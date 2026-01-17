@@ -1,5 +1,27 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Issue Tracking with Beads
+
+This project uses **[Beads](https://github.com/steveyegge/beads)** for AI-native issue tracking.
+
+```bash
+bd ready              # See available work
+bd show <id>          # View issue details
+bd update <id> --status in_progress  # Start work
+bd close <id>         # Complete work
+```
+
+**Documentation:**
+- [AGENTS.md](AGENTS.md) - Full workflow guidelines
+- [.beads/SESSION_START.md](.beads/SESSION_START.md) - Session start checklist
+- [.beads/SESSION_END.md](.beads/SESSION_END.md) - Session end protocol (mandatory!)
+- [.beads/TESTING.md](.beads/TESTING.md) - Test isolation practices
+
+**Key Rules:**
+- Always include issue ID in commits: `git commit -m "Fix bug (dt-xyz)"`
+- Never end session without `git push` (see SESSION_END.md)
+- Use `BEADS_DB=/tmp/test.db` for testing
+
 ## Getting Started
 
 First, run the development server:
