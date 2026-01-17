@@ -114,13 +114,7 @@ bd show <bead-id>
 
 #### 2.2 Make Changes
 
-**Tool**: `mcp__morph_mcp__edit_file`
-
-| Parameter     | Value                                 |
-| ------------- | ------------------------------------- |
-| `path`        | `<file>`                              |
-| `code_edit`   | Use `// ... existing code ...` syntax |
-| `instruction` | `<what you're changing>`              |
+Use built-in file editing tools for code changes.
 
 After edits: `get_diagnostics("<edited-file>")`
 
@@ -270,7 +264,6 @@ NEXT:  loop to START
 | Find code         | `mcp__gkg__search_codebase_definitions`          |
 | Get definition    | `mcp__gkg__get_definition`                       |
 | Find usages       | `mcp__gkg__get_references`                       |
-| Edit file         | `mcp__morph_mcp__edit_file`                      |
 | Search components | `mcp__shadcn__search_items_in_registries`        |
 | View components   | `mcp__shadcn__view_items_in_registries`          |
 | Get examples      | `mcp__shadcn__get_item_examples_from_registries` |

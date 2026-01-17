@@ -20,7 +20,6 @@ You are agent {AGENT_NAME} working on Track {N} of epic {EPIC_ID}.
 
 ## Tool Preferences (from AGENTS.md)
 - Codebase exploration: mcp__gkg__* tools
-- File editing: mcp__morph_mcp__edit_file
 - Web search: mcp__MCP_DOCKER__web_search_exa
 - UI components: mcp__shadcn__* tools
 
