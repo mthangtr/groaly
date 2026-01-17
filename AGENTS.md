@@ -262,73 +262,57 @@ This enables `bd doctor` to detect orphaned issues.
 
 ---
 
-## MCP Agent Mail: coordination for multi-agent workflows
+## MCP Agent Mail: Multi-Agent Coordination
 
-What it is
-- A mail-like layer that lets coding agents coordinate asynchronously via MCP tools and resources.
-- Provides identities, inbox/outbox, searchable threads, and advisory file reservations, with human-auditable artifacts in Git.
+**Purpose**: Prevent file conflicts when multiple agents work in parallel.
 
-Why it's useful
-- Prevents agents from stepping on each other with explicit file reservations (leases) for files/globs.
-- Keeps communication out of your token budget by storing messages in a per-project archive.
-- Offers quick reads (`resource://inbox/...`, `resource://thread/...`) and macros that bundle common flows.
+**Core concepts:**
+- **File reservations**: Reserve files BEFORE editing to signal intent
+- **Thread-based messaging**: Communicate via `thread_id` (match Beads issue IDs)
+- **Audit trail**: Everything logged in Git (human-readable)
 
-How to use effectively
-1) Same repository
-   - Register an identity: call `ensure_project`, then `register_agent` using this repo's absolute path as `project_key`.
-   - Reserve files before you edit: `file_reservation_paths(project_key, agent_name, ["src/**"], ttl_seconds=3600, exclusive=true)` to signal intent and avoid conflict.
-   - Communicate with threads: use `send_message(..., thread_id="FEAT-123")`; check inbox with `fetch_inbox` and acknowledge with `acknowledge_message`.
-   - Read fast: `resource://inbox/{Agent}?project=<abs-path>&limit=20` or `resource://thread/{id}?project=<abs-path>&include_bodies=true`.
-   - Tip: set `AGENT_NAME` in your environment so the pre-commit guard can block commits that conflict with others' active exclusive file reservations.
+**Server**: `http://127.0.0.1:8765/mcp/`  
+**Project key**: `D:\Workspace\projects\dumtasking` (always use absolute path)
 
-2) Across different repos in one project (e.g., Next.js frontend + FastAPI backend)
-   - Option A (single project bus): register both sides under the same `project_key` (shared key/path). Keep reservation patterns specific (e.g., `frontend/**` vs `backend/**`).
-   - Option B (separate projects): each repo has its own `project_key`; use `macro_contact_handshake` or `request_contact`/`respond_contact` to link agents, then message directly. Keep a shared `thread_id` (e.g., ticket key) across repos for clean summaries/audits.
+### Essential Workflow
 
-Macros vs granular tools
-- Prefer macros when you want speed or are on a smaller model: `macro_start_session`, `macro_prepare_thread`, `macro_file_reservation_cycle`, `macro_contact_handshake`.
-- Use granular tools when you need control: `register_agent`, `file_reservation_paths`, `send_message`, `fetch_inbox`, `acknowledge_message`.
+```typescript
+// 1. Register once per session
+register_agent(project_key, program: "opencode", model: "gpt-5-mini")
 
-Common pitfalls
-- "from_agent not registered": always `register_agent` in the correct `project_key` first.
-- "FILE_RESERVATION_CONFLICT": adjust patterns, wait for expiry, or use a non-exclusive reservation when appropriate.
-- Auth errors: if JWT+JWKS is enabled, include a bearer token with a `kid` that matches server JWKS; static bearer is used only when JWT is disabled.
+// 2. ALWAYS reserve before editing
+file_reservation_paths(
+  project_key, agent_name, 
+  paths: ["src/components/**"], 
+  exclusive: true, 
+  reason: "dt-123"
+)
 
----
+// 3. Announce work
+send_message(thread_id: "dt-123", subject: "[dt-123] Starting...")
 
-## Integrating with Beads (dependency-aware task planning)
+// 4. Work & commit normally
 
-Beads provides a lightweight, dependency-aware issue database and a CLI (`bd`) for selecting "ready work," setting priorities, and tracking status. It complements MCP Agent Mail's messaging, audit trail, and file-reservation signals. Project: [steveyegge/beads](https://github.com/steveyegge/beads)
+// 5. Release when done
+release_file_reservations(paths: ["src/components/**"])
+```
 
-Recommended conventions
-- **Single source of truth**: Use **Beads** for task status/priority/dependencies; use **Agent Mail** for conversation, decisions, and attachments (audit).
-- **Shared identifiers**: Use the Beads issue id (e.g., `dt-123`) as the Mail `thread_id` and prefix message subjects with `[dt-123]`.
-- **Reservations**: When starting a `dt-###` task, call `file_reservation_paths(...)` for the affected paths; include the issue id in the `reason` and release on completion.
+### Beads Integration
 
-Typical flow (agents)
-1) **Pick ready work** (Beads)
-   - `bd ready --json` → choose one item (highest priority, no blockers)
-2) **Reserve edit surface** (Mail)
-   - `file_reservation_paths(project_key, agent_name, ["src/**"], ttl_seconds=3600, exclusive=true, reason="dt-123")`
-3) **Announce start** (Mail)
-   - `send_message(..., thread_id="dt-123", subject="[dt-123] Start: <short title>", ack_required=true)`
-4) **Work and update**
-   - Reply in-thread with progress and attach artifacts/images; keep the discussion in one thread per issue id
-5) **Complete and release**
-   - `bd close dt-123 --reason "Completed"` (Beads is status authority)
-   - `release_file_reservations(project_key, agent_name, paths=["src/**"])`
-   - Final Mail reply: `[dt-123] Completed` with summary and links
+| Beads | Agent Mail | Commit |
+|-------|-----------|--------|
+| `dt-123` | `thread_id: "dt-123"` | `"feat: xyz (dt-123)"` |
 
-Mapping cheat-sheet
-- **Mail `thread_id`** ↔ `dt-###`
-- **Mail subject**: `[dt-###] …`
-- **File reservation `reason`**: `dt-###`
-- **Commit messages (optional)**: include `dt-###` for traceability
+**Standard flow:**
+1. `bd ready` → pick task
+2. `file_reservation_paths` → reserve files
+3. `send_message` → announce start
+4. Work → commit with issue ID
+5. `bd close` + `release_file_reservations` + final message
 
-Event mirroring (optional automation)
-- On `bd update --status blocked`, send a high-importance Mail message in thread `dt-###` describing the blocker.
-- On Mail "ACK overdue" for a critical decision, add a Beads label (e.g., `needs-ack`) or bump priority to surface it in `bd ready`.
+**Quick macros:**
+- `macro_start_session`: Register + reserve + inbox in one call
+- `macro_file_reservation_cycle`: Reserve → work → auto-release
 
-Pitfalls to avoid
-- Don't create or manage tasks in Mail; treat Beads as the single task queue.
-- Always include `dt-###` in message `thread_id` to avoid ID drift across tools
+**📚 Full guide**: See `AM_GUIDE.md` for examples, troubleshooting, and advanced patterns.
+
