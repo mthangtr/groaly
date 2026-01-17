@@ -329,59 +329,63 @@ This enables `bd doctor` to detect orphaned issues (committed code but unclosed 
 
 ## Beads Workflow Integration
 
-This project uses [beads_viewer](https://github.com/Dicklesworthstone/beads_viewer) for issue tracking. Issues are stored in `.beads/` and tracked in git.
+This project uses **bd** (beads) for issue tracking. Issues are stored in `.beads/` and tracked in git.
 
 ### Essential Commands
 
 ```bash
-# View issues (launches TUI - avoid in automated sessions)
-bv
-
-# CLI commands for agents (use these instead)
+# Find and work on tasks
 bd ready              # Show issues ready to work (no blockers)
-bd list --status=open # All open issues
 bd show <id>          # Full issue details with dependencies
-bd create --title="..." --type=task --priority=2
-bd update <id> --status=in_progress
-bd close <id> --reason="Completed"
-bd close <id1> <id2>  # Close multiple issues at once
-bd sync               # Commit and push changes
+bd update <id> --status in_progress  # Claim work
+bd close <id>         # Complete work
+bd sync               # Sync with git
+
+# Create and manage issues
+bd create "Task title" -t task -p 1  # Create new task (P0-P4)
+bd dep add <issue> <depends-on>      # Add dependency
 ```
 
 ### Workflow Pattern
 
 1. **Start**: Run `bd ready` to find actionable work
-2. **Claim**: Use `bd update <id> --status=in_progress`
+2. **Claim**: Use `bd update <id> --status in_progress`
 3. **Work**: Implement the task
 4. **Complete**: Use `bd close <id>`
 5. **Sync**: Always run `bd sync` at session end
 
 ### Key Concepts
 
-- **Dependencies**: Issues can block other issues. `bd ready` shows only unblocked work.
-- **Priority**: P0=critical, P1=high, P2=medium, P3=low, P4=backlog (use numbers, not words)
+- **Dependencies**: Issues can block other issues. `bd ready` shows only unblocked work
+- **Priority**: P0=critical, P1=high, P2=medium, P3=low, P4=backlog (use numbers)
 - **Types**: task, bug, feature, epic, question, docs
-- **Blocking**: `bd dep add <issue> <depends-on>` to add dependencies
+- **Blocking**: Use `bd dep add <issue> <depends-on>` to add dependencies
+- **Auto-sync**: bd automatically exports to JSONL (30s debounce), imports after git pull
 
-### Session Protocol
+### Hooks and Auto-Sync
 
-**Before ending any session, run this checklist:**
+Beads uses hooks to remind agents about workflow:
 
+- **SessionStart** → `bd prime` runs → Agent learns workflow
+- **PreCompact** → `bd sync` runs → State saved before context compact
+
+**Install git hooks** (recommended):
 ```bash
-git status              # Check what changed
-git add <files>         # Stage code changes
-bd sync                 # Commit beads changes
-git commit -m "..."     # Commit code
-bd sync                 # Commit any new beads changes
-git push                # Push to remote
+bd hooks install  # One-time setup per workspace
 ```
 
-### Best Practices
+This installs pre-commit, post-merge, pre-push, post-checkout hooks for automatic sync.
 
-- Check `bd ready` at session start to find available work
-- Update status as you work (in_progress → closed)
-- Create new issues with `bd create` when you discover tasks
-- Use descriptive titles and set appropriate priority/type
-- Always `bd sync` before ending session
+### Full Documentation
+
+**For complete reference including theory, ID format, UI guide, and development:**
+→ See `.beads/BD_GUIDE.md`
+
+**Quick topics in BD_GUIDE.md:**
+- Why Beads vs Markdown for AI agents
+- ID format and prefix management (`bd rename-prefix`)
+- Beads UI for visual task management
+- Development guidelines and testing
+- Release process
 
 <!-- end-bv-agent-instructions -->

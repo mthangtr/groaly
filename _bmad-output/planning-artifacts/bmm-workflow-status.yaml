@@ -84,9 +84,10 @@ workflow_status:
     name: "Architecture"
     agent: "architect"
     command: "/bmad:bmm:workflows:create-architecture"
-    status: "required"
-    output: "System architecture document"
-    note: "Critical for complex system: Realtime sync, AI orchestration, pgvector, PWA"
+    status: "_bmad-output/planning-artifacts/architecture.md"
+    completed: "2026-01-18T00:00:00.000Z"
+    output: "Comprehensive architecture document (85KB) - serverless, AI-native, realtime sync"
+    note: "✅ COMPLETED - Deferred Knowledge Graph from MVP, focus on core features"
   
   - id: "create-epics-and-stories"
     phase: 3
