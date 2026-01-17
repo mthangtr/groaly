@@ -745,6 +745,16 @@ graph TD
 - **Framework:** Next.js 16+ (App Router, React Server Components, Server Actions)
 - **Language:** TypeScript (strict mode)
 - **UI Components:** shadcn/ui + Radix UI primitives + Tailwind CSS
+
+**shadcn/ui Setup:**  
+This project was created using the following command to ensure UI/UX complies with the specified shadcn/ui preset:  
+
+```bash
+bunx --bun shadcn@latest create --preset "https://ui.shadcn.com/init?base=base&style=mira&baseColor=zinc&theme=zinc&iconLibrary=lucide&font=inter&menuAccent=subtle&menuColor=default&radius=default&template=next" --template next
+```
+
+All UI/UX must adhere to this configuration (style=mira, baseColor=zinc, theme=zinc, iconLibrary=lucide, font=inter, etc.) to ensure consistency.
+
 - **Rich Text Editor:** Tiptap (extensible, lightweight)
 - **Drag-and-Drop:** dnd-kit (accessible, performant)
 - **Calendar Component:** FullCalendar or custom via date-fns
