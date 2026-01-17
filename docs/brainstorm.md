@@ -10,7 +10,7 @@
 ## 1. Overview / Product Description
 
 **What is this product?**  
-**dumtasking** is an AI Agents-powered productivity application that transforms your notes into organized, actionable task management systems. Users store notes (text or optional voice) and interact with AI through natural conversation to automatically extract tasks, set priorities, identify dependencies, suggest schedules, and generate Kanban boards and Calendar views—all through intelligent prompting and agent orchestration.
+**dumtasking** is an AI Agents-powered productivity application that transforms your notes into organized, actionable task management systems. Users dump notes (text-first) and interact with AI through natural conversation to automatically extract tasks, set priorities, identify dependencies, suggest schedules, and manage everything through Kanban, Calendar, and Table views—all through intelligent prompting and agent orchestration with a powerful Focus Mode for execution.
 
 **Core value proposition (UVP):**  
 *"Store your notes, chat with AI Agents, get perfect task plans—zero manual organizing."*
@@ -73,7 +73,7 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 ## 3. Solution Vision / Overall Approach
 
 **High-Level Solution:**  
-"AI Agents-Powered Notes to Tasks" leverages conversational AI orchestration (Claude 3.7 Sonnet / Gemini 2.0 Flash via Vercel AI SDK) to create a seamless notes storage → AI conversation → intelligent task planning pipeline. Users dump notes (text-first, voice optional), then chat with AI Agents to automatically extract tasks, set priorities, identify dependencies, optimize schedules, and manage everything through natural language—all synced across Kanban, Calendar, and Database views.
+"AI Agents-Powered Notes to Tasks" leverages conversational AI orchestration (Claude 3.7 Sonnet / Gemini 2.0 Flash via Vercel AI SDK) to create a seamless notes storage → AI conversation → intelligent task planning → focused execution pipeline. Users dump notes (text-first), chat with AI Agents to automatically extract tasks, set priorities, identify dependencies, optimize schedules, defend focus time, and execute in distraction-free Focus Mode—all synced across Kanban, Calendar, and Table views.
 
 **Why this approach is superior:**
 - **AI Agents conversation:** Natural language interface—just tell AI what you want ("plan this note", "optimize my week", "what should I do today")—no forms or manual clicking
@@ -92,18 +92,26 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 
 **Non-Goals / Out-of-Scope (Full-Feature Version):**
 - ❌ No multi-user collaboration or project sharing (single-user focus)
-- ❌ No Pomodoro timers or advanced time tracking (keep focus on planning, not execution tracking)
-- ❌ No image/PDF OCR or multi-modal input beyond voice + text
+- ❌ No voice input/capture (text is sufficient, web voice unreliable)
+- ❌ No image/PDF OCR or multi-modal input
 - ❌ No custom LLM fine-tuning (rely on OpenRouter's routing to best models)
 - ❌ No complex workflow automation (e.g., IFTTT-style rules)
+- ❌ No external calendar sync (two-way) - dumtasking is single source of truth
+- ❌ No meeting notes templates or recording features
+- ❌ No browser extensions or quick capture tools (bookmark tab sufficient)
 
-**Now IN-SCOPE (moved from MVP non-goals):**
-- ✅ Voice input as optional bonus feature (not voice-first)
-- ✅ AI Chat Assistant for flexible interactions (like Blitzit's Blitzy)
+**Now IN-SCOPE (Full-Feature Version):**
+- ✅ AI Chat Assistant with unified control (one-command magic merged in)
 - ✅ Smart daily suggestions ("What should I work on today?" - Motion-style)
 - ✅ Auto-balance workload optimization (Motion-style redistribution)
+- ✅ Defend focus time & auto-schedule breaks (Reclaim.ai-style)
+- ✅ Energy-based intelligent scheduling (complex tasks → morning)
+- ✅ Focus Mode with PiP floating timer (Blitzit-style execution)
+- ✅ Pomodoro timer integrated (25/5 customizable)
+- ✅ Table/Database view (Notion-style power user view)
 - ✅ Knowledge graph for related tasks/dependencies (Mem.ai-style)
-- ✅ External calendar export (one-way to Google Calendar - post-launch)
+- ✅ Time tracking (optional, background, non-intrusive)
+- ✅ Weekly AI Review with insights and suggestions
 - ✅ Full offline mode with sync queue (PWA capability)
 
 ---
@@ -144,59 +152,34 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 
 ## 5. Key Features / Epics
 
-### Feature 1: Quick Voice Capture (Optional Bonus) – Priority: ★★★☆☆
-**Value:** Nice-to-have feature for users who want voice input as alternative to typing.
+### Feature 1: Rich Text Note Storage & Editor – Priority: ★★★★★
+**Value:** Core foundation—all tasks derive from notes. Primary and only input method for brain dumps.
 
 **User Story:**  
-*As a busy professional, I want the option to record voice notes when typing is inconvenient so that I have flexible input methods.*
+*As a user, I want to type or edit notes with rich formatting so that I can capture my thoughts and ideas quickly without friction.*
 
 **Acceptance Criteria:**
-- Microphone button visible in note editor (not prominently featured)
-- One-tap recording starts (after initial permission)
-- Audio recorded via MediaRecorder API, uploaded to Supabase Storage
-- Basic STT transcription (Web Speech API or simple Whisper API)
-- Transcript displays within 5 seconds
-- Raw audio file linked to note for playback/verification
-- Supports English language primarily
-- Max recording length: 10 minutes (with warning at 9 minutes)
-
-**Edge Cases:**
-- Poor internet connection: Show "Uploading..." state, retry with exponential backoff
-- Ambient noise: Display confidence score, allow re-recording
-- Silent recording (no speech detected): Prompt user to check microphone
-
-**Success Metrics:**
-- Transcription accuracy >90% (user-reported via feedback) for users who enable voice
-- 15-20% of users try voice feature at least once
-- For voice users: Average recording length 1-3 minutes
-
----
-
-### Feature 2: Rich Text Note Storage & Editor – Priority: ★★★★★
-**Value:** Core foundation—all tasks derive from notes. Provides primary input method for brain dumps.
-
-**User Story:**  
-*As a user, I want to type or edit notes with rich formatting so that I can add context that might be hard to express via voice alone.*
-
-**Acceptance Criteria:**
-- Rich text editor (Tiptap or Lexical) with basic formatting: bold, italic, bullet lists, numbered lists
+- Rich text editor (Tiptap) with basic formatting: bold, italic, bullet lists, numbered lists, headings
 - Auto-save every 2 seconds (debounced)
-- Markdown shortcuts supported (e.g., `##` for headings, `-` for lists)
-- Edit voice transcripts inline after STT
+- Markdown shortcuts supported (e.g., `##` for headings, `-` for lists, `**` for bold)
 - Character/word count displayed (optional toggle)
 - Responsive design (optimized for desktop, works on tablets/phones)
+- Paste support from any source (web, docs, emails)
+- Notes list view with search and filter
 
 **Edge Cases:**
 - Conflict resolution if user edits on two devices simultaneously (last-write-wins with notification)
 - Pasting large amounts of text: Warn if >10,000 characters (may impact AI processing time)
+- Offline editing: Queue changes locally, sync when reconnected (PWA)
 
 **Success Metrics:**
-- 50%+ of notes include at least one manual edit
-- Average edit session: <2 minutes
+- Average note length: 200-500 words
+- 90%+ notes saved successfully with auto-save
+- Average edit session: <3 minutes
 
 ---
 
-### Feature 3: AI Agents Task Extraction & Orchestration – Priority: ★★★★★
+### Feature 2: AI Agents Task Extraction & Orchestration – Priority: ★★★★★
 **Value:** The core "magic"—AI Agents convert messy notes into actionable, prioritized tasks through intelligent conversation and orchestration.
 
 **User Story:**  
@@ -243,7 +226,7 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 
 ---
 
-### Feature 4: Realtime Kanban Board – Priority: ★★★★★
+### Feature 3: Realtime Kanban Board – Priority: ★★★★★
 **Value:** Visual task management with drag-and-drop, synced in real-time across devices.
 
 **User Story:**  
@@ -279,7 +262,7 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 
 ---
 
-### Feature 5: AI-Powered Calendar View – Priority: ★★★★☆
+### Feature 4: AI-Powered Calendar View – Priority: ★★★★☆
 **Value:** Automatically schedules tasks across days/weeks based on AI suggestions.
 
 **User Story:**  
@@ -315,7 +298,7 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 
 ---
 
-### Feature 6: Realtime Sync Across Views – Priority: ★★★★★
+### Feature 5: Realtime Sync Across Views – Priority: ★★★★★
 **Value:** Ensures data consistency across Notes, Kanban, and Calendar without manual refreshes.
 
 **User Story:**  
@@ -338,7 +321,7 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 
 ---
 
-### Feature 7: Settings & Customization – Priority: ★★★☆☆
+### Feature 6: Settings & Customization – Priority: ★★★☆☆
 **Value:** Allows users to tailor the app to their workflow and preferences.
 
 **User Story:**  
@@ -363,63 +346,11 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 
 ---
 
-### Feature 8: Voice Commands (Optional Hands-Free) – Priority: ★★☆☆☆
-**Value:** Nice-to-have bonus for users who want hands-free interaction (accessibility feature).
+### Feature 7: AI Chat Assistant (Conversational Task Manager) – Priority: ★★★★★
+**Value:** Unified control center for all AI interactions - flexible conversation + one-command magic through prompt templates. Like Blitzit's Blitzy but more powerful.
 
 **User Story:**  
-*As a user who occasionally needs hands-free interaction, I want to say "Add task: Call client tomorrow high priority" so that I have an alternative input method when typing is inconvenient.*
-
-**Acceptance Criteria:**
-- **Wake word detection**: "Hey dumtasking" or tap-and-hold mic button activates listening mode
-- **Supported commands** (English only):
-  - **Add task**: "Add task [title] [priority] [due date]" → creates task with metadata
-    - Example: "Add task call client A tomorrow high priority" → Task created with due_date=tomorrow, priority=high
-  - **Complete task**: "Mark [task title] as done" → moves to Done column
-  - **List tasks**: "Show me today's tasks" / "What's high priority?" → AI displays tasks in chat
-  - **Reschedule**: "Move [task title] to [date]" → updates due_date
-  - **Query status**: "What should I work on now?" → AI suggests top task based on time/energy
-  - **Summarize**: "Summarize my day" → AI shows completion rate + pending tasks
-- **Confirmation for destructive actions**: "Mark task as done" → "I'll mark '[task title]' as complete. Confirm?" → user says "yes"
-- **Context-aware**: If user says "mark it done" after listing tasks, AI infers "it" = last mentioned task
-- **Text feedback primarily**: AI responds with text (voice TTS optional for accessibility)
-- **Fallback to chat**: If command unclear → "I didn't understand. Did you mean: Add task or List tasks?"
-
-**Edge Cases:**
-- **Ambiguous task names**: "Mark project done" (multiple tasks match "project") → AI lists options: "Which one? 1) Project A kickoff, 2) Project B design"
-- **Invalid dates**: "Add task tomorrow yesterday" → AI clarifies: "Did you mean tomorrow or yesterday?"
-- **Background noise**: Confidence score <80% → "Sorry, I didn't catch that. Please repeat."
-- **No tasks match**: "Complete task XYZ" (XYZ doesn't exist) → "I couldn't find task 'XYZ'. Did you mean [similar task]?"
-
-**Implementation Details:**
-- **Wake word**: Use browser Web Speech API (webkitSpeechRecognition) for wake word detection
-- **STT**: Web Speech API or Whisper API for English command transcription
-- **Intent parsing**: LLM (Claude 3.7 Sonnet) with structured output (Zod schema):
-  ```typescript
-  {
-    intent: "add_task" | "complete_task" | "list_tasks" | "reschedule" | "query" | "summarize",
-    parameters: {
-      task_title?: string,
-      priority?: "high" | "medium" | "low",
-      due_date?: string, // parsed to YYYY-MM-DD
-      filter?: "today" | "high_priority" | "all"
-    }
-  }
-  ```
-- **Text-first responses**: Display results in chat panel; optional TTS for accessibility
-
-**Success Metrics:**
-- 60%+ users try voice commands within first week
-- 40%+ users use voice commands at least 2x/week
-- 90%+ command accuracy (intent correctly parsed)
-- <2 seconds command execution time (STT → intent → action)
-
----
-
-### Feature 9: AI Chat Assistant (Conversational Task Manager) – Priority: ★★★★★
-**Value:** Flexible interaction model (like Blitzit's Blitzy, Mem Chat) for power users who need more than buttons.
-
-**User Story:**  
-*As a user, I want to chat with an AI assistant about my tasks and notes so that I can quickly extract insights, reorganize work, or get suggestions without clicking through multiple views.*
+*As a user, I want to chat with an AI assistant about my tasks and notes so that I can quickly extract insights, reorganize work, or get suggestions through natural conversation or quick commands.*
 
 **Acceptance Criteria:**
 - **Floating chat widget**: Bottom-right corner, expandable (minimized = small circle icon, expanded = 400x600px panel)
@@ -427,16 +358,25 @@ User takes notes in various apps → notes sit unused → manually copy to task 
   - All user's notes (content + metadata)
   - All tasks (title, description, priority, due_date, status, dependencies)
   - Current calendar state (workload per day)
-  - User preferences (working hours, timezone)
-- **Supported interactions**:
-  - **Extract tasks from note**: "Turn this note into tasks" → AI extracts + shows preview (same as "Plan this" button)
-  - **Summarize work**: "Summarize my week" / "What did I complete today?" → AI generates summary
-  - **Smart queries**: "What should I work on now?" → AI suggests task based on time, priority, dependencies
+  - User preferences (working hours, timezone, energy levels)
+  
+- **Quick Action Buttons (One-Command Magic)**:
+  - `/plan-week` → "Plan my week from all unprocessed notes" (scans all notes, extracts, schedules)
+  - `/optimize-today` → "Optimize today's schedule based on current workload" (rebalance tasks)
+  - `/whats-next` → "What should I work on next?" (suggests based on time/priority/blockers)
+  - `/find-blockers` → "What tasks are blocking other work?" (find critical dependencies)
+  - `/prep-tomorrow` → "Review and prepare tomorrow's schedule" (preview + suggest adjustments)
+  - `/summarize-week` → "Summarize this week's progress" (completion rate, achievements)
+  
+- **Flexible Chat Interactions**:
+  - **Extract tasks**: "Turn this note into tasks" / "Plan this note" → AI extracts + shows preview
+  - **Summarize work**: "What did I complete today?" / "Show my week summary" → AI generates report
+  - **Smart queries**: "Show me tasks related to Client A" → AI searches + lists
   - **Reschedule requests**: "Move all high-priority tasks to next week" → AI shows plan, user confirms
-  - **Find tasks**: "Show me tasks related to Client A" → AI searches + lists tasks
-  - **Explain decisions**: "Why is this task scheduled for tomorrow?" → AI explains reasoning (priority, dependencies, workload)
-  - **Quick edits**: "Change task X priority to low" → AI updates task
-  - **Proactive suggestions**: "You have 3 overdue tasks. Should I reschedule them?" (AI initiates conversation)
+  - **Explain decisions**: "Why is this task scheduled for tomorrow?" → AI explains reasoning
+  - **Quick edits**: "Change Task X priority to low" / "Mark Task Y as done" → AI updates
+  - **Proactive suggestions**: "You have 3 overdue tasks. Should I reschedule them?" (AI initiates)
+  - **Find connections**: "What tasks depend on Task X?" → show dependency tree
 - **Streaming responses**: Use Vercel AI SDK streaming for real-time feedback
 - **Message history**: Persisted per session (cleared on page refresh or user clears)
 - **Quick actions**: AI responses include actionable buttons (e.g., "Reschedule these 3 tasks" → [Confirm] button)
@@ -451,23 +391,27 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 **Implementation Details:**
 - **UI**: shadcn/ui Dialog component, floating + expandable
 - **LLM**: Claude 3.7 Sonnet via Vercel AI SDK (streaming)
-- **System prompt**: Inject user context (notes, tasks, calendar) + capabilities + tone ("You are a helpful productivity assistant for dumtasking. Help users organize their notes into actionable tasks...")
-- **Tool calling**: AI can call functions:
+- **System prompt**: Inject user context (notes, tasks, calendar) + capabilities + tone
+- **Tool calling** (AI can execute functions):
   - `extract_tasks(note_id)` → trigger task extraction
   - `update_task(task_id, updates)` → modify task
   - `search_tasks(query)` → find tasks
   - `reschedule_tasks(task_ids, new_dates)` → batch reschedule
   - `generate_summary(date_range)` → create report
+  - `optimize_schedule(date_range, constraints)` → rebalance workload
+  - `find_blockers()` → identify tasks blocking others
+  - `suggest_next_task(time, energy_level)` → recommend task to work on
 
 **Success Metrics:**
-- 70%+ users try chat within first 2 weeks
-- 50%+ users use chat at least 1x/week
+- 90%+ users try chat within first 2 weeks
+- 70%+ users use chat at least 2x/week
 - Average conversation length: 3-5 messages
-- 85%+ user satisfaction with AI responses (survey)
+- 85%+ user satisfaction with AI responses
+- Quick actions used 60%+ of the time (vs. freeform chat)
 
 ---
 
-### Feature 10: Smart Daily Suggestions (Morning Dashboard) – Priority: ★★★★★
+### Feature 8: Smart Daily Suggestions (Morning Dashboard) – Priority: ★★★★★
 **Value:** Answers "What should I work on today?" (Motion's killer feature) → reduces decision paralysis.
 
 **User Story:**  
@@ -519,63 +463,91 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 
 ---
 
-### Feature 11: Tasks Aggregation View (All Tasks Hub) – Priority: ★★★★☆
-**Value:** Central place to see ALL tasks across all notes (Reflect's Tasks tab) → eliminates need to hunt through notes.
+### Feature 9: Table/Database View (All Tasks Hub) – Priority: ★★★★★
+**Value:** Notion-style database view for power users - central place to see ALL tasks with advanced sorting, filtering, and bulk operations.
 
 **User Story:**  
-*As a user with tasks scattered across 50+ notes, I want a single view of all pending tasks so that I can see my full workload and find tasks quickly without remembering which note they came from.*
+*As a power user with tasks scattered across 50+ notes, I want a table/database view of all tasks so that I can perform bulk operations, advanced filtering, and see my full workload like Notion databases.*
 
 **Acceptance Criteria:**
-- **New tab**: "Tasks" (icon: checkbox list) alongside Notes/Kanban/Calendar
-- **List view**: All tasks displayed in sortable table:
-  - Columns: Title, Priority (badge), Due Date, Status, Estimated Time, Source Note (clickable link)
-  - Sortable by: Priority, Due Date, Created Date, Estimated Time, Status
-  - Default sort: Priority (high→low) → Due Date (earliest→latest)
-- **Filters** (multi-select):
+- **New view tab**: "Table" (icon: table/database) alongside Notes/Kanban/Calendar
+- **Notion-style table**: All tasks displayed in sortable, filterable table:
+  - **Columns** (customizable visibility):
+    - Title (editable inline)
+    - Status (To Do / In Progress / Done) - dropdown inline edit
+    - Priority (High / Medium / Low) - color badge, inline edit
+    - Due Date (date picker inline)
+    - Estimated Time (number input, inline edit)
+    - Source Note (link, clickable → jump to note)
+    - Dependencies (multi-select tasks, inline edit)
+    - Tags (multi-select, custom tags, inline edit)
+    - Created Date (read-only)
+    - Completed Date (read-only)
+    - Time Spent (if tracking enabled, read-only)
+  
+  - **Sortable**: Click any column header → sort asc/desc
+  - **Default sort**: Priority (high→low) → Due Date (earliest→latest)
+- **Filters** (multi-select, combinable):
   - **Status**: To Do / In Progress / Done (default: show To Do + In Progress only)
   - **Priority**: High / Medium / Low
   - **Date range**: Today / This Week / This Month / Overdue / Unscheduled / Custom range
   - **Source note**: Filter by note title (useful for project-specific tasks)
-- **Search**: Full-text search across task titles + descriptions
+  - **Tags**: Filter by custom tags
+  - **Has dependencies**: Show only tasks with/without blockers
+  - **Saved filter views**: Save filter combinations (e.g., "High Priority Overdue", "Client A Tasks")
+  
+- **Search**: Full-text search across task titles + descriptions (fuzzy search)
+
 - **Bulk actions**: Select multiple tasks (checkboxes) → actions:
+  - Change status (bulk)
   - Change priority (bulk)
+  - Add/remove tags (bulk)
   - Reschedule (bulk - AI suggests optimal dates)
   - Mark complete (bulk)
-  - Delete (bulk - with confirmation)
+  - Delete (bulk - with confirmation: "Delete 12 tasks?")
   - Move to different note (bulk)
-- **Grouped views** (toggle):
-  - Group by Priority (High / Medium / Low sections)
-  - Group by Status (To Do / In Progress / Done)
-  - Group by Due Date (Today / Tomorrow / This Week / Later)
-  - Group by Source Note (show tasks under their originating note)
-- **Quick actions per task**:
-  - Drag handle → reorder tasks (changes priority order)
-  - Edit button → inline edit title/description
-  - Calendar icon → quick reschedule (date picker)
-  - Checkbox → mark complete
-  - Link icon → jump to source note
-- **Empty state**: "No tasks yet. Create tasks by processing your notes!"
+  - Add dependencies (bulk)
 
+- **Column customization**:
+  - Show/hide columns (toggle visibility)
+  - Reorder columns (drag column headers)
+  - Column width resize
+  - Preferences saved per user
+
+- **Inline editing**: Click any cell → edit directly (debounced auto-save)
+- **Quick add row**: "+ Add task" button at bottom → create task inline
+- **Row actions** (hover → show icons):
+  - Edit (opens detail modal)
+  - Duplicate task
+  - Delete
+  - Jump to source note
 **Edge Cases:**
-- **Large task lists** (>500 tasks): Virtual scrolling (only render visible rows)
-- **Conflicting filters**: "Show completed + overdue" (completed can't be overdue) → AI resolves: "Showing completed tasks (overdue filter ignored)"
-- **Deleted source note**: Task remains, source note shows "(deleted)" with option to re-attach to different note
+- **Large task lists** (>1000 tasks): Virtual scrolling (only render visible rows - react-virtual)
+- **Conflicting filters**: "Show completed + overdue" (completed can't be overdue) → show warning, ignore overdue filter
+- **Deleted source note**: Task remains, source note shows "(deleted)" with option to re-attach
+- **Concurrent edits**: Optimistic UI, resolve conflicts with last-write-wins + notification
 
 **Implementation Details:**
-- **UI**: TanStack Table (react-table v8) for sortable, filterable table
-- **Performance**: Virtualized scrolling (react-virtual) for >100 tasks
-- **State sync**: Changes in Tasks view → instantly update Kanban/Calendar (Supabase Realtime)
-- **URL state**: Filters persist in URL params (e.g., `/tasks?status=todo&priority=high`) → shareable links
+- **UI**: TanStack Table v8 (react-table) - industry standard for complex tables
+- **Performance**: 
+  - Virtual scrolling (react-virtual) for >100 tasks
+  - Debounced inline editing (save 1 second after last keystroke)
+  - Pagination optional (if virtual scroll not sufficient)
+- **State sync**: Changes in Table view → instantly update Kanban/Calendar (Supabase Realtime)
+- **URL state**: Filters + sort persist in URL params (e.g., `/table?status=todo&priority=high&sort=due_date-asc`) → shareable links
+- **Export**: CSV/JSON export of filtered view
 
 **Success Metrics:**
-- 60%+ users visit Tasks view at least 2x/week
-- 50%+ users use filters regularly
-- 30%+ users perform bulk actions
-- Average time to find specific task: <10 seconds
+- 80%+ users visit Table view at least 2x/week
+- 70%+ users use filters regularly
+- 50%+ users perform bulk actions
+- 60%+ users customize columns
+- Average time to find specific task: <5 seconds
+- Power users spend 40%+ of time in Table view (vs. Kanban/Calendar)
 
 ---
 
-### Feature 12: Knowledge Graph / Related Tasks (Smart Connections) – Priority: ★★★☆☆
+### Feature 10: Knowledge Graph / Related Tasks (Smart Connections) – Priority: ★★★★
 **Value:** Auto-discover connections between tasks/notes (Mem.ai's knowledge graph) → better dependency detection + context.
 
 **User Story:**  
@@ -614,7 +586,7 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 
 ---
 
-### Feature 13: Weekly AI Review (Retrospective & Planning) – Priority: ★★★☆☆
+### Feature 11: Weekly AI Review (Retrospective & Planning) – Priority: ★★★★
 **Value:** Provides insights and suggestions for improving productivity (Motion/Reflect-style retrospectives).
 
 **User Story:**  
@@ -643,6 +615,256 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 
 ---
 
+### Feature 12: Focus Mode / Blitz Mode (Execution Layer) – Priority: ★★★★★
+**Value:** Distraction-free execution environment (Blitzit's killer feature) - helps users actually complete tasks, not just plan them.
+
+**User Story:**  
+*As a user ready to work, I want to enter a distraction-free focus mode with a floating timer so that I can execute tasks without interruptions and stay in flow state.*
+
+**Acceptance Criteria:**
+- **Entry points**:
+  - Select task(s) → click "Start Focus Session" button
+  - AI Chat: "Start focus session on Task X"
+  - Smart Daily Suggestions: "Start [Task A]" button
+  
+- **Focus Mode UI**:
+  - **Fullscreen** (Fullscreen API) - immersive, distraction-free
+  - **Minimalist interface**:
+    - Hide sidebar, navigation, all non-essential UI
+    - Show only: Current task title + description, Timer, Progress bar
+    - Dark background with task content centered
+  - **PiP Floating Timer** (Picture-in-Picture API) - stays on top when user switches tabs/windows
+    - Small floating window (200x100px) with timer + task name
+    - Works even when user switches to VS Code, browser, etc.
+    - Pause/Resume/Stop controls
+
+- **Pomodoro Timer Integration**:
+  - Default: 25 min work / 5 min break (customizable in Settings)
+  - Visual countdown timer (large, center screen)
+  - Progress bar fills up during work session
+  - Audio cue when work session ends (optional, toggle in Settings)
+  - Prompt: "Work session complete! Take a 5-minute break?" [Continue Working] [Take Break]
+  - Long break after 4 pomodoros (15 min, customizable)
+
+- **Ambient Sounds** (optional):
+  - Dropdown: White Noise / Rain / Coffee Shop / Forest / Ocean / Off
+  - Looped audio files, volume control
+  - Helps with focus, masks distractions
+
+- **Distraction Prevention**:
+  - Block browser notifications (Notifications API - requires permission)
+  - If user switches tabs → gentle browser notification: "Stay focused! 💪 [Task Name]"
+  - Visual: tab title shows "🔴 Focus Mode - 18:32 remaining"
+  - Page Visibility API tracks if user leaves → log for insights
+
+- **Task Completion**:
+  - When timer ends OR user clicks "Mark Complete":
+    - Celebration animation (confetti, checkmark grows)
+    - Sound effect (optional, like Blitzit's dopamine hits)
+    - Summary: "You completed Task X in 47 minutes! 🎉"
+    - Auto-move task to "Done" column
+    - Ask: "Ready for next task or take a break?" [Next Task] [Break] [Exit Focus]
+
+- **Session History** (for insights):
+  - Log: task_id, start_time, end_time, completed (boolean), interruptions (tab switches)
+  - Used by Weekly AI Review for productivity insights
+
+**Edge Cases:**
+- **Fullscreen exit (Esc key)**: Show modal: "Exit focus mode? Your progress will be saved." [Exit] [Stay Focused]
+- **Browser crash / refresh**: Resume session if <5 minutes passed, else count as interrupted
+- **Multiple tasks queued**: After completing one → auto-start next with 2-min break in between
+- **Offline**: Focus Mode works offline (timer runs locally), sync completion when reconnected
+
+**Implementation Details:**
+- **Fullscreen**: `document.documentElement.requestFullscreen()`
+- **PiP Timer**: 
+  ```typescript
+  const video = document.createElement('video');
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  // Draw timer on canvas → stream to video → requestPictureInPicture()
+  await video.requestPictureInPicture();
+  ```
+- **Pomodoro Logic**: setInterval() for countdown, localStorage to persist state
+- **Ambient Sounds**: `<audio>` element with loop attribute, preload audio files
+- **Notifications**: `Notification.requestPermission()` → `new Notification()`
+
+**Success Metrics:**
+- 70%+ users try Focus Mode within first week
+- 50%+ users use Focus Mode at least 3x/week
+- Tasks started in Focus Mode: 75%+ completion rate (vs. 60% without Focus Mode)
+- Average focus session duration: 35 minutes (vs. 25 min Pomodoro standard = good!)
+- User survey: "Focus Mode helps me complete tasks" → 85%+ agree
+
+---
+
+### Feature 13: Defend Focus Time / Protected Slots – Priority: ★★★★★
+**Value:** Reclaim.ai's killer feature - protect deep work time from being scheduled over, prevent burnout with automatic breaks.
+
+**User Story:**  
+*As a user, I want to define protected time slots for deep work and breaks so that AI never schedules tasks during these times and I maintain sustainable productivity.*
+
+**Acceptance Criteria:**
+- **Protected Slots Configuration** (in Settings):
+  - User defines recurring protected slots:
+    - **Focus Time**: "Monday-Friday 9-11 AM" (deep work, complex tasks only)
+    - **Lunch Break**: "12-1 PM daily" (no tasks)
+    - **Gym/Habits**: "Monday/Wednesday/Friday 6-7 PM" (personal time)
+    - **No Work After**: "8 PM" (hard stop, work-life balance)
+  - Each slot has:
+    - Title (e.g., "Morning Deep Work")
+    - Days of week (multi-select)
+    - Time range (start - end)
+    - Type: Protected (no tasks) / Focus Only (only high-priority/complex tasks)
+    - Recurring pattern (daily, weekdays, custom days)
+
+- **AI Scheduling Respects Protected Slots**:
+  - When auto-scheduling tasks → AI skips protected slots
+  - When user manually drags task to protected slot → warning:
+    - "This is your protected focus time. Are you sure?" [Yes, Override] [Cancel]
+  - Visual on Calendar: Protected slots show as green-bordered blocks with pattern fill
+  - Cannot be deleted by dragging tasks over them
+
+- **Auto-Schedule Breaks**:
+  - AI automatically inserts breaks based on work duration:
+    - **15-min break** after 2 hours continuous work
+    - **30-min lunch break** (user's preferred time, default 12-1 PM)
+    - **10-min stretch break** every 90 minutes (optional, toggle in Settings)
+  - Breaks show on calendar as light blue blocks
+  - Browser notifications remind: "You've worked 2 hours straight. Take a 15-min break 🧘‍♂️"
+  - Can be snoozed (5/10/15 min) but cannot be deleted
+
+- **Focus Time Optimization**:
+  - AI preferentially schedules complex/high-priority tasks during focus slots
+  - Routine/admin tasks scheduled outside focus time
+  - Respects user's energy profile (complex tasks → high energy slots)
+
+- **Calendar Visualization**:
+  - Protected slots: Green border, diagonal stripe pattern, label "Protected: Deep Work"
+  - Auto-breaks: Light blue background, icon ☕ or 🧘‍♂️
+  - Regular tasks: Normal color-coded by priority
+  - Hover tooltip: "Protected slot - AI won't schedule tasks here"
+
+- **Weekly Overview**:
+  - Dashboard shows: "You protected 10 hours this week for deep work 💪"
+  - Compliance tracking: "You respected 8/10 protected slots (80%)"
+  - Suggestions: "Consider protecting 2-3 more hours next week for better focus"
+
+**Edge Cases:**
+- **Urgent tasks conflict with protected time**: AI suggests: "Task X is urgent but conflicts with your focus time. Override protection or reschedule to tomorrow?"
+- **User consistently overrides**: After 3 overrides in a week → AI asks: "You've overridden focus time 3 times. Adjust your protected slots?"
+- **Holidays/Special days**: User can temporarily disable protected slots for specific dates
+- **Changing timezone**: Re-calculate all protected slots to new timezone
+
+**Implementation Details:**
+- **Data Model**:
+  ```typescript
+  protected_slots: [{
+    id: string,
+    user_id: string,
+    title: string,
+    days_of_week: number[], // [1,2,3,4,5] for Mon-Fri
+    start_time: string, // "09:00"
+    end_time: string, // "11:00"
+    type: "protected" | "focus_only",
+    enabled: boolean
+  }]
+  ```
+- **Scheduling Algorithm**: Filter available slots before AI scheduling
+- **Conflict Detection**: Check if task time range overlaps with protected slots
+- **Notifications**: Browser Notification API at break times
+
+**Success Metrics:**
+- 80%+ users define at least one protected slot
+- 70%+ compliance rate (users respect their protected slots)
+- Users with protected slots: 20% higher task completion rate
+- 90% reduction in burnout-related task deferrals
+- User survey: "Protected time helps me focus" → 85%+ agree
+
+---
+
+### Feature 14: Time Tracking (Optional, Background) – Priority: ★★★☆☆
+**Value:** Non-intrusive time tracking to improve future estimates and provide insights - completely optional.
+
+**User Story:**  
+*As a user who wants better time estimates, I want optional background time tracking so that I can see actual vs estimated time and improve my planning without manual tracking friction.*
+
+**Acceptance Criteria:**
+- **Settings Toggle**: "Enable Time Tracking" (default: OFF)
+  - Clear description: "Automatically track time spent on tasks (runs in background, no manual start/stop needed)"
+  - Privacy note: "Data never leaves your device, used only for improving your estimates"
+
+- **Automatic Tracking** (if enabled):
+  - Timer auto-starts when task moved to "In Progress"
+  - Timer runs in background (no visible timer unless in Focus Mode)
+  - Timer auto-pauses if user idle >5 minutes (Page Visibility API detects tab switch)
+  - Timer auto-stops when task moved to "Done"
+  - Time accumulated stored in `tasks.time_spent_minutes`
+
+- **Compare Estimated vs Actual**:
+  - Task detail modal shows: "Estimated: 2 hours | Actual: 2.5 hours"
+  - Color-coded: Green (within 10%), Yellow (10-30% off), Red (>30% off)
+  - Insight: "You took 25% longer than estimated"
+
+- **AI Learning from History**:
+  - After 10+ completed tasks with time tracking:
+    - AI analyzes patterns: "You usually take 30% longer for design tasks, adjusting estimates..."
+    - Future task extraction: AI adjusts estimates based on historical data
+    - By task type (keywords): "design" → +30%, "code" → +10%, "meeting" → accurate
+  - Dashboard insight: "Your estimates are improving! Now 85% accurate (up from 70%)"
+
+- **Weekly Review Integration**:
+  - If tracking enabled → Weekly Review includes:
+    - "Time efficiency: You completed 28h of tasks in 32h actual time (87% efficiency)"
+    - "Most accurate estimates: Coding tasks (95% accurate)"
+    - "Needs improvement: Design tasks (only 65% accurate, consider adding buffer)"
+
+- **Privacy & Control**:
+  - User can delete time tracking data anytime
+  - User can manually adjust tracked time (if timer was wrong)
+  - Can disable mid-week without losing existing data
+  - No forced tracking - completely opt-in
+
+- **Minimal UI**:
+  - No prominent timer widgets (unlike Toggl/Harvest)
+  - Only shows in: Task detail modal, Weekly Review, Insights (if tracking enabled)
+  - Badge on "In Progress" tasks: small clock icon (subtle, not intrusive)
+
+**Edge Cases:**
+- **Browser closed mid-task**: Timer state saved to localStorage, resumes on return (if <30 min passed)
+- **Forgot to move to "Done"**: AI detects stale "In Progress" tasks (>24h) → asks: "Still working on this? Or mark done?"
+- **Multiple tasks "In Progress"**: Only track active task (last one moved to "In Progress")
+- **Disabled then re-enabled**: Historical data preserved, new tracking starts fresh
+
+**Implementation Details:**
+- **Storage**: Add column `tasks.time_spent_minutes` (integer)
+- **Timer Logic**: 
+  ```typescript
+  // LocalStorage for persistence
+  localStorage.setItem('active_timer', JSON.stringify({
+    task_id: '123',
+    start_time: Date.now(),
+    accumulated_minutes: 45 // from previous sessions
+  }));
+  
+  // Update every minute
+  setInterval(() => {
+    if (document.visibilityState === 'visible') {
+      updateTimeSpent();
+    }
+  }, 60000);
+  ```
+- **Idle Detection**: Page Visibility API
+- **AI Analysis**: Statistical analysis after N tasks (mean, median, variance by category)
+
+**Success Metrics:**
+- 30-40% users enable time tracking (not majority, that's OK - it's optional)
+- For tracking users: 25% improvement in estimate accuracy after 4 weeks
+- <5% users disable after trying (low churn = good UX)
+- User survey: "Time tracking is non-intrusive" → 90%+ agree
+
+---
+
 ## 6. User Flows & Wireframe Descriptions
 
 ### Flow 1: Onboarding & First Note Capture
@@ -656,11 +878,10 @@ User takes notes in various apps → notes sit unused → manually copy to task 
    - Button: "Start Organizing"
 5. **Dashboard:** Clean interface with:
    - Top: Text editor (placeholder: "Type or paste your notes here...")
-   - Optional: Small mic button in toolbar (not prominently featured)
-   - Sidebar: "Notes" / "Kanban" / "Calendar" tabs (Kanban/Calendar grayed out with "Process a note first" tooltip)
-6. **First Voice Note:**
-   - User taps mic → records 30 seconds: "Tôi cần hoàn thành landing page cho client A, sau đó setup database cho dự án B, và gọi điện cho đối tác về hợp đồng"
-   - Tap stop → "Transcribing..." (2 seconds) → transcript appears in editor
+   - Sidebar: "Notes" / "Kanban" / "Calendar" / "Table" tabs (Kanban/Calendar/Table grayed out with "Process a note first" tooltip)
+6. **First Note:**
+   - User types or pastes: "I need to complete landing page for Client A, then setup database for Project B, and call partner about contract"
+   - Auto-save indicator appears (subtle checkmark)
 7. **AI Processing:**
    - User sees "Plan this" button (glowing green)
    - Clicks → Modal: "AI will extract tasks from your note. Continue?" (estimated cost: $0.02)
@@ -669,8 +890,10 @@ User takes notes in various apps → notes sit unused → manually copy to task 
      2. Set up database for Project B (Medium, 2 hours, due in 2 days, depends on task 1)
      3. Call partner about contract (High, 30 minutes, due today)
    - User reviews → clicks "Add to Workspace"
-8. **Kanban Unlocked:** Sidebar "Kanban" tab lights up → user clicks → sees 3 tasks in "To Do" column
-9. **Calendar Unlocked:** "Calendar" tab active → shows tasks on timeline
+8. **Views Unlocked:** 
+   - Sidebar "Kanban" tab lights up → user clicks → sees 3 tasks in "To Do" column
+   - "Calendar" tab active → shows tasks on timeline
+   - "Table" tab active → shows tasks in sortable table
 
 **UI Style & Design System:**  
 This project uses **shadcn/ui** with the following preset configuration:  
@@ -696,30 +919,25 @@ bunx --bun shadcn@latest create --preset "https://ui.shadcn.com/init?base=base&s
 
 ---
 
-### Flow 2: Daily Workflow – Morning Review
+### Flow 2: Daily Workflow – Morning Review & Focus Mode
 
 1. User opens app in desktop browser (7:30 AM)
-2. Dashboard shows: "Good morning! Today's focus:" + 2 high-priority tasks auto-pulled from calendar
-3. User clicks Kanban tab → drags "Call partner" from "To Do" to "In Progress" (visual feedback: card highlights)
-4. Realtime sync: Other browser tabs/devices update instantly
-5. User clicks Calendar tab → sees today is slightly overloaded (red indicator: 9 hours scheduled)
-6. Drags "Set up database" to tomorrow → Calendar recalculates, shows green (balanced)
-7. Toast notification: "Good call! Your week is now balanced."
+2. Dashboard shows: "Good morning! Today's focus:" + 3 high-priority tasks auto-pulled from Smart Daily Suggestions
+3. User clicks "Start [Task A]" button → enters Focus Mode:
+   - Fullscreen activated
+   - Pomodoro timer starts (25 minutes)
+   - PiP floating timer appears
+   - Ambient rain sounds playing (selected in Settings)
+4. User completes Task A after 47 minutes → celebration animation → "Great job! 🎉"
+5. Exits Focus Mode → sees Kanban view → Task A automatically in "Done" column
+6. Realtime sync: Other browser tabs/devices update instantly
+7. User clicks Calendar tab → sees today is slightly overloaded (red indicator: 9 hours scheduled)
+8. Drags "Set up database" to tomorrow → Calendar recalculates, shows green (balanced)
+9. Toast notification: "Good call! Your week is now balanced."
 
 ---
 
-### Flow 3: Voice Capture While Commuting
-
-1. User riding motorbike, gets idea for new feature
-2. Opens app (one-handed) → taps large mic button
-3. Records while riding: "Thêm tính năng export PDF cho report, cần design mockup trước, rồi code backend API, estimate khoảng 8 giờ, deadline cuối tuần này"
-4. Stops recording → app auto-saves, shows "Saved as draft" (no internet required for recording, will STT + process when connected)
-5. Arrives home → app auto-processes: "Connected! Transcribing your note..."
-6. 5 seconds later: Tasks extracted → added to Kanban → scheduled on Calendar
-
----
-
-### Flow 4: Task Completion & Sync
+### Flow 3: Task Completion & Dependency Unlock
 
 1. User completes "Call partner" task
 2. In Kanban, drags card to "Done" column → card fades with checkmark animation
@@ -734,24 +952,26 @@ bunx --bun shadcn@latest create --preset "https://ui.shadcn.com/init?base=base&s
 graph TD
     A[User Opens App] --> B{Authenticated?}
     B -->|No| C[Sign Up / Login]
-    B -->|Yes| D[Dashboard]
+    B -->|Yes| D[Dashboard with Smart Daily Suggestions]
     C --> D
-    D --> E[Optional Voice Capture]
-    D --> F[Text Note - Primary]
-    E --> G[Web Speech API / Whisper]
-    F --> H[Rich Editor]
-    G --> H
-    H --> I[User Triggers 'Plan This' or Chats with AI]
-    I --> J[AI Agents Extraction via OpenRouter]
-    J --> K[Preview Tasks]
-    K --> L{User Confirms?}
-    L -->|Yes| M[Insert Tasks to DB]
-    L -->|No| H
-    M --> N[Update Kanban]
-    M --> O[Update Calendar]
-    N --> P[Supabase Realtime Sync]
-    O --> P
-    P --> Q[All Views Updated]
+    D --> E[Text Note Editor - Primary Input]
+    E --> F[Rich Editor with Auto-save]
+    F --> G[User Triggers 'Plan This' or AI Chat]
+    G --> H[AI Agents Extraction via OpenRouter]
+    H --> I[Preview Tasks]
+    I --> J{User Confirms?}
+    J -->|Yes| K[Insert Tasks to DB]
+    J -->|No| F
+    K --> L[Update Kanban]
+    K --> M[Update Calendar]
+    K --> N[Update Table View]
+    L --> O[Supabase Realtime Sync]
+    M --> O
+    N --> O
+    O --> P[All Views Updated]
+    P --> Q[User Starts Focus Mode]
+    Q --> R[Task Completion with Celebration]
+    R --> P
 ```
 
 ---
@@ -777,33 +997,34 @@ All UI/UX must adhere to this configuration (style=mira, baseColor=zinc, theme=z
 - **Rich Text Editor:** Tiptap (extensible, lightweight)
 - **Drag-and-Drop:** dnd-kit (accessible, performant)
 - **Calendar Component:** FullCalendar or custom via date-fns
-- **Table Component:** TanStack Table v8 (for Tasks Aggregation view - sortable, filterable)
+- **Table Component:** TanStack Table v8 (for Table/Database view - sortable, filterable, Notion-style)
 - **Virtual Scrolling:** react-virtual (for large task lists >100 items)
-- **Voice Input:** Web Speech API (webkitSpeechRecognition) for wake word detection
 - **Charts (optional):** Recharts (for weekly review visualizations)
+- **Focus Mode APIs:**
+  - Fullscreen API (distraction-free mode)
+  - Picture-in-Picture API (floating timer)
+  - Page Visibility API (track user attention)
+  - Notifications API (break reminders)
+  - Web Audio API (ambient sounds)
 
 **Backend & Database:**
 - **Database:** Supabase (PostgreSQL)
   - Tables:
-    - `users`: id, email, name, timezone, working_hours, preferences (jsonb), created_at
-    - `notes`: id, user_id, title, content, raw_audio_url, transcript, status (raw/processed), created_at, updated_at
-    - `tasks`: id, user_id, note_id, title, description, priority, estimated_time_minutes, dependencies (jsonb array), due_date, status (todo/in_progress/done), order, embedding (vector), created_at, updated_at
-    - `chat_messages`: id, user_id, role (user/assistant), content, created_at (for AI Chat history)
+    - `users`: id, email, name, timezone, working_hours, energy_levels (jsonb), preferences (jsonb), created_at
+    - `notes`: id, user_id, title, content, status (raw/processed), created_at, updated_at
+    - `tasks`: id, user_id, note_id, title, description, priority, estimated_time_minutes, time_spent_minutes (nullable), dependencies (jsonb array), due_date, status (todo/in_progress/done), tags (jsonb array), order, embedding (vector), created_at, updated_at, completed_at
+    - `protected_slots`: id, user_id, title, days_of_week (int array), start_time, end_time, type (protected/focus_only), enabled, created_at
+    - `chat_messages`: id, user_id, role (user/assistant), content, tool_calls (jsonb), created_at
     - `weekly_reviews`: id, user_id, week_start_date, report_data (jsonb), created_at
+    - `focus_sessions`: id, user_id, task_id, start_time, end_time, completed (boolean), interruptions (int), created_at
   - **Extensions**: pgvector (for task embeddings + similarity search)
 - **Auth:** Supabase Auth (magic links, email/password)
 - **Storage:** Supabase Storage (audio files, max 10MB per file)
 - **Realtime:** Supabase Realtime subscriptions on `notes`, `tasks`, and `chat_messages` tables
 
 **AI Services:**
-- **Speech-to-Text (Optional):** Web Speech API (browser-native, free) for basic voice input; OpenAI Whisper via OpenRouter for higher accuracy
-  - Web Speech API: Free, browser-native, English support
-  - Whisper API: ~$0.006/minute, higher accuracy for complex notes
-  - Note: Voice is optional feature, not core dependency
-- **Text-to-Speech (Optional):** Browser native Web Speech API for accessibility
-  - Cost: Free (browser-native)
 - **LLM:** Vercel AI SDK v6+ with OpenRouter
-  - Models: Claude 3.7 Sonnet (primary for task extraction, chat assistant, intent parsing), Gemini 2.0 Flash (cost-effective alternative)
+  - Models: Claude 3.7 Sonnet (primary for task extraction, chat assistant), Gemini 2.0 Flash (cost-effective alternative)
   - Structured output via Zod schemas (type-safe)
   - Streaming support for real-time feedback (chat assistant)
   - Tool calling support (AI Chat Assistant functions)
@@ -821,20 +1042,20 @@ All UI/UX must adhere to this configuration (style=mira, baseColor=zinc, theme=z
 - **Initial Scale:** 100-1,000 users (full-feature launch)
 - **Target Scale:** 10,000 users within 12 months
 - **Response Times:**
-  - Voice transcription: <3 seconds (batch), <500ms latency (realtime)
   - AI task extraction: <5 seconds for typical note (200-500 words)
   - AI Chat Assistant: <2 seconds first token (streaming), <10 seconds full response
-  - Voice command execution: <2 seconds (STT → intent → action)
   - Realtime sync: <1 second across all views
   - Page load: <2 seconds (initial), <500ms (subsequent navigation)
-  - Tasks Aggregation view: <1 second load time for 1000+ tasks (virtualized)
+  - Table/Database view: <1 second load time for 1000+ tasks (virtualized)
+  - Focus Mode entry: <500ms (fullscreen + PiP timer activation)
+  - Calendar auto-balance: <3 seconds to redistribute full week
 - **Database:** Supabase free tier supports up to 500MB, upgrade to Pro ($25/month) at 1,000 users
 - **Cost Guardrails:**
   - Cache AI Chat responses for similar queries (24h)
   - Cache task embeddings (regenerate only when task content changes)
   - Cache weekly reviews (no need to regenerate if user re-opens)
   - Rate limiting: 50 AI Chat messages/hour per user
-  - Voice features (if enabled): 20 transcriptions/hour per user
+  - Focus Mode: Runs fully client-side (no API costs)
 
 ### Language & Internationalization
 
@@ -868,14 +1089,16 @@ All UI/UX must adhere to this configuration (style=mira, baseColor=zinc, theme=z
 - **Error Tracking:** Sentry (catch client + server errors)
 - **Analytics:** PostHog (privacy-friendly, self-hosted option)
 - **Metrics to Track:**
-  - Voice feature adoption rate (if enabled)
   - AI extraction accuracy (user feedback)
-  - AI Chat Assistant usage (messages/user, satisfaction)
+  - AI Chat Assistant usage (messages/user, satisfaction, quick action adoption)
   - Smart Suggestions acceptance rate
   - Auto-balance adoption rate
-  - Task completion rate (overall + per view)
-  - Tasks Aggregation view usage
+  - Task completion rate (overall + per view + Focus Mode vs non-Focus Mode)
+  - Table/Database view usage (filters, bulk actions, column customization)
   - Knowledge Graph link acceptance rate
+  - Focus Mode adoption (sessions/user, completion rate, average duration)
+  - Protected slots compliance rate
+  - Time tracking adoption (if enabled)
   - Weekly Review engagement (open rate, suggestion adoption)
   - Realtime sync latency
   - User retention (DAU/MAU)
@@ -888,41 +1111,44 @@ All UI/UX must adhere to this configuration (style=mira, baseColor=zinc, theme=z
 **Phase 1: Core Foundation (Weeks 1-3)**
 1. Set up Next.js + Supabase + Vercel project skeleton
 2. Implement Auth flow (magic links) + user profile setup
-3. Develop rich text note editor (Tiptap) with auto-save - PRIMARY INPUT
-4. Optional: Add basic voice capture (Web Speech API) as bonus feature
-5. Database schema + migrations (notes, tasks, users tables)
+3. Develop rich text note editor (Tiptap) with auto-save
+4. Database schema + migrations (users, notes, tasks, protected_slots, focus_sessions tables)
+5. Notes list view with search
 
 **Phase 2: AI Intelligence (Weeks 4-6)**
 6. AI task extraction pipeline (Claude 3.7 + Zod schemas)
-7. Smart Daily Suggestions algorithm
-8. AI Chat Assistant (streaming, tool calling)
-9. Voice commands (intent parsing, TTS responses)
-10. Knowledge Graph (embeddings + pgvector setup)
+7. AI Chat Assistant (streaming, tool calling, quick action buttons)
+8. Smart Daily Suggestions algorithm
+9. Knowledge Graph (embeddings + pgvector setup)
+10. Defend Focus Time logic (protected slots, auto-breaks)
 
 **Phase 3: Views & Interactions (Weeks 7-9)**
 11. Kanban board (dnd-kit) + realtime sync
-12. Calendar view (FullCalendar) + auto-balance workload
-13. Tasks Aggregation view (TanStack Table + filters)
+12. Calendar view (FullCalendar) + auto-balance workload + energy-based scheduling
+13. Table/Database view (TanStack Table + inline editing + bulk actions + column customization)
 14. Related Tasks panel (similarity search)
 
-**Phase 4: Polish & Advanced Features (Weeks 10-12)**
-15. Weekly AI Review generation + delivery
-16. Settings & customization (working hours, AI model selection, API keys)
-17. UI/UX polish (animations, loading states, error handling)
-18. Performance optimization (caching, virtual scrolling, edge functions)
-19. PWA setup (offline mode, service worker)
+**Phase 4: Execution & Polish (Weeks 10-12)**
+15. Focus Mode (fullscreen + PiP floating timer + Pomodoro + ambient sounds)
+16. Time Tracking (optional, background, non-intrusive)
+17. Weekly AI Review generation + delivery + interactive insights
+18. Settings & customization (working hours, energy profile, protected slots, Pomodoro settings, API keys)
+19. UI/UX polish (animations, loading states, error handling, celebration effects)
+20. Performance optimization (caching, virtual scrolling, edge functions)
+21. PWA setup (offline mode, service worker, install prompt)
 
 **Phase 5: Testing & Launch (Weeks 13-14)**
-20. Comprehensive testing (unit, integration, E2E)
-21. Personal dogfooding (use for 2 weeks, fix issues)
-22. Documentation (user guide, API docs)
-23. Deploy to production (Vercel)
-24. Monitor & iterate based on personal usage
+22. Comprehensive testing (unit, integration, E2E with Playwright)
+23. Personal dogfooding (use for 2 weeks, fix issues, iterate based on real usage)
+24. Documentation (user guide, feature walkthroughs, keyboard shortcuts)
+25. Deploy to production (Vercel)
+26. Monitor & iterate based on personal usage patterns
 
-**Post-Launch Enhancements:**
-- External calendar export (Google Calendar one-way sync)
+**Post-Launch Enhancements (If Needed):**
 - Visual graph view (network diagram for dependencies)
-- Advanced analytics dashboard
-- Multi-language support (English, Thai, Indonesian)
-- Mobile native apps (React Native)
-- API for integrations (Zapier, IFTTT)
+- Advanced analytics dashboard (realtime insights beyond weekly review)
+- Multi-language support (Vietnamese, Thai, etc.)
+- Mobile native apps (React Native - if PWA insufficient)
+- API for integrations (Zapier, Make.com)
+- Export capabilities (PDF reports, CSV exports)
+- Themes (dark mode enhancements, color schemes)
