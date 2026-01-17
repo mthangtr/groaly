@@ -3,6 +3,12 @@
     "supabase": {
       "url": "https://mcp.supabase.com/mcp?project_ref=onwwkhxrtcnzpmmrprro"
     },
+    "MCP_DOCKER": {
+      "type": "stdio",
+      "command": "docker",
+      "args": ["mcp", "gateway", "run"],
+      "includeTools": ["resolve-library-id", "get-library-docs", "web_search_exa"]
+    },
     "shadcn": {
       "type": "stdio",
       "command": "npx",

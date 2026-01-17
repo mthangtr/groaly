@@ -13,6 +13,13 @@
       "type": "local",
       "command": ["npx", "shadcn@latest", "mcp"],
       "enabled": true
+    },
+    
+    // Docker MCP Gateway - Local
+    "mcp_docker": {
+      "type": "local",
+      "command": ["docker", "mcp", "gateway", "run"],
+      "enabled": true
     }
   },
   
@@ -21,14 +28,10 @@
     // Enable tất cả tools từ supabase
     "supabase_*": true,
     
-    // Chỉ enable các tools cụ thể từ shadcn (tương tự includeTools trong Amp)
-    "shadcn_search_items_in_registries": true,
-    "shadcn_view_items_in_registries": true,
-    "shadcn_get_item_examples_from_registries": true,
-    "shadcn_get_add_command_for_items": true,
-    "shadcn_get_audit_checklist": true,
+    // Enable tất cả tools từ shadcn
+    "shadcn_*": true,
     
-    // Disable các tools khác của shadcn (nếu có)
-    "shadcn_*": false
+    // Enable tất cả tools từ mcp_docker
+    "mcp_docker_*": true
   }
 }
