@@ -314,5 +314,5 @@ release_file_reservations(paths: ["src/components/**"])
 - `macro_start_session`: Register + reserve + inbox in one call
 - `macro_file_reservation_cycle`: Reserve → work → auto-release
 
-**📚 Full guide**: See `AM_GUIDE.md` for examples, troubleshooting, and advanced patterns.
+**📚 Full guide**: See `./beads/AM_GUIDE.md` for examples, troubleshooting, and advanced patterns.
 
