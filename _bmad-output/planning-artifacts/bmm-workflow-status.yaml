@@ -61,9 +61,10 @@ workflow_status:
     name: "Product Requirements Document"
     agent: "pm"
     command: "/bmad:bmm:workflows:prd"
-    status: "required"
-    output: "Product Requirements Document with FRs and NFRs"
-    note: "Comprehensive PRD covering all 14 features from brainstorm"
+    status: "_bmad-output/planning-artifacts/prd.md"
+    completed: "2026-01-17T23:30:00.000Z"
+    output: "Product Requirements Document with 99 FRs and 12 NFR categories"
+    note: "✅ COMPLETED - Comprehensive PRD covering all features, user journeys, innovation analysis, and technical requirements"
   
   - id: "create-ux-design"
     phase: 2
@@ -172,16 +173,33 @@ project_summary:
 # ===================================================================
 
 next_workflow:
-  id: "prd"
-  name: "Create Product Requirements Document"
-  agent: "bmm-pm"
-  command: "/bmad:bmm:workflows:prd"
-  description: "Create comprehensive PRD with functional and non-functional requirements"
+  id: "create-ux-design"
+  name: "Create UX Design"
+  agent: "bmm-ux-designer"
+  command: "/bmad:bmm:workflows:create-ux-design"
+  description: "Design user experience and interaction flows based on PRD requirements"
   prerequisites:
-    - "✅ Brainstorm document (docs/brainstorm.md)"
-    - "✅ Product Brief (_bmad-output/planning-artifacts/product-brief-dumtasking-2026-01-17.md)"
+    - "✅ Product Requirements Document (_bmad-output/planning-artifacts/prd.md)"
+    - "✅ User Journeys (documented in PRD)"
+    - "✅ Functional Requirements (99 FRs)"
   outputs:
-    - "Product Requirements Document covering all 20 features"
-    - "Functional Requirements with detailed acceptance criteria"
-    - "Non-Functional Requirements (performance, security, scalability)"
+    - "UX Design document with wireframes and interaction flows"
+    - "Design system specifications"
+    - "User flow diagrams"
+  
+  alternate_next:
+    - id: "create-architecture"
+      name: "Create Architecture"
+      agent: "bmm-architect"
+      command: "/bmad:bmm:workflows:create-architecture"
+      note: "Architecture can be done in parallel with UX, or done first"
+      prerequisites:
+        - "✅ Product Requirements Document (_bmad-output/planning-artifacts/prd.md)"
+        - "✅ Technical requirements (Web App, NFRs documented)"
+    
+    - id: "prd-validation"
+      name: "Validate PRD"
+      agent: "bmm-pm"
+      command: "/bmad:bmm:workflows:prd --validate"
+      note: "Optional validation workflow to ensure PRD completeness before architecture/UX"
 
