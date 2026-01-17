@@ -1,31 +1,31 @@
 # "dumtasking" - Product Idea & Requirements Spec
 
 **Project Name:** dumtasking (dumb/dump + tasking)  
-**Tagline:** "Brain-dump anything, AI organizes everything"  
+**Tagline:** "Dump your notes, AI Agents handle the rest"  
 **Current Date:** January 2026  
-**Document Version:** 2.0
+**Document Version:** 3.0
 
 ---
 
 ## 1. Overview / Product Description
 
 **What is this product?**  
-**dumtasking** is a voice-first productivity application that transforms chaotic brain dumps (voice or text notes) into organized, actionable task management systems. The app is specifically designed for Vietnamese users who need to capture thoughts on-the-go (e.g., while riding a motorbike, during busy meetings) and have AI automatically extract tasks, set priorities, identify dependencies, suggest schedules, and generate Kanban boards and Calendar views—all without manual effort.
+**dumtasking** is an AI Agents-powered productivity application that transforms your notes into organized, actionable task management systems. Users store notes (text or optional voice) and interact with AI through natural conversation to automatically extract tasks, set priorities, identify dependencies, suggest schedules, and generate Kanban boards and Calendar views—all through intelligent prompting and agent orchestration.
 
 **Core value proposition (UVP):**  
-*"Brain-dump anything in Vietnamese, AI organizes everything—zero manual planning required."*
+*"Store your notes, chat with AI Agents, get perfect task plans—zero manual organizing."*
 
 **Primary target users:**
-- Vietnamese freelancers and startup founders (25-40 years old, tech-savvy)
+- Knowledge workers and developers (25-45 years old, tech-savvy)
 - Busy professionals juggling multiple projects with chaotic note-taking habits
-- Users who prefer voice input over typing, especially during commutes
+- Users who want AI to handle planning through conversation, not manual task creation
 - People frustrated with existing task managers that require too much manual organization
 
 **Business objectives:**
 - Reduce time spent organizing tasks from 2 hours/week to <10 minutes/week
 - Achieve 70%+ task completion rate (vs. ~40% industry average for manual planning)
 - Target 1,000 active users within 6 months post-launch
-- Differentiate through superior Vietnamese voice recognition and AI automation
+- Differentiate through conversational AI Agents and intelligent task orchestration
 
 ---
 
@@ -33,29 +33,29 @@
 
 **Critical Pain Points:**
 
-1. **"I have brilliant ideas while riding my motorbike but forget them by the time I get home."**
-   - Current workflow: Try to remember → forget 80% → feel frustrated
-   - Need: Hands-free voice capture that actually understands Vietnamese accents/slang
+1. **"I have tons of notes but they're just sitting there doing nothing."**
+   - Current workflow: Take notes → never revisit → notes become digital graveyard
+   - Need: AI that proactively transforms notes into actionable plans
 
 2. **"My notes are a chaotic mess—I spend more time organizing than actually doing the work."**
    - Current state: 50+ unstructured notes in various apps, no clear next actions
    - Manual task extraction takes 1-2 hours weekly and still incomplete
 
-3. **"Existing voice-to-text tools butcher Vietnamese, especially with code-switching (Viet-English mix)."**
-   - Whisper/Google STT: ~15-20% error rate on Vietnamese with regional accents
-   - Users waste time correcting transcripts, defeating the purpose of voice input
-
-4. **"I don't know what to work on first—everything feels urgent."**
+3. **"I don't know what to work on first—everything feels urgent."**
    - No systematic prioritization → reactive instead of proactive
    - Missed dependencies cause tasks to fail or block later work
 
-5. **"Task management apps require too many clicks—I just want to brain-dump and have it figured out."**
+4. **"Task management apps require too many clicks—I just want to dump notes and have AI figure it out."**
    - Todoist/Asana: 5-8 steps to create one task with proper metadata
    - Users abandon these tools after a week due to friction
 
-6. **"I need to see tasks in multiple views (list, board, calendar) but switching apps is tedious."**
+5. **"I need to see tasks in multiple views (list, board, calendar) but switching apps is tedious."**
    - Current workflow: Notion for notes → Trello for board → Google Calendar → manual sync = chaos
    - Data gets out of sync, causing duplicated/missed work
+
+6. **"I want to just tell AI what I need and have it handle my schedule intelligently."**
+   - Current tools: Dumb buttons and forms, no conversational intelligence
+   - Need: Chat with AI like a personal assistant, have it orchestrate tasks automatically
 
 **Nice-to-Have Improvements:**
 
@@ -66,26 +66,27 @@
    - Desire to bring own API keys for full control
 
 **Before State (Current Workflow):**
-User records voice memo → manually listen back → type out tasks → manually categorize → manually schedule → update 3 different tools → half the tasks are forgotten.
+User takes notes in various apps → notes sit unused → manually copy to task manager → manually categorize → manually schedule → update 3 different tools → half the tasks are forgotten.
 
 ---
 
 ## 3. Solution Vision / Overall Approach
 
 **High-Level Solution:**  
-"AI Powered Notes To Task" combines best-in-class Vietnamese speech-to-text (ElevenLabs Scribe v2) with advanced AI reasoning (Claude 3.7 Sonnet / Gemini 2.0 Flash via Vercel AI SDK) to create a seamless capture → process → organize → work pipeline. The app operates as a single source of truth: notes automatically become tasks, tasks auto-populate a Kanban board, and dates sync to a built-in calendar—all with real-time updates across views.
+"AI Agents-Powered Notes to Tasks" leverages conversational AI orchestration (Claude 3.7 Sonnet / Gemini 2.0 Flash via Vercel AI SDK) to create a seamless notes storage → AI conversation → intelligent task planning pipeline. Users dump notes (text-first, voice optional), then chat with AI Agents to automatically extract tasks, set priorities, identify dependencies, optimize schedules, and manage everything through natural language—all synced across Kanban, Calendar, and Database views.
 
 **Why this approach is superior:**
-- **Voice-first for Vietnamese:** ElevenLabs Scribe v2 achieves ~3-5.5% WER on Vietnamese (vs. 15-20% for competitors), handling regional accents and code-switching
-- **AI auto-magic:** LLMs with structured output (Zod schemas) extract precise task metadata in one shot—no multi-step forms
+- **AI Agents conversation:** Natural language interface—just tell AI what you want ("plan this note", "optimize my week", "what should I do today")—no forms or manual clicking
+- **Intelligent orchestration:** Multi-agent system handles task extraction, scheduling optimization, dependency resolution, and workload balancing autonomously
+- **Notes as foundation:** All tasks derive from notes—maintains context and traceability, notes become your knowledge base
 - **All-in-one:** Eliminates context-switching between 3-5 apps; everything stays synced via Supabase Realtime
 - **Serverless & affordable:** Vercel + Supabase keeps costs low and scales effortlessly
 - **Privacy option:** Users can bring their own API keys for full control
 
 **Core Assumptions (If These Fail, Rethink the Product):**
-1. Vietnamese users prefer voice over typing for quick capture (hypothesis: 70%+ will use voice regularly)
+1. Users prefer conversational AI interaction over manual forms/buttons for task management
 2. LLMs (2026 era) can reliably extract structured tasks from messy notes with <10% error rate
-3. Users trust AI to prioritize/schedule tasks (vs. wanting full manual control)
+3. Users trust AI Agents to prioritize/schedule/optimize tasks through conversation (vs. wanting full manual control)
 4. Real-time sync is valuable enough to justify requiring internet connectivity
 5. Users will pay $5-10/month for premium features after experiencing value
 
@@ -97,7 +98,7 @@ User records voice memo → manually listen back → type out tasks → manually
 - ❌ No complex workflow automation (e.g., IFTTT-style rules)
 
 **Now IN-SCOPE (moved from MVP non-goals):**
-- ✅ Voice commands for hands-free task management (core feature)
+- ✅ Voice input as optional bonus feature (not voice-first)
 - ✅ AI Chat Assistant for flexible interactions (like Blitzit's Blitzy)
 - ✅ Smart daily suggestions ("What should I work on today?" - Motion-style)
 - ✅ Auto-balance workload optimization (Motion-style redistribution)
@@ -109,55 +110,54 @@ User records voice memo → manually listen back → type out tasks → manually
 
 ## 4. Target Users & Personas
 
-### Persona 1: Minh - The Hustling Freelancer
-- **Age:** 28, Freelance Developer in Hanoi
+### Persona 1: Alex - The Hustling Freelancer
+- **Age:** 28, Freelance Developer
 - **Goals:** Juggle 4-5 client projects, never miss deadlines, maintain work-life balance
 - **Frustrations:** 
-  - "I get project ideas while commuting but can't type safely on my bike"
-  - "My notes app is a graveyard of half-baked ideas"
+  - "I take tons of notes during client calls but they just sit in my note app unused"
+  - "I waste 2 hours every Monday manually converting notes to tasks in Todoist"
   - "I miss deadlines because I forget to check my task list"
 - **Tech-savviness:** High (uses Notion, VS Code, GitHub)
-- **Ideal outcome:** Brain-dump project notes via voice → AI auto-creates prioritized tasks with realistic schedules → visual Kanban keeps him on track
+- **Ideal outcome:** Dump project notes → chat with AI: 'plan this note' → AI auto-creates prioritized tasks with realistic schedules → visual Kanban keeps him on track
 
-### Persona 2: Linh - The Startup Founder
-- **Age:** 34, Co-founder of an edtech startup in Ho Chi Minh City
+### Persona 2: Sarah - The Startup Founder
+- **Age:** 34, Co-founder of a SaaS startup
 - **Goals:** Stay on top of product development, fundraising, and team management simultaneously
 - **Frustrations:**
   - "My brain is overloaded with 50 things daily—I need AI to organize, not just capture"
-  - "Meetings are chaotic—I voice-record but never have time to process notes"
+  - "I have 100+ notes but no system to turn them into actionable plans"
   - "I hate manually breaking down big goals into actionable steps"
 - **Tech-savviness:** Medium-high (uses Slack, Trello, Google Workspace)
-- **Ideal outcome:** Record meeting notes → AI extracts action items with owners/due dates → automatically schedules tasks across team calendar
+- **Ideal outcome:** Dump meeting notes → chat with AI: 'extract action items and schedule them' → AI auto-generates task plan with optimal scheduling
 
-### Persona 3: Hùng - The Busy Professional
+### Persona 3: Jordan - The Busy Professional
 - **Age:** 41, Marketing Manager at a corporate firm
 - **Goals:** Manage campaigns, coordinate with agencies, report to executives
 - **Frustrations:**
   - "I switch between 5 apps daily just to track my work"
-  - "Voice-to-text always messes up Vietnamese brand names and acronyms"
+  - "I want to just ask AI 'what should I work on today' and get intelligent answers"
   - "I need weekly reviews but manually creating them takes an hour"
 - **Tech-savviness:** Medium (comfortable with web apps, avoids complex tools)
-- **Ideal outcome:** One app for notes → tasks → schedule, with AI-generated weekly summaries
+- **Ideal outcome:** One app for notes → tasks → schedule, with conversational AI that handles planning through chat
 
 ---
 
 ## 5. Key Features / Epics
 
-### Feature 1: Quick Voice Capture with Superior Vietnamese STT – Priority: ★★★★★
-**Value:** Enables hands-free brain dumps with industry-leading accuracy for Vietnamese language.
+### Feature 1: Quick Voice Capture (Optional Bonus) – Priority: ★★★☆☆
+**Value:** Nice-to-have feature for users who want voice input as alternative to typing.
 
 **User Story:**  
-*As a busy Vietnamese professional, I want to record voice notes while commuting so that I can capture ideas without typing or stopping what I'm doing.*
+*As a busy professional, I want the option to record voice notes when typing is inconvenient so that I have flexible input methods.*
 
 **Acceptance Criteria:**
-- Floating microphone button visible on home dashboard at all times
-- One-tap recording starts immediately (no permission prompts after initial setup)
+- Microphone button visible in note editor (not prominently featured)
+- One-tap recording starts (after initial permission)
 - Audio recorded via MediaRecorder API, uploaded to Supabase Storage
-- ElevenLabs Scribe v2 transcribes audio with <5.5% WER for Vietnamese
-- Transcript displays in real-time or within 3 seconds for batch mode
+- Basic STT transcription (Web Speech API or simple Whisper API)
+- Transcript displays within 5 seconds
 - Raw audio file linked to note for playback/verification
-- Supports regional accents (Northern, Central, Southern Vietnamese)
-- Handles code-switching (Vietnamese-English mix) correctly
+- Supports English language primarily
 - Max recording length: 10 minutes (with warning at 9 minutes)
 
 **Edge Cases:**
@@ -166,14 +166,14 @@ User records voice memo → manually listen back → type out tasks → manually
 - Silent recording (no speech detected): Prompt user to check microphone
 
 **Success Metrics:**
-- Transcription accuracy >94.5% (user-reported via feedback)
-- 70%+ of notes created via voice within first month
-- Average recording length: 1-3 minutes
+- Transcription accuracy >90% (user-reported via feedback) for users who enable voice
+- 15-20% of users try voice feature at least once
+- For voice users: Average recording length 1-3 minutes
 
 ---
 
-### Feature 2: Rich Text Note Editor – Priority: ★★★★☆
-**Value:** Provides flexibility for users who prefer typing or need to edit voice transcripts.
+### Feature 2: Rich Text Note Storage & Editor – Priority: ★★★★★
+**Value:** Core foundation—all tasks derive from notes. Provides primary input method for brain dumps.
 
 **User Story:**  
 *As a user, I want to type or edit notes with rich formatting so that I can add context that might be hard to express via voice alone.*
@@ -184,7 +184,7 @@ User records voice memo → manually listen back → type out tasks → manually
 - Markdown shortcuts supported (e.g., `##` for headings, `-` for lists)
 - Edit voice transcripts inline after STT
 - Character/word count displayed (optional toggle)
-- Mobile-responsive with comfortable tap targets (44x44px minimum)
+- Responsive design (optimized for desktop, works on tablets/phones)
 
 **Edge Cases:**
 - Conflict resolution if user edits on two devices simultaneously (last-write-wins with notification)
@@ -196,11 +196,11 @@ User records voice memo → manually listen back → type out tasks → manually
 
 ---
 
-### Feature 3: AI Task Extraction & Structuring – Priority: ★★★★★
-**Value:** The core "magic" that converts messy notes into actionable, prioritized tasks with zero manual input.
+### Feature 3: AI Agents Task Extraction & Orchestration – Priority: ★★★★★
+**Value:** The core "magic"—AI Agents convert messy notes into actionable, prioritized tasks through intelligent conversation and orchestration.
 
 **User Story:**  
-*As a user with a chaotic note, I want to click "Plan this" and have AI automatically extract all tasks with priorities, time estimates, dependencies, and suggested due dates so that I don't waste time organizing manually.*
+*As a user with a chaotic note, I want to tell AI "plan this note" (via button or chat) and have AI Agents automatically extract all tasks with priorities, time estimates, dependencies, and suggested schedules so that I don't waste time organizing manually.*
 
 **Acceptance Criteria:**
 - "Plan this" button visible on every note (disabled if note <20 characters)
@@ -258,7 +258,7 @@ User records voice memo → manually listen back → type out tasks → manually
 - Tasks show: title, priority badge, time estimate
 - Click task to open detail modal (edit fields, mark complete)
 - Color-coding: red (high), yellow (medium), gray (low)
-- Mobile-friendly: swipe gestures for moving tasks
+- Responsive drag-and-drop (works on touch devices with long-press)
 
 **Edge Cases:**
 - Two users drag same task simultaneously: Optimistic UI, resolve with last-write-wins
@@ -346,9 +346,9 @@ User records voice memo → manually listen back → type out tasks → manually
 
 **Acceptance Criteria:**
 - Settings page with sections:
-  - **Profile:** Name, timezone (default: Asia/Ho_Chi_Minh), working hours (default 8AM-8PM)
+  - **Profile:** Name, timezone (auto-detected from browser), working hours (default 9AM-6PM)
   - **AI Preferences:** Choose LLM model via OpenRouter (Claude 3.7, Gemini 2.0, etc.)
-  - **API Keys (Advanced):** Bring your own ElevenLabs + OpenRouter keys
+  - **API Keys (Advanced):** Bring your own OpenRouter/OpenAI keys (for LLM)
   - **Privacy:** Toggle analytics, data export
 - Changes saved to user profile table
 - AI processing respects selected model and keys
@@ -363,26 +363,25 @@ User records voice memo → manually listen back → type out tasks → manually
 
 ---
 
-### Feature 8: Voice Commands (Hands-Free Task Management) – Priority: ★★★★☆
-**Value:** Enables true hands-free workflow for commuting/multitasking users (Blitzit's killer feature).
+### Feature 8: Voice Commands (Optional Hands-Free) – Priority: ★★☆☆☆
+**Value:** Nice-to-have bonus for users who want hands-free interaction (accessibility feature).
 
 **User Story:**  
-*As a user commuting on a motorbike or cooking, I want to say "Add task: Call client tomorrow high priority" or "What should I work on today?" so that I can manage tasks completely hands-free without breaking focus.*
+*As a user who occasionally needs hands-free interaction, I want to say "Add task: Call client tomorrow high priority" so that I have an alternative input method when typing is inconvenient.*
 
 **Acceptance Criteria:**
 - **Wake word detection**: "Hey dumtasking" or tap-and-hold mic button activates listening mode
-- **Supported commands**:
+- **Supported commands** (English only):
   - **Add task**: "Add task [title] [priority] [due date]" → creates task with metadata
-    - Example: "Add task gọi client A tomorrow high priority" → Task created with due_date=tomorrow, priority=high
+    - Example: "Add task call client A tomorrow high priority" → Task created with due_date=tomorrow, priority=high
   - **Complete task**: "Mark [task title] as done" → moves to Done column
-  - **List tasks**: "Show me today's tasks" / "What's high priority?" → AI reads tasks aloud
+  - **List tasks**: "Show me today's tasks" / "What's high priority?" → AI displays tasks in chat
   - **Reschedule**: "Move [task title] to [date]" → updates due_date
   - **Query status**: "What should I work on now?" → AI suggests top task based on time/energy
-  - **Summarize**: "Summarize my day" → AI reads completion rate + pending tasks
+  - **Summarize**: "Summarize my day" → AI shows completion rate + pending tasks
 - **Confirmation for destructive actions**: "Mark task as done" → "I'll mark '[task title]' as complete. Confirm?" → user says "yes"
 - **Context-aware**: If user says "mark it done" after listing tasks, AI infers "it" = last mentioned task
-- **Vietnamese-first**: All commands work in Vietnamese ("Thêm task", "Đánh dấu hoàn thành", "Lịch hôm nay", "Hey dumtasking")
-- **Voice feedback**: AI responds with voice (ElevenLabs TTS) → "Task added: Call client A, due tomorrow"
+- **Text feedback primarily**: AI responds with text (voice TTS optional for accessibility)
 - **Fallback to chat**: If command unclear → "I didn't understand. Did you mean: Add task or List tasks?"
 
 **Edge Cases:**
@@ -393,7 +392,7 @@ User records voice memo → manually listen back → type out tasks → manually
 
 **Implementation Details:**
 - **Wake word**: Use browser Web Speech API (webkitSpeechRecognition) for wake word detection
-- **STT**: ElevenLabs Scribe v2 (same as note capture) for command transcription
+- **STT**: Web Speech API or Whisper API for English command transcription
 - **Intent parsing**: LLM (Claude 3.7 Sonnet) with structured output (Zod schema):
   ```typescript
   {
@@ -406,7 +405,7 @@ User records voice memo → manually listen back → type out tasks → manually
     }
   }
   ```
-- **TTS**: ElevenLabs TTS for voice responses (optional, can be text-only on mobile to save battery)
+- **Text-first responses**: Display results in chat panel; optional TTS for accessibility
 
 **Success Metrics:**
 - 60%+ users try voice commands within first week
@@ -441,7 +440,7 @@ User records voice memo → manually listen back → type out tasks → manually
 - **Streaming responses**: Use Vercel AI SDK streaming for real-time feedback
 - **Message history**: Persisted per session (cleared on page refresh or user clears)
 - **Quick actions**: AI responses include actionable buttons (e.g., "Reschedule these 3 tasks" → [Confirm] button)
-- **Mobile-friendly**: Swipe down to minimize chat, swipe up to expand
+- **Responsive panel**: Collapsible sidebar on smaller screens, always visible on desktop
 
 **Edge Cases:**
 - **Ambiguous requests**: "Reschedule everything" → AI clarifies: "Do you mean all pending tasks or just today's tasks?"
@@ -452,7 +451,7 @@ User records voice memo → manually listen back → type out tasks → manually
 **Implementation Details:**
 - **UI**: shadcn/ui Dialog component, floating + expandable
 - **LLM**: Claude 3.7 Sonnet via Vercel AI SDK (streaming)
-- **System prompt**: Inject user context (notes, tasks, calendar) + capabilities + tone ("You are a helpful Vietnamese productivity assistant for dumtasking...")
+- **System prompt**: Inject user context (notes, tasks, calendar) + capabilities + tone ("You are a helpful productivity assistant for dumtasking. Help users organize their notes into actionable tasks...")
 - **Tool calling**: AI can call functions:
   - `extract_tasks(note_id)` → trigger task extraction
   - `update_task(task_id, updates)` → modify task
@@ -648,16 +647,16 @@ User records voice memo → manually listen back → type out tasks → manually
 
 ### Flow 1: Onboarding & First Note Capture
 
-1. **Landing Page:** User visits app → sees hero: "Brain-dump in Vietnamese, AI plans everything"
+1. **Landing Page:** User visits app → sees hero: "Dump your notes, AI Agents handle the rest"
 2. **Sign Up:** Click "Get Started" → Supabase Auth magic link sent to email
 3. **Email Verification:** User clicks link → redirected to app
 4. **Profile Setup:**
    - Modal: "Welcome! Let's set up your workspace"
-   - Fields: Name, Timezone (dropdown, default Asia/Ho_Chi_Minh), Working Hours (default 8AM-8PM)
-   - Button: "Start Capturing Ideas"
+   - Fields: Name, Timezone (auto-detected from browser), Working Hours (default 9AM-6PM)
+   - Button: "Start Organizing"
 5. **Dashboard:** Clean interface with:
-   - Top: Large floating mic button (blue, pulsing animation)
-   - Below: Text editor (placeholder: "Or type your thoughts here...")
+   - Top: Text editor (placeholder: "Type or paste your notes here...")
+   - Optional: Small mic button in toolbar (not prominently featured)
    - Sidebar: "Notes" / "Kanban" / "Calendar" tabs (Kanban/Calendar grayed out with "Process a note first" tooltip)
 6. **First Voice Note:**
    - User taps mic → records 30 seconds: "Tôi cần hoàn thành landing page cho client A, sau đó setup database cho dự án B, và gọi điện cho đối tác về hợp đồng"
@@ -673,19 +672,39 @@ User records voice memo → manually listen back → type out tasks → manually
 8. **Kanban Unlocked:** Sidebar "Kanban" tab lights up → user clicks → sees 3 tasks in "To Do" column
 9. **Calendar Unlocked:** "Calendar" tab active → shows tasks on timeline
 
-**UI Style:** Minimal, mobile-first, Notion-inspired (clean, lots of whitespace). Primary color: Blue (#3B82F6), secondary: Green (#10B981).
+**UI Style & Design System:**  
+This project uses **shadcn/ui** with the following preset configuration:  
+- **Style:** mira  
+- **Base Color:** zinc  
+- **Theme:** zinc  
+- **Icon Library:** lucide  
+- **Font:** Inter  
+- **Menu Accent:** subtle  
+- **Menu Color:** default  
+- **Radius:** default  
+
+**Setup Command:**  
+```bash
+bunx --bun shadcn@latest create --preset "https://ui.shadcn.com/init?base=base&style=mira&baseColor=zinc&theme=zinc&iconLibrary=lucide&font=inter&menuAccent=subtle&menuColor=default&radius=default&template=next" --template next
+```
+
+**Design Principles:**  
+- Web-first responsive design (desktop optimized, mobile responsive secondary)  
+- Minimal, clean interface with proper spacing  
+- Consistent shadcn/ui component usage across all features  
+- All UI/UX must adhere to the mira style + zinc color scheme for consistency
 
 ---
 
 ### Flow 2: Daily Workflow – Morning Review
 
-1. User opens app on phone (7:30 AM)
+1. User opens app in desktop browser (7:30 AM)
 2. Dashboard shows: "Good morning! Today's focus:" + 2 high-priority tasks auto-pulled from calendar
-3. User taps Kanban tab → drags "Call partner" from "To Do" to "In Progress" (visual feedback: card highlights green)
-4. Realtime sync: Desktop browser (if open) updates instantly
-5. User taps Calendar tab → sees today is slightly overloaded (red indicator: 9 hours scheduled)
+3. User clicks Kanban tab → drags "Call partner" from "To Do" to "In Progress" (visual feedback: card highlights)
+4. Realtime sync: Other browser tabs/devices update instantly
+5. User clicks Calendar tab → sees today is slightly overloaded (red indicator: 9 hours scheduled)
 6. Drags "Set up database" to tomorrow → Calendar recalculates, shows green (balanced)
-7. Notification: "Good call! Your week is now balanced."
+7. Toast notification: "Good call! Your week is now balanced."
 
 ---
 
@@ -717,13 +736,13 @@ graph TD
     B -->|No| C[Sign Up / Login]
     B -->|Yes| D[Dashboard]
     C --> D
-    D --> E[Voice Capture]
-    D --> F[Text Note]
-    E --> G[ElevenLabs STT]
+    D --> E[Optional Voice Capture]
+    D --> F[Text Note - Primary]
+    E --> G[Web Speech API / Whisper]
     F --> H[Rich Editor]
     G --> H
-    H --> I[User Triggers 'Plan This']
-    I --> J[AI Extraction via OpenRouter]
+    H --> I[User Triggers 'Plan This' or Chats with AI]
+    I --> J[AI Agents Extraction via OpenRouter]
     J --> K[Preview Tasks]
     K --> L{User Confirms?}
     L -->|Yes| M[Insert Tasks to DB]
@@ -742,7 +761,7 @@ graph TD
 ### Tech Stack (Required)
 
 **Frontend/Full-Stack:**
-- **Framework:** Next.js 16+ (App Router, React Server Components, Server Actions)
+- **Framework:** Next.js 15+ (App Router, React Server Components, Server Actions)
 - **Language:** TypeScript (strict mode)
 - **UI Components:** shadcn/ui + Radix UI primitives + Tailwind CSS
 
@@ -777,11 +796,12 @@ All UI/UX must adhere to this configuration (style=mira, baseColor=zinc, theme=z
 - **Realtime:** Supabase Realtime subscriptions on `notes`, `tasks`, and `chat_messages` tables
 
 **AI Services:**
-- **Speech-to-Text:** ElevenLabs Scribe v2 (primary), OpenAI Whisper via OpenRouter (fallback)
-  - Expected accuracy: >94.5% WER for Vietnamese
-  - Cost: ~$0.40/hour
-- **Text-to-Speech (Voice Commands):** ElevenLabs TTS (multilingual, Vietnamese support)
-  - Cost: ~$0.30/1K characters
+- **Speech-to-Text (Optional):** Web Speech API (browser-native, free) for basic voice input; OpenAI Whisper via OpenRouter for higher accuracy
+  - Web Speech API: Free, browser-native, English support
+  - Whisper API: ~$0.006/minute, higher accuracy for complex notes
+  - Note: Voice is optional feature, not core dependency
+- **Text-to-Speech (Optional):** Browser native Web Speech API for accessibility
+  - Cost: Free (browser-native)
 - **LLM:** Vercel AI SDK v6+ with OpenRouter
   - Models: Claude 3.7 Sonnet (primary for task extraction, chat assistant, intent parsing), Gemini 2.0 Flash (cost-effective alternative)
   - Structured output via Zod schemas (type-safe)
@@ -809,40 +829,46 @@ All UI/UX must adhere to this configuration (style=mira, baseColor=zinc, theme=z
   - Page load: <2 seconds (initial), <500ms (subsequent navigation)
   - Tasks Aggregation view: <1 second load time for 1000+ tasks (virtualized)
 - **Database:** Supabase free tier supports up to 500MB, upgrade to Pro ($25/month) at 1,000 users
-- **Cost Guardrails (for personal use, adjust for multi-user later):**
+- **Cost Guardrails:**
   - Cache AI Chat responses for similar queries (24h)
   - Cache task embeddings (regenerate only when task content changes)
   - Cache weekly reviews (no need to regenerate if user re-opens)
-  - Batch audio uploads (debounce 2 seconds after recording stops)
-  - Rate limiting: 50 AI Chat messages/hour, 100 voice commands/hour
+  - Rate limiting: 50 AI Chat messages/hour per user
+  - Voice features (if enabled): 20 transcriptions/hour per user
 
 ### Language & Internationalization
 
-- **Primary Language:** Vietnamese (vi-VN)
-- **Secondary Language:** English (en-US) for UI fallback
-- **i18n Strategy:** Not required for MVP (Vietnamese-only)
-- **Post-MVP:** Add English, consider Thai/Indonesian for SEO expansion
+- **Primary Language:** English (en-US)
+- **i18n Strategy:** Not required for MVP (English-only)
+- **Post-MVP:** Consider adding other languages based on user demand
 
 ### Security & Privacy
 
 - **Data Encryption:** All data encrypted at rest (Supabase default) and in transit (HTTPS)
 - **GDPR Compliance:** User can export all data (JSON), delete account (cascade delete all notes/tasks)
-- **API Keys:** Support user-provided ElevenLabs + OpenRouter keys (encrypted in database)
+- **API Keys:** Support user-provided OpenRouter/OpenAI keys (encrypted in database)
 - **Rate Limiting:** 100 API requests/minute per user (prevent abuse)
 
-### Browser & Device Support
+### Browser & Platform Support
 
-- **Desktop:** Chrome, Firefox, Safari, Edge (latest 2 versions)
-- **Mobile:** iOS Safari 15+, Android Chrome 100+
-- **PWA:** Progressive Web App support (offline draft notes, push notifications post-MVP)
+**Primary Target (Desktop Web):**
+- Chrome, Firefox, Safari, Edge (latest 2 versions)
+- Optimized for 1920x1080 and 1366x768 resolutions
+
+**Secondary Support (Responsive):**
+- Tablets: iPad (Safari), Android tablets (Chrome)
+- Mobile phones: iOS Safari 15+, Android Chrome 100+ (responsive layout, not optimized)
+
+**Technology Stack:**
+- Next.js 15+ (App Router, React Server Components, Server Actions)
+- Progressive Web App (PWA) support (offline draft notes, sync queue)
 
 ### Monitoring & Analytics
 
 - **Error Tracking:** Sentry (catch client + server errors)
 - **Analytics:** PostHog (privacy-friendly, self-hosted option)
 - **Metrics to Track:**
-  - Voice capture success rate
-  - Voice command accuracy (intent parsing)
+  - Voice feature adoption rate (if enabled)
   - AI extraction accuracy (user feedback)
   - AI Chat Assistant usage (messages/user, satisfaction)
   - Smart Suggestions acceptance rate
@@ -862,8 +888,8 @@ All UI/UX must adhere to this configuration (style=mira, baseColor=zinc, theme=z
 **Phase 1: Core Foundation (Weeks 1-3)**
 1. Set up Next.js + Supabase + Vercel project skeleton
 2. Implement Auth flow (magic links) + user profile setup
-3. Build voice capture + ElevenLabs Scribe v2 integration
-4. Develop rich text note editor (Tiptap) with auto-save
+3. Develop rich text note editor (Tiptap) with auto-save - PRIMARY INPUT
+4. Optional: Add basic voice capture (Web Speech API) as bonus feature
 5. Database schema + migrations (notes, tasks, users tables)
 
 **Phase 2: AI Intelligence (Weeks 4-6)**
