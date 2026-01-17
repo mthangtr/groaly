@@ -4,43 +4,14 @@ This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get sta
 
 ## Engineering Principles
 
-### Code Quality Philosophy
+**Core Values:**
+- **AVOID OVER-ENGINEERING**: Simple > clever. Don't add abstractions until needed (YAGNI)
+- **FIX ROOT CAUSE**: No patches/workarounds. Fix properly at source, refactor if needed
+- **READABILITY > CLEVERNESS**: Code read 10x more than written. Descriptive names, clear logic
+- **MAINTAINABILITY FIRST**: Consistent patterns, DRY but don't over-abstract
 
-**AVOID OVER-ENGINEERING** - Keep solutions simple and pragmatic:
-- Write code that is easy to read and understand first
-- Don't add abstractions until you need them (YAGNI - You Aren't Gonna Need It)
-- Prefer straightforward solutions over clever ones
-- If unsure between simple and complex, choose simple
-
-**NO PATCHES - FIX THE ROOT CAUSE**:
-- NEVER apply band-aid fixes or workarounds
-- If you find a bug, fix it properly at the source
-- If a fix requires significant refactoring, do the refactoring
-- Prefer comprehensive solutions over quick hacks
-- Think: "What's the RIGHT way to solve this?" not "What's the FAST way?"
-
-**READABILITY > CLEVERNESS**:
-- Code is read 10x more than it's written - optimize for readers
-- Use descriptive variable names (`userAuthToken` not `uat`)
-- Break complex logic into well-named functions
-- Add comments for "why", not "what" (code should be self-documenting)
-- Prefer explicit over implicit
-
-**MAINTAINABILITY FIRST**:
-- Future developers (including you) will thank you
-- Consistent patterns across the codebase
-- Don't repeat yourself (DRY), but don't over-abstract
-- Make changes easy, then make the easy change
-
-### Decision Making
-
-When facing a choice, ask:
-1. **Is it readable?** Can someone understand this in 6 months?
-2. **Is it simple?** Am I adding unnecessary complexity?
-3. **Does it fix the root cause?** Or am I just patching symptoms?
-4. **Is it maintainable?** Will this be easy to change later?
-
-**If the answer is "no" to any of these, reconsider your approach.**
+**Decision checklist:** Is it readable? Simple? Fixes root cause? Maintainable?
+If any "no" → reconsider approach.
 
 ## Project Stack
 
@@ -97,26 +68,17 @@ public/              # Static assets
 ### Import Conventions
 
 ```typescript
-// 1. Type imports first (if using type-only imports)
+// 1. Type imports → 2. React/core → 3. Third-party → 4. Local (@/ alias)
 import type { Metadata } from "next"
-
-// 2. React and core libraries
 import * as React from "react"
-
-// 3. Third-party libraries (grouped)
-import { cva, type VariantProps } from "class-variance-authority"
-import { ChevronDownIcon } from "lucide-react"
-
-// 4. Local imports using @ alias (defined in tsconfig.json)
+import { cva } from "class-variance-authority"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 ```
 
 ### Component Patterns
 
-**Server Components (default in App Router):**
+**Server Components (default):**
 ```typescript
-// No "use client" directive needed
 export default function Page() {
   return <div>Server Component</div>
 }
@@ -124,11 +86,9 @@ export default function Page() {
 
 **Client Components:**
 ```typescript
-"use client"  // MUST be first line (before imports)
+"use client"  // MUST be first line
 
-import * as React from "react"
-
-export function InteractiveComponent() {
+export function Interactive() {
   const [state, setState] = React.useState(false)
   return <button onClick={() => setState(!state)}>Toggle</button>
 }
@@ -136,18 +96,13 @@ export function InteractiveComponent() {
 
 **Component Structure:**
 ```typescript
-// 1. Props interface
 interface ButtonProps extends React.ComponentProps<"button"> {
   variant?: "default" | "outline"
-  size?: "sm" | "md" | "lg"
 }
 
-// 2. Component definition (named exports for reusable UI, default for pages)
-export function Button({ variant = "default", size = "md", className, ...props }: ButtonProps) {
+export function Button({ variant = "default", className, ...props }: ButtonProps) {
   return <button className={cn(baseStyles, className)} {...props} />
 }
-
-// 3. Use descriptive prop names, provide defaults, spread remaining props
 ```
 
 ### TypeScript Conventions
@@ -195,15 +150,7 @@ export function Button({ variant = "default", size = "md", className, ...props }
 
 - **Use Error boundaries** for React error handling (add when needed)
 - **Validate props** with TypeScript types, not runtime checks (prefer type safety)
-- **Handle async errors** explicitly:
-  ```typescript
-  try {
-    const data = await fetchData()
-  } catch (error) {
-    console.error("Failed to fetch:", error)
-    // Handle gracefully
-  }
-  ```
+- **Handle async errors** explicitly with try/catch
 - **Server Components** - Can throw errors, will be caught by nearest error.tsx boundary
 
 ### Accessibility
@@ -218,78 +165,69 @@ export function Button({ variant = "default", size = "md", className, ...props }
   ```
 - **Use Base UI primitives** - They handle accessibility (focus, keyboard nav, ARIA)
 
-## Session Workflow
+## Beads Workflow (bd/bv)
 
-- **Start session**: See `.beads/SESSION_START.md` for checklist
-- **End session**: See `.beads/SESSION_END.md` for mandatory steps
-- **Workflow context**: Run `bd prime` for detailed instructions
+This project uses **bd** for issue tracking and **bv** for graph analysis. Issues are in `.beads/` and tracked in git.
 
-### Quick Reference
+### Essential bd Commands
 
 ```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
+# Find and work on tasks
+bd ready              # Show issues ready to work (no blockers)
+bd show <id>          # Full issue details with dependencies
 bd update <id> --status in_progress  # Claim work
 bd close <id>         # Complete work
 bd sync               # Sync with git
+
+# Create and manage
+bd create "Task title" -t task -p 1  # Create task (P0-P4)
+bd dep add <issue> <depends-on>      # Add dependency
 ```
 
-## Using Beads Viewer (bv)
+### Beads Viewer (bv) - Graph Analysis
 
-`bv` is a **graph-aware analysis tool** for Beads issues. It provides:
-- Deterministic graph metrics (PageRank, betweenness, critical path, cycles)
-- Task prioritization and execution planning
-- Dependency visualization and analytics
-
-**⚠️ For AI agents: Use ONLY `--robot-*` flags. Bare `bv` launches interactive TUI.**
-
-### Essential Commands
+**⚠️ For AI: Use ONLY `--robot-*` flags. Bare `bv` launches TUI.**
 
 ```bash
-# Find next task (THE MEGA-COMMAND)
+# Find next task (MEGA-COMMAND)
 bv --robot-triage        # Complete triage with recommendations
-bv --robot-next          # Just the top pick + claim command
+bv --robot-next          # Top pick + claim command
 
-# Analyze dependencies
+# Analysis
 bv --robot-plan          # Execution plan with parallel tracks
-bv --robot-insights      # Graph metrics (PageRank, cycles, etc.)
+bv --robot-insights      # Graph metrics (PageRank, cycles)
 ```
 
-### Common Patterns
-
+**Quick patterns:**
 ```bash
-# Get highest-impact task
-bv --robot-triage | jq '.recommendations[0]'
-
-# Check for circular dependencies
-bv --robot-insights | jq '.Cycles'
-
-# Priority recommendations
-bv --robot-priority | jq '.recommendations[] | select(.confidence > 0.6)'
+bv --robot-triage | jq '.recommendations[0]'  # Highest-impact task
+bv --robot-insights | jq '.Cycles'             # Check circular deps
 ```
 
-### Full Documentation
+**Full docs:** `.beads/BV_GUIDE.md` and `.beads/BD_GUIDE.md`
 
-**For complete reference including all commands, jq recipes, and troubleshooting:**
-→ See `.beads/BV_GUIDE.md`
+### Workflow Pattern
 
-**Quick tips:**
-- Use `--robot-plan` for "what to work on next"
-- Use `--robot-insights` for project health checks
-- Results are cached by data hash (fast repeat calls)
-- Phase 2 metrics (PageRank, etc.) have 500ms timeout—check `.status` field
+1. **Start**: `bd ready` or `bv --robot-next` → find work
+2. **Claim**: `bd update <id> --status in_progress`
+3. **Work**: Implement the task
+4. **Complete**: `bd close <id>`
+5. **Sync**: `bd sync` at session end
 
-### Commit Message Convention
+### Key Concepts
 
-**ALWAYS include issue ID in commit messages:**
+- **Dependencies**: `bd ready` shows only unblocked work
+- **Priority**: P0=critical, P1=high, P2=medium, P3=low, P4=backlog
+- **Types**: task, bug, feature, epic, question, docs
+- **Hooks**: `bd hooks install` for auto-sync (pre-commit, post-merge, etc.)
 
+### Commit Convention
+
+**ALWAYS include issue ID:**
 ```bash
 git commit -m "Fix validation bug (dt-a1b2c3)"
-git commit -m "Add retry logic (dt-xyz456)"
-git commit -m "Update documentation (dt-abc789)"
 ```
-
-This enables `bd doctor` to detect orphaned issues (committed code but unclosed issue).
+This enables `bd doctor` to detect orphaned issues.
 
 ## Landing the Plane (Session Completion)
 
@@ -321,71 +259,3 @@ This enables `bd doctor` to detect orphaned issues (committed code but unclosed 
 - NEVER stop before pushing - that leaves work stranded locally  
 - NEVER say "ready to push when you are" - YOU must push
 - If push fails, resolve and retry until it succeeds
-
-
-<!-- bv-agent-instructions-v1 -->
-
----
-
-## Beads Workflow Integration
-
-This project uses **bd** (beads) for issue tracking. Issues are stored in `.beads/` and tracked in git.
-
-### Essential Commands
-
-```bash
-# Find and work on tasks
-bd ready              # Show issues ready to work (no blockers)
-bd show <id>          # Full issue details with dependencies
-bd update <id> --status in_progress  # Claim work
-bd close <id>         # Complete work
-bd sync               # Sync with git
-
-# Create and manage issues
-bd create "Task title" -t task -p 1  # Create new task (P0-P4)
-bd dep add <issue> <depends-on>      # Add dependency
-```
-
-### Workflow Pattern
-
-1. **Start**: Run `bd ready` to find actionable work
-2. **Claim**: Use `bd update <id> --status in_progress`
-3. **Work**: Implement the task
-4. **Complete**: Use `bd close <id>`
-5. **Sync**: Always run `bd sync` at session end
-
-### Key Concepts
-
-- **Dependencies**: Issues can block other issues. `bd ready` shows only unblocked work
-- **Priority**: P0=critical, P1=high, P2=medium, P3=low, P4=backlog (use numbers)
-- **Types**: task, bug, feature, epic, question, docs
-- **Blocking**: Use `bd dep add <issue> <depends-on>` to add dependencies
-- **Auto-sync**: bd automatically exports to JSONL (30s debounce), imports after git pull
-
-### Hooks and Auto-Sync
-
-Beads uses hooks to remind agents about workflow:
-
-- **SessionStart** → `bd prime` runs → Agent learns workflow
-- **PreCompact** → `bd sync` runs → State saved before context compact
-
-**Install git hooks** (recommended):
-```bash
-bd hooks install  # One-time setup per workspace
-```
-
-This installs pre-commit, post-merge, pre-push, post-checkout hooks for automatic sync.
-
-### Full Documentation
-
-**For complete reference including theory, ID format, UI guide, and development:**
-→ See `.beads/BD_GUIDE.md`
-
-**Quick topics in BD_GUIDE.md:**
-- Why Beads vs Markdown for AI agents
-- ID format and prefix management (`bd rename-prefix`)
-- Beads UI for visual task management
-- Development guidelines and testing
-- Release process
-
-<!-- end-bv-agent-instructions -->
