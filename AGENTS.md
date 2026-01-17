@@ -2,6 +2,12 @@
 
 This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get started.
 
+## Session Workflow
+
+- **Start session**: See `.beads/SESSION_START.md` for checklist
+- **End session**: See `.beads/SESSION_END.md` for mandatory steps
+- **Workflow context**: Run `bd prime` for detailed instructions
+
 ## Quick Reference
 
 ```bash
@@ -10,6 +16,39 @@ bd show <id>          # View issue details
 bd update <id> --status in_progress  # Claim work
 bd close <id>         # Complete work
 bd sync               # Sync with git
+```
+
+## Commit Message Convention
+
+**ALWAYS include issue ID in commit messages:**
+
+```bash
+git commit -m "Fix validation bug (dt-a1b2c3)"
+git commit -m "Add retry logic (dt-xyz456)"
+git commit -m "Update documentation (dt-abc789)"
+```
+
+This enables `bd doctor` to detect orphaned issues (committed code but unclosed issue).
+
+## Dependencies & Parallel Work
+
+```bash
+# Create parent task
+bd create --title="Feature: User auth" --type=feature --priority=1
+
+# Create dependent tasks
+bd create --title="Auth API" --type=task --priority=2
+bd create --title="Auth UI" --type=task --priority=2
+
+# Set dependencies (child depends on parent)
+bd dep add dt-ui dt-api    # UI depends on API
+bd dep add dt-api dt-auth  # API depends on Feature
+
+# Check what's ready (automatically filters blocked tasks)
+bd ready
+
+# View dependencies
+bd show dt-ui  # Shows "Blocked by: dt-api"
 ```
 
 ## Landing the Plane (Session Completion)
