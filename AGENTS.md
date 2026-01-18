@@ -264,6 +264,8 @@ This enables `bd doctor` to detect orphaned issues.
 
 ## MCP Agent Mail: Multi-Agent Coordination
 
+`& "C:\Users\tmtmt\mcp_agent_mail\.venv\Scripts\python.exe" -m mcp_agent_mail.cli serve-http --host 127.0.0.1 --port 8765`
+
 **Purpose**: Prevent file conflicts when multiple agents work in parallel.
 
 **Core concepts:**

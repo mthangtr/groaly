@@ -19,7 +19,7 @@
     "gkg": {
       "type": "remote",
       "url": "http://localhost:27495/mcp",
-      "enabled": false
+      "enabled": true
     },
     "mcp_agent_mail": {
       "type": "remote",
@@ -34,7 +34,7 @@
     "supabase_*": true,
     "shadcn_*": true,
     "mcp_docker_*": true,
-    "gkg_*": false,
+    "gkg_*": true,
     "mcp_agent_mail_*": true
   }
 }
