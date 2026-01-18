@@ -13,7 +13,7 @@ researchCount: 0
 brainstormingCount: 1
 projectDocsCount: 2
 date: 2026-01-17
-author: Tmtmt
+author: mthangtr
 project_name: dumtasking
 classification:
   projectType: web_app
@@ -31,7 +31,7 @@ classification:
 
 # Product Requirements Document - dumtasking
 
-**Author:** Tmtmt
+**Author:** mthangtr
 **Date:** 2026-01-17
 
 ## Success Criteria
@@ -56,7 +56,7 @@ Users consistently make progress on all their major life goals without neglect, 
 
 **Phase 1: Personal Validation (Months 1-3)**
 
-**Primary Objective:** Prove dumtasking solves the multi-goal orchestration problem for Tmtmt personally.
+**Primary Objective:** Prove dumtasking solves the multi-goal orchestration problem for mthangtr personally.
 
 **Success Criteria:**
 1. Personal Adoption: 5+ days/week usage for 3 consecutive months
@@ -439,11 +439,11 @@ Features are organized to enable incremental development and testing without blo
 
 ### Journey 1: First-Time User - From Chaos to Clarity
 
-**Persona:** Tmtmt - 25-year-old developer juggling 3 major life goals (dev growth, startup, Japanese learning)
+**Persona:** mthangtr - 25-year-old developer juggling 3 major life goals (dev growth, startup, Japanese learning)
 
 **Opening Scene - The Overwhelm:**
 
-It's Monday morning, 8:30 AM. Tmtmt opens his laptop to start the workday. He has 47 unread notes scattered across iPhone Notes and random text files. His mind races with tasks: "Finish Java training module, call Client A about pricing, prepare marketing deck, review N3 vocabulary..." He feels paralyzed—where to even start?
+It's Monday morning, 8:30 AM. mthangtr opens his laptop to start the workday. He has 47 unread notes scattered across iPhone Notes and random text files. His mind races with tasks: "Finish Java training module, call Client A about pricing, prepare marketing deck, review N3 vocabulary..." He feels paralyzed—where to even start?
 
 He opens Gmail, then habitually types "dumtasking" in the browser. This is his first visit after hearing about it from a developer community.
 
@@ -458,12 +458,12 @@ He opens Gmail, then habitually types "dumtasking" in the browser. This is his f
 - Welcome modal: "Welcome! Let's set up your workspace"
 - Auto-detected timezone: Asia/Ho_Chi_Minh ✓
 - Working hours suggested: 9 AM - 6 PM (accepts default)
-- Enters name: Tmtmt
+- Enters name: mthangtr
 - Clicks "Start Organizing"
 
 **First Note Dump (9:05 AM):**
 - Clean dashboard appears with rich text editor placeholder: "Type or paste your notes here..."
-- Tmtmt thinks: "Let me just dump everything from today's mind chaos"
+- mthangtr thinks: "Let me just dump everything from today's mind chaos"
 - Types frantically for 3 minutes:
 
 ```
@@ -542,7 +542,7 @@ Note: AI has balanced your 3 goals automatically across this week
 - "⚡ Your most productive time: Tuesday/Thursday mornings → complex tasks scheduled then"
 - "🧘 Evening task: Only light Japanese review (respecting energy levels)"
 
-**Tmtmt's Internal Reaction:**
+**mthangtr's Internal Reaction:**
 - Eyes widen: "Wait... it actually understood ALL of this?"
 - Scrolls through tasks: "It caught the urgency in Client A... it scheduled complex tasks in mornings... it even removed the 'weekly planning' task because IT DID THE PLANNING FOR ME"
 - Notices goal distribution: "Wow, I don't have to think about orchestration anymore—AI did it for me"
@@ -554,15 +554,15 @@ Note: AI has balanced your 3 goals automatically across this week
 - Dashboard transforms:
   - Kanban tab lights up → 6 tasks in "To Do" column
   - Calendar tab shows weekly view with color-coded tasks
-  - Smart Daily Suggestions appears: "Good morning Tmtmt! Here's your focus for today:" with top 3 tasks
+  - Smart Daily Suggestions appears: "Good morning mthangtr! Here's your focus for today:" with top 3 tasks
 
-- Tmtmt clicks "Start [Call Client A]" → enters Focus Mode
+- mthangtr clicks "Start [Call Client A]" → enters Focus Mode
   - Fullscreen activates, PiP timer starts
   - 30 minutes later: Completes call, celebration animation 🎉
   - Returns to dashboard → task auto-moved to "Done"
 
 **End of First Day (6:30 PM):**
-- Tmtmt has completed 3/5 tasks today (Client call ✓, Bug fix ✓, N3 review ✓)
+- mthangtr has completed 3/5 tasks today (Client call ✓, Bug fix ✓, N3 review ✓)
 - Evening motivation drop hits → sees remaining tasks
 - **Compassionate Accountability appears:**
   - Modal: "Evening energy low? You've done great today (3 tasks completed). Options:"
@@ -585,11 +585,11 @@ Note: AI has balanced your 3 goals automatically across this week
 
 ### Journey 2: Daily Workflow - Multi-Goal Balance in Action
 
-**Persona:** Tmtmt - 2 weeks into using dumtasking
+**Persona:** mthangtr - 2 weeks into using dumtasking
 
 **Morning Ritual (7:45 AM - The Hook):**
 
-Tmtmt arrives at office, opens laptop. Muscle memory kicks in:
+mthangtr arrives at office, opens laptop. Muscle memory kicks in:
 1. Chrome opens → Gmail tab
 2. Slack tab
 3. **dumtasking tab** (now part of the ritual, like checking email)
@@ -597,7 +597,7 @@ Tmtmt arrives at office, opens laptop. Muscle memory kicks in:
 **Dashboard Smart Suggestions (7:46 AM):**
 
 ```
-Good morning Tmtmt! Here's your balanced focus for today:
+Good morning mthangtr! Here's your balanced focus for today:
 
 🔥 High Priority (2 tasks, 4 hours):
   1. Prepare investor deck final slides (3h) - DUE TODAY
@@ -618,7 +618,7 @@ Good morning Tmtmt! Here's your balanced focus for today:
 ✅ Yesterday: 3 tasks completed - great job! 💪
 ```
 
-**Tmtmt's Reaction:**
+**mthangtr's Reaction:**
 - "Perfect. It already figured out what I should do. No thinking needed."
 - Clicks "Start [Investor deck]" → enters Focus Mode immediately
 
@@ -643,7 +643,7 @@ Good morning Tmtmt! Here's your balanced focus for today:
 
 **11:00 AM - URGENT INTERRUPTION:**
 - Boss Slack message: "Client C contract needs review ASAP - legal wants it by 2 PM today"
-- Tmtmt panics: "This will blow up my whole day..."
+- mthangtr panics: "This will blow up my whole day..."
 
 **Adaptive Response (11:02 AM):**
 - Exits Focus Mode → marks "Investor deck" as 60% done
@@ -656,7 +656,7 @@ Good morning Tmtmt! Here's your balanced focus for today:
   - Email legal team with review
   ```
 - AI Chat Assistant pops up: "I noticed an urgent task. Want me to reorganize your day?"
-- Tmtmt: "Yes, please reorganize"
+- mthangtr: "Yes, please reorganize"
 
 **AI Auto-Reorganization (11:03 AM):**
 - AI analyzes current schedule + new urgent task
@@ -672,7 +672,7 @@ Good morning Tmtmt! Here's your balanced focus for today:
   - "📊 Goal balance this week still maintained: Startup 62%, Dev 22%, Japanese 16%"
   - "💡 Investor deck moved to tomorrow morning (your most productive time)"
 
-**Tmtmt's Reaction:**
+**mthangtr's Reaction:**
 - "Wow... it reorganized everything instantly. AND it didn't forget my Japanese review."
 - "This is the 'adaptive orchestration' I needed"
 - Feels relieved, not stressed
@@ -828,7 +828,7 @@ instead of evenings (7-9 PM)?
 
 ### Journey 4: Weekly Review - Growth Through Reflection
 
-**Persona:** Tmtmt - 4 weeks into using dumtasking
+**Persona:** mthangtr - 4 weeks into using dumtasking
 
 **Trigger:** Sunday evening, 8:00 PM (automated weekly review generation)
 
@@ -842,7 +842,7 @@ Week of Jan 13-19 - Let's reflect on your progress.
 [View Full Review]
 ```
 
-**Tmtmt clicks - Review Opens (8:02 PM):**
+**mthangtr clicks - Review Opens (8:02 PM):**
 
 ```
 Weekly Review - Week of Jan 13-19
@@ -929,7 +929,7 @@ NEXT WEEK SUGGESTIONS 💡
 [Apply All Suggestions] [Customize] [Discuss with AI]
 ```
 
-**Tmtmt's Reaction (8:08 PM):**
+**mthangtr's Reaction (8:08 PM):**
 
 - Scrolls through review slowly
 - **Celebrates:** "23 tasks! And 7-day Japanese streak—I've NEVER done that before!"
@@ -943,7 +943,7 @@ NEXT WEEK SUGGESTIONS 💡
 Clicks "Discuss with AI" → Chat Assistant opens:
 
 ```
-Tmtmt: "I want to rebalance but I'm worried about startup progress. 
+mthangtr: "I want to rebalance but I'm worried about startup progress. 
 We're launching in 6 weeks."
 
 AI: "I understand. Launch is critical. How about this:
@@ -961,13 +961,13 @@ After launch (week 7+):
 This way, startup gets the attention it needs NOW, but other goals 
 don't disappear for 2 months like before. Sound good?"
 
-Tmtmt: "Yes! That's exactly what I need. Apply that plan."
+mthangtr: "Yes! That's exactly what I need. Apply that plan."
 
 AI: "✅ Plan applied. Your schedule for next week is ready. 
 I'll remind you in 6 weeks to shift to post-launch balance."
 ```
 
-**Tmtmt's Emotional State:**
+**mthangtr's Emotional State:**
 - Feels seen: "It understood my startup urgency"
 - Feels relieved: "I won't neglect Japanese for 2 months again"
 - Feels empowered: "I'm making intentional choices, not reactive chaos"
@@ -981,7 +981,7 @@ Weekly review shows:
 - Japanese: 40% to N3 completion ✓
 - **No goal neglected >2 weeks in entire 3-month period**
 
-Tmtmt's reflection: "I finally have a companion that understands I'm not one person with one goal—I'm three people trying to coexist. dumtasking orchestrates that chaos into sustainable progress."
+mthangtr's reflection: "I finally have a companion that understands I'm not one person with one goal—I'm three people trying to coexist. dumtasking orchestrates that chaos into sustainable progress."
 
 ---
 
@@ -1243,7 +1243,7 @@ dumtasking introduces **"Vibe Tasking"** - a novel approach to personal producti
 ### Validation Approach
 
 **Phase 1: Personal Validation (3 Months)**
-- Tmtmt uses dumtasking as primary productivity system
+- mthangtr uses dumtasking as primary productivity system
 - Measure: Goal neglect eliminated (Japanese 15min daily, no 2-month gaps)
 - Measure: 70%+ task completion rate sustained
 - Measure: All 3 goals show progress monthly
@@ -1630,7 +1630,7 @@ dumtasking is a **logged-in application** focused on personal productivity, not 
 
 dumtasking MVP is a **complete, production-ready application** designed for personal use validation, not a minimal proof-of-concept. This approach serves three strategic objectives:
 
-1. **Personal Productivity Solution:** Full feature set to solve Tmtmt's real workflow needs (not a toy)
+1. **Personal Productivity Solution:** Full feature set to solve mthangtr's real workflow needs (not a toy)
 2. **Coding Agent Capability Test:** Validates AI-assisted development with substantial, real-world scope
 3. **Portfolio Showcase:** Demonstrates full-stack + AI integration expertise with production-quality code
 
@@ -1639,7 +1639,7 @@ dumtasking MVP is a **complete, production-ready application** designed for pers
 This approach prioritizes personal value and learning over premature market testing.
 
 **Resource Requirements:**
-- **Team Size:** Solo developer (Tmtmt)
+- **Team Size:** Solo developer (mthangtr)
 - **Timeline:** 12-14 weeks development + 3 months personal validation
 - **Skills Required:** 
   - Full-stack development (Next.js, React, TypeScript)

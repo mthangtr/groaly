@@ -12,7 +12,7 @@ tea_use_mcp_enhancements: false
 tea_use_playwright_utils: false
 
 # Core Configuration Values
-user_name: Tmtmt
+user_name: mthangtr
 communication_language: Vietnamese
 document_output_language: English
 output_folder: "{project-root}/_bmad-output"

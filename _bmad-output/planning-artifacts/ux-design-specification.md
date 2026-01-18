@@ -28,7 +28,7 @@ techStack:
 
 # UX Design Specification dumtasking
 
-**Author:** Tmtmt
+**Author:** mthangtr
 **Date:** 2026-01-17
 
 ---
@@ -92,7 +92,7 @@ dumtasking is designed for people managing 2-5 major life goals simultaneously�
 - Prefer AI assistance integrated seamlessly, not bolt-on features
 - Web-first workflow (productivity tools are part of daily work ritual like email)
 
-**Primary Persona - Tmtmt (Multi-Goal Builder):**
+**Primary Persona - mthangtr (Multi-Goal Builder):**
 - 25, Fresher Developer + Startup Founder + Japanese N3 Learner
 - Pain: "Focus vào 1 cái thì bỏ qua 2 cái" → 2 months neglecting Japanese when focused on startup
 - Need: AI orchestrator that balances all 3 goals automatically without manual planning

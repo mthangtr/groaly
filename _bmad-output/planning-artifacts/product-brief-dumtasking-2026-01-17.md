@@ -3,7 +3,7 @@ stepsCompleted: [1, 2, 3, 4, 5]
 inputDocuments: 
   - docs/brainstorm.md
 date: 2026-01-17
-author: Tmtmt
+author: mthangtr
 ---
 
 # Product Brief: dumtasking
@@ -208,7 +208,7 @@ Only tool that treats productivity as a human journey:
 
 ### User Personas
 
-#### Persona 1: Tmtmt - The Multi-Goal Builder
+#### Persona 1: mthangtr - The Multi-Goal Builder
 
 **Profile:**
 - Age: 25, Fresher Developer + Startup Founder
@@ -232,7 +232,7 @@ Only tool that treats productivity as a human journey:
 - Doesn't know how to orchestrate balance: "Không biết sắp xếp như nào"
 - Overwhelm prevents execution of well-intentioned plans
 
-**What Tmtmt Needs from dumtasking:**
+**What mthangtr Needs from dumtasking:**
 - **AI Orchestrator:** Automatically balances all 3 goals without manual planning
 - **Compassionate Reminders:** "Startup đang tốt! Nhưng 2 tháng rồi chưa học tiếng Nhật - 15 phút hôm nay?"
 - **Goal Distribution Insights:** "Startup 70%, Dev 20%, Japanese 10% this month → suggest rebalance?"
@@ -297,7 +297,7 @@ Opens dumtasking in the morning, sees balanced daily plan automatically generate
 
 1. **Open tabs ritual:** Gmail + Slack + dumtasking (becomes part of daily routine like checking email)
 2. **dumtasking Dashboard shows:**
-   - "Good morning Tmtmt! Here's your balanced focus for today:"
+   - "Good morning mthangtr! Here's your balanced focus for today:"
    - **Startup:** 2 tasks (4 hours) - meetings, customer calls
    - **Dev Learning:** 1 task (1 hour) - Java training module
    - **Japanese:** Quick review (15 min) - vocabulary flashcards
@@ -409,7 +409,7 @@ Opens dumtasking in the morning, sees balanced daily plan automatically generate
 
 Success for dumtasking is measured by one core outcome: **users consistently make progress on all their major life goals without neglect, overwhelm, or burnout**, while maintaining the flexibility to adapt when context changes.
 
-For our primary user (multi-goal individuals like Tmtmt), success means:
+For our primary user (multi-goal individuals like mthangtr), success means:
 - **Consistency:** All 3+ major goals receive attention regularly (no 2-month neglect)
 - **Completion:** Tasks and goals are completed, not just planned
 - **Adaptability:** When urgent tasks emerge (boss assigns rush work), the system reorganizes seamlessly while maintaining long-term goal progress
@@ -496,7 +496,7 @@ For our primary user (multi-goal individuals like Tmtmt), success means:
 **Definition:** Time allocation across major goals matches user's intended priorities.
 
 **Measurement:**
-- **Example Target for Tmtmt:** Startup 60%, Dev Learning 25%, Japanese 15%
+- **Example Target for mthangtr:** Startup 60%, Dev Learning 25%, Japanese 15%
 - **Tolerance:** ±10% variance acceptable
 - **Monthly Review:** User + AI discuss and adjust targets based on life context
 - **Success Indicator:** Actual distribution matches intended within tolerance 80%+ of the time
@@ -535,10 +535,10 @@ For our primary user (multi-goal individuals like Tmtmt), success means:
 
 #### Phase 1: Personal Validation (Months 1-3)
 
-**Objective:** Prove dumtasking solves the multi-goal orchestration problem for Tmtmt personally.
+**Objective:** Prove dumtasking solves the multi-goal orchestration problem for mthangtr personally.
 
 **Success Criteria:**
-1. **Personal Adoption:** Tmtmt uses dumtasking 5+ days/week for 3 consecutive months
+1. **Personal Adoption:** mthangtr uses dumtasking 5+ days/week for 3 consecutive months
 2. **Goal Neglect Eliminated:** Japanese N3 receives minimum 15 min daily (no more 2-month gaps)
 3. **Developer Joy:** Building and using dumtasking is energizing, not draining
 4. **Workflow Integration:** dumtasking replaces previous fragmented workflow (external AI + Notion/iPhone reminders)
@@ -611,7 +611,7 @@ For our primary user (multi-goal individuals like Tmtmt), success means:
 - ❌ **STOP (Fundamental Rethink):** If <3 metrics met - core assumptions may be wrong
 
 **Key Questions at 3 Months:**
-1. Is Tmtmt using dumtasking daily without forcing himself?
+1. Is mthangtr using dumtasking daily without forcing himself?
 2. Has goal neglect (Japanese) been eliminated?
 3. Does AI orchestration feel like magic or burden?
 4. Is completion rate meaningfully better than before?
@@ -660,7 +660,7 @@ If this metric is achieved, everything else (completion rates, engagement, comme
 
 **dumtasking MVP is a complete, production-ready application** designed for personal use validation, not a minimal proof-of-concept. The scope includes all features necessary to solve the multi-goal orchestration problem comprehensively, serving as:
 
-1. **Personal Productivity Solution:** Full feature set to solve Tmtmt's real workflow needs (not a toy)
+1. **Personal Productivity Solution:** Full feature set to solve mthangtr's real workflow needs (not a toy)
 2. **Coding Agent Capability Test:** Validates AI-assisted development with substantial, real-world scope
 3. **Portfolio Showcase:** Demonstrates full-stack + AI integration expertise with production-quality code
 

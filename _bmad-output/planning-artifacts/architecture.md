@@ -6,13 +6,13 @@ inputDocuments:
   - '_bmad-output/planning-artifacts/product-brief-dumtasking-2026-01-17.md'
 workflowType: 'architecture'
 project_name: 'dumtasking'
-user_name: 'Tmtmt'
+user_name: 'mthangtr'
 date: '2026-01-18'
 ---
 
 # Architecture Decision Document - dumtasking
 
-**Author:** Tmtmt  
+**Author:** mthangtr  
 **Date:** 2026-01-18  
 **Status:** Draft  
 **Version:** 1.0
