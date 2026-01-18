@@ -204,7 +204,7 @@ bv --robot-triage | jq '.recommendations[0]'  # Highest-impact task
 bv --robot-insights | jq '.Cycles'             # Check circular deps
 ```
 
-**Full docs:** `.beads/BV_GUIDE.md` and `.beads/BD_GUIDE.md`
+**Full docs:** `.docs\workflow-setup/BV_GUIDE.md` and `.docs\workflow-setup/BD_GUIDE.md`
 
 ### Workflow Pattern
 
@@ -316,5 +316,5 @@ release_file_reservations(paths: ["src/components/**"])
 - `macro_start_session`: Register + reserve + inbox in one call
 - `macro_file_reservation_cycle`: Reserve → work → auto-release
 
-**📚 Full guide**: See `./beads/AM_GUIDE.md` for examples, troubleshooting, and advanced patterns.
+**📚 Full guide**: See `./docs\workflow-setup/AM_GUIDE.md` for examples, troubleshooting, and advanced patterns.
 
