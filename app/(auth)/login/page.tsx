@@ -3,7 +3,10 @@
 import * as React from "react"
 import { createClient } from "@/lib/supabase/client"
 import { cn } from "@/lib/utils"
-import { Lock, Mail, Loader2 } from "lucide-react"
+import { Mail, Loader2, Sparkles, CheckCircle2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 export default function LoginPage() {
   const [email, setEmail] = React.useState("")
@@ -30,7 +33,6 @@ export default function LoginPage() {
         setError(signInError.message)
       } else {
         setSuccess(true)
-        setEmail("")
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
@@ -40,180 +42,176 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen grid md:grid-cols-2 bg-zinc-50">
-      {/* Left Panel - Branding */}
-      <div className="hidden md:flex md:flex-col md:justify-between bg-gradient-to-br from-zinc-900 to-zinc-800 p-12 text-white">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-              <Lock className="w-6 h-6" />
+    <div className="grid min-h-svh lg:grid-cols-2">
+      {/* Left Column - Login Form */}
+      <div className="flex flex-col gap-4 p-6 md:p-10">
+        {/* Header with Logo */}
+        <div className="flex justify-center gap-2 md:justify-start">
+          <a href="/" className="flex items-center gap-2 font-medium">
+            <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+              <Sparkles className="size-4" />
             </div>
-            <h1 className="text-2xl font-bold tracking-tight">DumTasking</h1>
-          </div>
+            dumtasking
+          </a>
         </div>
 
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-bold tracking-tight">
-              Focus on what matters
-            </h2>
-            <p className="text-zinc-400">
-              A productivity system designed for deep work, task management, and weekly reflection.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            {[
-              { title: "Protected Focus", desc: "Block time for important work" },
-              { title: "Smart Tasks", desc: "Organize with priorities and tracking" },
-              { title: "Weekly Reviews", desc: "Reflect and plan for next week" },
-            ].map((item) => (
-              <div key={item.title} className="flex gap-3">
-                <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <div className="w-2 h-2 rounded-full bg-blue-400" />
-                </div>
-                <div>
-                  <p className="font-medium text-white">{item.title}</p>
-                  <p className="text-sm text-zinc-400">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <p className="text-xs text-zinc-500">
-          © 2026 DumTasking. All rights reserved.
-        </p>
-      </div>
-
-      {/* Right Panel - Login Form */}
-      <div className="flex flex-col justify-center px-6 md:px-12 py-12">
-        <div className="w-full max-w-sm mx-auto space-y-8">
-          {/* Mobile Header */}
-          <div className="md:hidden text-center space-y-2">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                <Lock className="w-6 h-6 text-white" />
-              </div>
-            </div>
-            <h1 className="text-3xl font-bold text-zinc-900">DumTasking</h1>
-            <p className="text-zinc-600">Sign in to your account</p>
-          </div>
-
-          {/* Desktop Header */}
-          <div className="hidden md:space-y-2 md:block">
-            <h2 className="text-3xl font-bold text-zinc-900">Sign in</h2>
-            <p className="text-zinc-600">
-              Enter your email to receive a magic link
-            </p>
-          </div>
-
-          {success ? (
-            <div className="space-y-4 bg-green-50 border border-green-200 rounded-xl p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <p className="font-semibold text-green-900">Check your email</p>
-                  <p className="text-sm text-green-700">
-                    We&apos;ve sent a magic link to <span className="font-medium">{email}</span>
+        {/* Form Container */}
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-xs">
+            {/* Success State */}
+            {success ? (
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-2 text-center">
+                  <h1 className="text-2xl font-bold">Check your email</h1>
+                  <p className="text-balance text-sm text-muted-foreground">
+                    We&apos;ve sent a magic link to{" "}
+                    <span className="font-medium text-foreground">{email}</span>
                   </p>
                 </div>
+                <div className="space-y-4 rounded-lg border bg-card p-6 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                      <CheckCircle2 className="size-5 text-primary" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">Magic link sent</p>
+                      <p className="text-sm text-muted-foreground">
+                        Click the link in your email to sign in
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSuccess(false)
+                      setEmail("")
+                    }}
+                    className="w-full"
+                  >
+                    Try another email
+                  </Button>
+                </div>
               </div>
-              <button
-                onClick={() => setSuccess(false)}
-                className="text-sm font-medium text-green-700 hover:text-green-800 underline"
-              >
-                Try another email
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-zinc-900"
-                >
-                  Email address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-400" />
-                  <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={isLoading}
-                    required
-                    autoComplete="email"
-                    className={cn(
-                      "w-full pl-10 pr-4 py-2.5 border rounded-lg text-sm font-medium",
-                      "placeholder:text-zinc-400 text-zinc-900",
-                      "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
-                      "disabled:bg-zinc-100 disabled:text-zinc-500 disabled:cursor-not-allowed",
-                      "transition-colors",
-                      error && "border-red-500 focus:ring-red-500"
+            ) : (
+              /* Login Form */
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                <div className="flex flex-col gap-2 text-center">
+                  <h1 className="text-2xl font-bold">Login to your account</h1>
+                  <p className="text-balance text-sm text-muted-foreground">
+                    Enter your email below to receive a magic link
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        disabled={isLoading}
+                        required
+                        autoComplete="email"
+                        placeholder="m@example.com"
+                        className={cn("pl-9", error && "border-destructive")}
+                      />
+                    </div>
+                  </div>
+
+                  {error && (
+                    <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
+                      <p className="text-sm text-destructive">{error}</p>
+                    </div>
+                  )}
+
+                  <Button
+                    type="submit"
+                    disabled={isLoading || !email}
+                    className="w-full"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 size-4 animate-spin" />
+                        Sending magic link...
+                      </>
+                    ) : (
+                      "Send magic link"
                     )}
-                    placeholder="you@example.com"
-                  />
+                  </Button>
                 </div>
+
+                <div className="text-center text-sm text-muted-foreground">
+                  By signing in, you agree to our{" "}
+                  <a
+                    href="#"
+                    className="underline underline-offset-4 hover:text-foreground"
+                  >
+                    Terms
+                  </a>{" "}
+                  and{" "}
+                  <a
+                    href="#"
+                    className="underline underline-offset-4 hover:text-foreground"
+                  >
+                    Privacy Policy
+                  </a>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column - Cover Image / Features */}
+      <div className="relative hidden bg-muted lg:block">
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-10">
+          <div className="max-w-md space-y-6">
+            {/* Quote Section */}
+            <div className="space-y-2 rounded-lg border border-dashed bg-background/50 p-6 backdrop-blur-sm">
+              <Sparkles className="mx-auto size-5 text-muted-foreground/70" />
+              <blockquote className="text-center text-sm italic text-foreground">
+                &ldquo;Dump your notes, AI Agents handle the rest&rdquo;
+              </blockquote>
+            </div>
+
+            {/* Features List */}
+            <div className="space-y-3 rounded-lg border bg-background/50 p-6 backdrop-blur-sm">
+              <p className="text-sm font-medium">What you&apos;ll get:</p>
+              <div className="space-y-3">
+                {[
+                  {
+                    title: "AI-Powered Extraction",
+                    desc: "Transform notes into structured tasks automatically",
+                  },
+                  {
+                    title: "Smart Scheduling",
+                    desc: "Daily suggestions based on priorities and energy",
+                  },
+                  {
+                    title: "Focus Mode",
+                    desc: "Pomodoro timer with ambient sounds",
+                  },
+                  {
+                    title: "Weekly Insights",
+                    desc: "AI-generated reviews and patterns",
+                  },
+                ].map((feature) => (
+                  <div key={feature.title} className="flex gap-3">
+                    <div className="mt-0.5 size-1.5 shrink-0 rounded-full bg-primary" />
+                    <div>
+                      <p className="text-sm font-medium">{feature.title}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {feature.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-
-              {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm">
-                  <p className="text-red-800">{error}</p>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={isLoading || !email}
-                className={cn(
-                  "w-full px-4 py-2.5 rounded-lg font-medium text-white transition-all",
-                  "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
-                  "text-sm font-semibold",
-                  isLoading || !email
-                    ? "bg-zinc-300 cursor-not-allowed"
-                    : "bg-zinc-900 hover:bg-zinc-800 active:bg-zinc-950"
-                )}
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Sending magic link...
-                  </span>
-                ) : (
-                  "Send magic link"
-                )}
-              </button>
-            </form>
-          )}
-
-          {/* Footer */}
-          <div className="text-center text-xs text-zinc-500">
-            <p>
-              By signing in, you agree to our{" "}
-              <a href="#" className="hover:text-zinc-700 underline">
-                Terms of Service
-              </a>{" "}
-              and{" "}
-              <a href="#" className="hover:text-zinc-700 underline">
-                Privacy Policy
-              </a>
-            </p>
+            </div>
           </div>
         </div>
       </div>
