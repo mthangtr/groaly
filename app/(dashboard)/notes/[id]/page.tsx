@@ -4,6 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { formatDistanceToNow } from "date-fns"
+import { toast } from "sonner"
 import {
   ArrowLeft,
   Sparkles,
@@ -13,9 +14,7 @@ import {
   Loader2,
 } from "lucide-react"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import type { Note } from "@/types/note"
+import type { ExtractTasksResponse } from "@/lib/ai/schemas"
 
 export default function NoteEditorPage() {
   const params = useParams()
@@ -37,6 +37,7 @@ export default function NoteEditorPage() {
   const [isSaved, setIsSaved] = React.useState(true)
   const [title, setTitle] = React.useState("")
   const [content, setContent] = React.useState("")
+  const [isExtracting, setIsExtracting] = React.useState(false)
 
   // Fetch note on mount
   React.useEffect(() => {
@@ -91,6 +92,116 @@ export default function NoteEditorPage() {
     return () => clearTimeout(timeout)
   }, [note, noteId, title, content, isSaved])
 
+  // Handle "Plan this" - extract tasks from note using AI
+  const handlePlanThis = React.useCallback(async () => {
+    if (isExtracting || !content.trim()) {
+      if (!content.trim()) {
+        toast.warning("Nothing to plan", {
+          description: "Add some content to your note first.",
+        })
+      }
+      return
+    }
+
+    setIsExtracting(true)
+    const toastId = toast.loading("Analyzing your note with AI...")
+
+    try {
+      // Step 1: Extract tasks using AI
+      const extractRes = await fetch("/api/ai/extract-tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ note_id: noteId, content }),
+      })
+
+      if (!extractRes.ok) {
+        const errorData = await extractRes.json().catch(() => ({}))
+        throw new Error(errorData.error || `Failed to extract tasks (${extractRes.status})`)
+      }
+
+      const { tasks, reasoning } = (await extractRes.json()) as ExtractTasksResponse
+
+      if (tasks.length === 0) {
+        toast.info("No tasks found", {
+          id: toastId,
+          description: "AI couldn't identify any actionable tasks in this note.",
+        })
+        return
+      }
+
+      // Step 2: Create tasks in database
+      let createdCount = 0
+      const failedTasks: string[] = []
+
+      for (const task of tasks) {
+        try {
+          const createRes = await fetch("/api/tasks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: task.title,
+              description: task.description,
+              priority: task.priority,
+              due_date: task.due_date,
+              tags: task.tags,
+              metadata: {
+                source_note_id: noteId,
+                estimated_minutes: task.estimated_minutes,
+                ai_extracted: true,
+              },
+            }),
+          })
+
+          if (createRes.ok) {
+            createdCount++
+          } else {
+            failedTasks.push(task.title)
+          }
+        } catch {
+          failedTasks.push(task.title)
+        }
+      }
+
+      if (createdCount > 0) {
+        toast.success(`Created ${createdCount} task${createdCount > 1 ? "s" : ""}`, {
+          id: toastId,
+          description: reasoning,
+          action: {
+            label: "View tasks",
+            onClick: () => router.push("/kanban"),
+          },
+        })
+      }
+
+      if (failedTasks.length > 0) {
+        toast.warning(`${failedTasks.length} task(s) failed to create`, {
+          description: failedTasks.slice(0, 3).join(", ") + (failedTasks.length > 3 ? "..." : ""),
+        })
+      }
+    } catch (err) {
+      console.error("Error in Plan this:", err)
+      toast.error("Failed to extract tasks", {
+        id: toastId,
+        description: err instanceof Error ? err.message : "Please try again later.",
+      })
+    } finally {
+      setIsExtracting(false)
+    }
+  }, [content, isExtracting, noteId, router])
+
+  // Keyboard shortcut: Cmd/Ctrl+Shift+P for "Plan this"
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === "p") {
+        e.preventDefault()
+        handlePlanThis()
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [handlePlanThis])
+
   if (isLoading) {
     return (
       <div className="flex h-dvh items-center justify-center">
@@ -137,9 +248,20 @@ export default function NoteEditorPage() {
               Saving...
             </span>
           )}
-          <Button variant="outline" size="sm" className="gap-1.5">
-            <Sparkles className="size-3.5" />
-            Plan this
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            onClick={handlePlanThis}
+            disabled={isExtracting}
+            title="Extract tasks from note (Ctrl+Shift+P)"
+          >
+            {isExtracting ? (
+              <Loader2 className="size-3.5 animate-spin" />
+            ) : (
+              <Sparkles className="size-3.5" />
+            )}
+            {isExtracting ? "Planning..." : "Plan this"}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger
@@ -153,7 +275,7 @@ export default function NoteEditorPage() {
               <DropdownMenuItem>Export</DropdownMenuItem>
               <DropdownMenuItem>Share</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 className="text-destructive"
                 onClick={async () => {
                   if (confirm("Are you sure you want to delete this note?")) {

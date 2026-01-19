@@ -28,23 +28,80 @@ const quickActions = [
   { label: "/balance", description: "Check goal balance" },
 ]
 
-const initialMessages: Message[] = [
-  {
-    id: "1",
-    role: "assistant",
-    content:
-      "Hey! I'm your AI assistant. I can help you plan tasks, optimize your schedule, and keep your goals balanced. What would you like to do?",
-    timestamp: new Date(),
-  },
-]
+const STORAGE_KEY = "dumtasking-chat-history"
+
+// Load messages from localStorage
+function loadMessages(): Message[] {
+  if (typeof window === "undefined") return []
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      const parsed = JSON.parse(stored)
+      return parsed.map((msg: Message) => ({
+        ...msg,
+        timestamp: new Date(msg.timestamp),
+      }))
+    }
+  } catch {
+    console.error("Failed to load chat history")
+  }
+  return []
+}
+
+// Save messages to localStorage
+function saveMessages(messages: Message[]) {
+  if (typeof window === "undefined") return
+  try {
+    // Only save last 50 messages to avoid storage limits
+    const toSave = messages.slice(-50)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
+  } catch {
+    console.error("Failed to save chat history")
+  }
+}
 
 export function AIChatWidget() {
   const [isOpen, setIsOpen] = React.useState(false)
   const [isMinimized, setIsMinimized] = React.useState(false)
-  const [messages, setMessages] = React.useState<Message[]>(initialMessages)
+  const [messages, setMessages] = React.useState<Message[]>([])
   const [input, setInput] = React.useState("")
   const [isLoading, setIsLoading] = React.useState(false)
+  const [streamingContent, setStreamingContent] = React.useState("")
   const scrollRef = React.useRef<HTMLDivElement>(null)
+  const abortControllerRef = React.useRef<AbortController | null>(null)
+
+  // Load messages on mount
+  React.useEffect(() => {
+    const loaded = loadMessages()
+    if (loaded.length > 0) {
+      setMessages(loaded)
+    } else {
+      // Add initial greeting if no history
+      setMessages([
+        {
+          id: "init",
+          role: "assistant",
+          content:
+            "Hey! I'm your AI assistant. I can help you plan tasks, optimize your schedule, and keep your goals balanced. What would you like to do?",
+          timestamp: new Date(),
+        },
+      ])
+    }
+  }, [])
+
+  // Save messages when they change
+  React.useEffect(() => {
+    if (messages.length > 0) {
+      saveMessages(messages)
+    }
+  }, [messages])
+
+  // Auto scroll to bottom
+  React.useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
+  }, [messages, streamingContent])
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return
@@ -59,29 +116,104 @@ export function AIChatWidget() {
     setMessages((prev) => [...prev, userMessage])
     setInput("")
     setIsLoading(true)
+    setStreamingContent("")
 
-    // Simulate AI response
-    setTimeout(() => {
+    // Create abort controller for this request
+    abortControllerRef.current = new AbortController()
+
+    try {
+      // Build messages for API in correct format
+      const apiMessages = [...messages, userMessage].map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }))
+
+      const response = await fetch("/api/ai/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: apiMessages,
+          contextMode: "default",
+        }),
+        signal: abortControllerRef.current.signal,
+      })
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`)
+      }
+
+      // Handle streaming response
+      const reader = response.body?.getReader()
+      if (!reader) {
+        throw new Error("No response body")
+      }
+
+      const decoder = new TextDecoder()
+      let accumulated = ""
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value, { stream: true })
+        accumulated += chunk
+        setStreamingContent(accumulated)
+      }
+
+      // Add completed assistant message
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: getAIResponse(input),
+        content: accumulated || "I couldn't generate a response. Please try again.",
         timestamp: new Date(),
       }
       setMessages((prev) => [...prev, aiMessage])
+      setStreamingContent("")
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") {
+        // Request was aborted, don't show error
+        return
+      }
+
+      console.error("Chat error:", error)
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content:
+          "Sorry, I encountered an error. Please check your connection and try again.",
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
       setIsLoading(false)
-    }, 1000)
+      setStreamingContent("")
+      abortControllerRef.current = null
+    }
   }
 
   const handleQuickAction = (action: string) => {
     setInput(action)
   }
 
-  React.useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+  const handleClearHistory = () => {
+    setMessages([
+      {
+        id: "init",
+        role: "assistant",
+        content: "Chat history cleared. How can I help you today?",
+        timestamp: new Date(),
+      },
+    ])
+    localStorage.removeItem(STORAGE_KEY)
+  }
+
+  // Cancel streaming on close
+  const handleClose = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
     }
-  }, [messages])
+    setIsOpen(false)
+  }
 
   if (!isOpen) {
     return (
@@ -113,7 +245,9 @@ export function AIChatWidget() {
           </div>
           <div>
             <p className="text-sm font-medium">AI Assistant</p>
-            <p className="text-[10px] text-muted-foreground">Always here to help</p>
+            <p className="text-[10px] text-muted-foreground">
+              {isLoading ? "Thinking..." : "Always here to help"}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-1">
@@ -139,7 +273,7 @@ export function AIChatWidget() {
             className="size-8"
             onClick={(e) => {
               e.stopPropagation()
-              setIsOpen(false)
+              handleClose()
             }}
           >
             <X className="size-4" />
@@ -162,7 +296,7 @@ export function AIChatWidget() {
                 >
                   <div
                     className={cn(
-                      "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm",
+                      "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap",
                       message.role === "user"
                         ? "bg-foreground text-background rounded-br-md"
                         : "bg-muted rounded-bl-md"
@@ -172,7 +306,16 @@ export function AIChatWidget() {
                   </div>
                 </div>
               ))}
-              {isLoading && (
+              {/* Streaming message */}
+              {streamingContent && (
+                <div className="flex justify-start">
+                  <div className="max-w-[80%] bg-muted rounded-2xl rounded-bl-md px-4 py-2.5 text-sm whitespace-pre-wrap">
+                    {streamingContent}
+                    <span className="inline-block w-1.5 h-4 ml-1 bg-foreground/50 animate-pulse" />
+                  </div>
+                </div>
+              )}
+              {isLoading && !streamingContent && (
                 <div className="flex justify-start">
                   <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-2.5">
                     <Loader2 className="size-4 animate-spin" />
@@ -191,11 +334,24 @@ export function AIChatWidget() {
                     key={action.label}
                     onClick={() => handleQuickAction(action.label)}
                     className="px-2.5 py-1 rounded-full border text-xs hover:bg-muted transition-colors"
+                    title={action.description}
                   >
                     {action.label}
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Clear history button */}
+          {messages.length > 5 && (
+            <div className="px-4 pb-2">
+              <button
+                onClick={handleClearHistory}
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Clear history
+              </button>
             </div>
           )}
 
@@ -230,27 +386,4 @@ export function AIChatWidget() {
       )}
     </div>
   )
-}
-
-// Mock AI responses
-function getAIResponse(input: string): string {
-  const lowerInput = input.toLowerCase()
-
-  if (lowerInput.includes("/plan-week") || lowerInput.includes("plan week")) {
-    return "I've analyzed your tasks and goals. Here's your optimized week:\n\n**Monday-Wednesday:** Focus on Startup tasks (pitch deck, customer calls)\n**Thursday:** Dev Learning block (Spring Boot module)\n**Friday:** Mixed day with Japanese practice + lighter tasks\n\nShall I create these time blocks in your calendar?"
-  }
-
-  if (lowerInput.includes("/whats-next") || lowerInput.includes("next task")) {
-    return "Based on your current energy and priorities, I recommend:\n\n**Review customer feedback** (45 min, High priority)\n\nThis aligns with your Startup goal and you typically do analytical tasks well in the morning. Ready to start Focus Mode?"
-  }
-
-  if (lowerInput.includes("/optimize") || lowerInput.includes("optimize")) {
-    return "Looking at today's schedule, I see some opportunities:\n\n1. Move the pitch deck work to morning (you're more creative then)\n2. Stack the quick tasks (emails, reviews) after lunch\n3. Save Japanese practice for evening wind-down\n\nWant me to apply these changes?"
-  }
-
-  if (lowerInput.includes("/balance") || lowerInput.includes("goal")) {
-    return "Your current goal distribution:\n\n**Startup:** 65% (target: 60%)\n**Dev Learning:** 22% (target: 25%)\n**Japanese N3:** 13% (target: 15%)\n\nYou're slightly over-indexing on Startup. Consider adding a 15-min Japanese session today to balance things out."
-  }
-
-  return "I understand you want to " + input + ". Let me help you with that. Would you like me to create tasks, schedule time blocks, or suggest optimizations for this?"
 }

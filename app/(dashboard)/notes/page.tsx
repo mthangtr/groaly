@@ -4,11 +4,11 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 import { Plus, Sparkles, FileText, Loader2 } from "lucide-react"
 
-import { cn } from "@/lib/utils"
-import { philosophicalQuotes, getDailySuggestions } from "@/lib/mock-data"
+import { philosophicalQuotes } from "@/lib/mock-data"
 import { Button } from "@/components/ui/button"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { NotesList } from "@/components/notes/NotesList"
+import { DailySuggestions } from "@/components/ai/daily-suggestions"
 import type { Note, NotesListResponse, NoteResponse } from "@/types/note"
 
 export default function NotesPage() {
@@ -19,9 +19,8 @@ export default function NotesPage() {
   const [isLoading, setIsLoading] = React.useState(true)
   const [isCreating, setIsCreating] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
-  
+
   const todayQuote = philosophicalQuotes[0]
-  const suggestions = getDailySuggestions()
 
   // Fetch notes on mount and when search changes
   React.useEffect(() => {
@@ -29,14 +28,14 @@ export default function NotesPage() {
       try {
         setIsLoading(true)
         setError(null)
-        
+
         const params = new URLSearchParams()
         if (search.trim()) {
           params.set("search", search.trim())
         }
-        
+
         const response = await fetch(`/api/notes?${params.toString()}`)
-        
+
         if (!response.ok) {
           if (response.status === 401) {
             // User not authenticated, redirect to login
@@ -45,7 +44,7 @@ export default function NotesPage() {
           }
           throw new Error("Failed to fetch notes")
         }
-        
+
         const data: NotesListResponse = await response.json()
         setNotes(data.notes)
         setCount(data.count)
@@ -67,7 +66,7 @@ export default function NotesPage() {
     try {
       setIsCreating(true)
       setError(null)
-      
+
       const response = await fetch("/api/notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -76,7 +75,7 @@ export default function NotesPage() {
           content: "",
         }),
       })
-      
+
       if (!response.ok) {
         if (response.status === 401) {
           router.push("/login")
@@ -84,7 +83,7 @@ export default function NotesPage() {
         }
         throw new Error("Failed to create note")
       }
-      
+
       const data: NoteResponse = await response.json()
       // Navigate to the new note
       router.push(`/notes/${data.note.id}`)
@@ -102,7 +101,7 @@ export default function NotesPage() {
       const response = await fetch(`/api/notes/${id}`, {
         method: "DELETE",
       })
-      
+
       if (!response.ok) {
         if (response.status === 401) {
           router.push("/login")
@@ -110,7 +109,7 @@ export default function NotesPage() {
         }
         throw new Error("Failed to delete note")
       }
-      
+
       // Remove from local state
       setNotes((prev) => prev.filter((note) => note.id !== id))
       setCount((prev) => prev - 1)
@@ -124,7 +123,7 @@ export default function NotesPage() {
   const handleDuplicateNote = async (note: Note) => {
     try {
       setError(null)
-      
+
       const response = await fetch("/api/notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -134,7 +133,7 @@ export default function NotesPage() {
           metadata: note.metadata,
         }),
       })
-      
+
       if (!response.ok) {
         if (response.status === 401) {
           router.push("/login")
@@ -142,7 +141,7 @@ export default function NotesPage() {
         }
         throw new Error("Failed to duplicate note")
       }
-      
+
       const data: NoteResponse = await response.json()
       // Add to beginning of list
       setNotes((prev) => [data.note, ...prev])
@@ -164,9 +163,9 @@ export default function NotesPage() {
             {count} {count === 1 ? "note" : "notes"}
           </span>
         </div>
-        <Button 
-          size="sm" 
-          className="gap-1.5" 
+        <Button
+          size="sm"
+          className="gap-1.5"
           onClick={handleCreateNote}
           disabled={isCreating}
         >
@@ -232,41 +231,12 @@ export default function NotesPage() {
                 </div>
 
                 {/* Daily Suggestions */}
-                <div className="space-y-3">
-                  <h3 className="text-sm font-medium text-muted-foreground">
-                    Today&apos;s Suggestions
-                  </h3>
-                  <div className="space-y-2">
-                    {suggestions.map((task) => (
-                      <div
-                        key={task.id}
-                        className="flex items-center gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-muted/50"
-                      >
-                        <div
-                          className={cn(
-                            "size-2 rounded-full shrink-0",
-                            task.priority === "urgent" && "bg-red-500",
-                            task.priority === "high" && "bg-orange-500",
-                            task.priority === "medium" && "bg-yellow-500",
-                            task.priority === "low" && "bg-zinc-400"
-                          )}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{task.title}</p>
-                          <p className="text-xs text-muted-foreground">{task.goal}</p>
-                        </div>
-                        <Button size="sm" variant="ghost" className="shrink-0">
-                          Start
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <DailySuggestions />
 
                 {/* Quick Action */}
                 <p className="text-xs text-muted-foreground">
                   Select a note or{" "}
-                  <button 
+                  <button
                     className="text-foreground underline underline-offset-2 hover:no-underline"
                     onClick={handleCreateNote}
                     disabled={isCreating}
