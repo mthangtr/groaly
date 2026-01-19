@@ -44,3 +44,6 @@ next-env.d.ts
 .bv/
 # bd worktree
 .worktrees\mvp-implementation/
+
+# Supabase local dev
+.supabase/
