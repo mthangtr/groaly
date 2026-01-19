@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { formatDistanceToNow } from "date-fns"
 import {
   ArrowLeft,
@@ -10,10 +10,10 @@ import {
   CheckCircle2,
   Clock,
   MoreHorizontal,
+  Loader2,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { mockNotes, mockTasks } from "@/lib/mock-data"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -24,19 +24,90 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import type { Note } from "@/types/note"
 
 export default function NoteEditorPage() {
   const params = useParams()
+  const router = useRouter()
   const noteId = params.id as string
-  const note = mockNotes.find((n) => n.id === noteId)
-  const linkedTasks = mockTasks.filter((t) => t.note_id === noteId)
 
+  const [note, setNote] = React.useState<Note | null>(null)
+  const [isLoading, setIsLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
   const [isSaved, setIsSaved] = React.useState(true)
+  const [title, setTitle] = React.useState("")
+  const [content, setContent] = React.useState("")
 
-  if (!note) {
+  // Fetch note on mount
+  React.useEffect(() => {
+    async function fetchNote() {
+      try {
+        const res = await fetch(`/api/notes/${noteId}`)
+        if (!res.ok) {
+          if (res.status === 404) {
+            setError("Note not found")
+          } else {
+            setError("Failed to load note")
+          }
+          return
+        }
+        const data = await res.json()
+        setNote(data.note)
+        setTitle(data.note.title)
+        setContent(data.note.content)
+      } catch (err) {
+        console.error("Error fetching note:", err)
+        setError("Failed to load note")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchNote()
+  }, [noteId])
+
+  // Auto-save debounced
+  React.useEffect(() => {
+    if (!note || isSaved) return
+
+    const timeout = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/notes/${noteId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, content }),
+        })
+
+        if (res.ok) {
+          setIsSaved(true)
+          const data = await res.json()
+          setNote(data.note)
+        }
+      } catch (err) {
+        console.error("Error saving note:", err)
+      }
+    }, 2000)
+
+    return () => clearTimeout(timeout)
+  }, [note, noteId, title, content, isSaved])
+
+  if (isLoading) {
     return (
       <div className="flex h-dvh items-center justify-center">
-        <p className="text-muted-foreground">Note not found</p>
+        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+      </div>
+    )
+  }
+
+  if (error || !note) {
+    return (
+      <div className="flex h-dvh items-center justify-center">
+        <div className="text-center space-y-2">
+          <p className="text-muted-foreground">{error || "Note not found"}</p>
+          <Button variant="outline" size="sm" onClick={() => router.push("/notes")}>
+            Back to Notes
+          </Button>
+        </div>
       </div>
     )
   }
@@ -63,7 +134,7 @@ export default function NoteEditorPage() {
           ) : (
             <span className="flex items-center gap-1 text-xs text-yellow-600">
               <Clock className="size-3" />
-              Unsaved changes
+              Saving...
             </span>
           )}
           <Button variant="outline" size="sm" className="gap-1.5">
@@ -82,7 +153,15 @@ export default function NoteEditorPage() {
               <DropdownMenuItem>Export</DropdownMenuItem>
               <DropdownMenuItem>Share</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive">
+              <DropdownMenuItem 
+                className="text-destructive"
+                onClick={async () => {
+                  if (confirm("Are you sure you want to delete this note?")) {
+                    await fetch(`/api/notes/${noteId}`, { method: "DELETE" })
+                    router.push("/notes")
+                  }
+                }}
+              >
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -97,93 +176,50 @@ export default function NoteEditorPage() {
             {/* Title */}
             <input
               type="text"
-              defaultValue={note.title}
-              onChange={() => setIsSaved(false)}
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value)
+                setIsSaved(false)
+              }}
               className="w-full bg-transparent text-2xl font-semibold tracking-tight outline-none placeholder:text-muted-foreground/50"
               placeholder="Untitled"
             />
 
             {/* Meta */}
             <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
-              <span>
-                Created{" "}
-                {formatDistanceToNow(new Date(note.created_at), {
-                  addSuffix: true,
-                })}
-              </span>
-              <span>·</span>
-              <span>
-                Updated{" "}
-                {formatDistanceToNow(new Date(note.updated_at), {
-                  addSuffix: true,
-                })}
-              </span>
+              {note.created_at && (
+                <>
+                  <span>
+                    Created{" "}
+                    {formatDistanceToNow(new Date(note.created_at), {
+                      addSuffix: true,
+                    })}
+                  </span>
+                  <span>·</span>
+                </>
+              )}
+              {note.updated_at && (
+                <span>
+                  Updated{" "}
+                  {formatDistanceToNow(new Date(note.updated_at), {
+                    addSuffix: true,
+                  })}
+                </span>
+              )}
             </div>
 
             {/* Content Editor (placeholder for Tiptap) */}
-            <div
-              className="mt-8 min-h-[400px] prose prose-zinc dark:prose-invert prose-sm max-w-none"
-              contentEditable
-              suppressContentEditableWarning
-              onInput={() => setIsSaved(false)}
-            >
-              <p>{note.content_preview}</p>
-              <p className="text-muted-foreground">
-                Start typing to add more content... (Rich text editor will be
-                integrated here with Tiptap)
-              </p>
-            </div>
+            <textarea
+              value={content}
+              onChange={(e) => {
+                setContent(e.target.value)
+                setIsSaved(false)
+              }}
+              className="mt-8 w-full min-h-[400px] bg-transparent outline-none resize-none placeholder:text-muted-foreground/50"
+              placeholder="Start typing your note..."
+            />
           </div>
         </div>
-
-        {/* Sidebar - Linked Tasks */}
-        {linkedTasks.length > 0 && (
-          <div className="w-72 border-l overflow-auto">
-            <div className="p-4">
-              <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
-                Linked Tasks ({linkedTasks.length})
-              </h3>
-              <div className="space-y-2">
-                {linkedTasks.map((task) => (
-                  <div
-                    key={task.id}
-                    className="rounded-lg border p-3 space-y-2 hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="flex items-start gap-2">
-                      <div
-                        className={cn(
-                          "size-2 rounded-full shrink-0 mt-1.5",
-                          task.priority === "urgent" && "bg-red-500",
-                          task.priority === "high" && "bg-orange-500",
-                          task.priority === "medium" && "bg-yellow-500",
-                          task.priority === "low" && "bg-zinc-400"
-                        )}
-                      />
-                      <span className="text-sm font-medium line-clamp-2">
-                        {task.title}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 pl-4">
-                      <Badge variant="outline" className="text-[10px] h-5">
-                        {task.status.replace("_", " ")}
-                      </Badge>
-                      {task.goal && (
-                        <Badge variant="secondary" className="text-[10px] h-5">
-                          {task.goal}
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="pl-4">
-                      <Button size="sm" variant="ghost" className="h-7 text-xs">
-                        Start Focus
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )
