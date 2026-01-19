@@ -4,6 +4,10 @@
     "supabase": {
       "type": "remote",
       "url": "https://mcp.supabase.com/mcp?project_ref=onwwkhxrtcnzpmmrprro",
+      "oauth": false,                
+      "headers": {
+        "Authorization": "Bearer sbp_e946e4fb483041d47c8697b6ccf56a7d19e179c3"
+      },
       "enabled": true
     },
     "shadcn": {
