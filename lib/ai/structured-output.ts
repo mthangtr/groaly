@@ -40,7 +40,7 @@ ${schemaDescription}
 No markdown code blocks, no explanation, just raw JSON.`.trim()
 
   const { text } = await generateText({
-    model: openrouter(model),
+    model: openrouter.chat(model),
     system: fullSystem,
     prompt,
   })

@@ -108,7 +108,7 @@ export async function POST(request: Request): Promise<Response> {
 
       // Stream the response
       const result = streamText({
-        model: openrouter("anthropic/claude-haiku-4.5"),
+        model: openrouter.chat("anthropic/claude-haiku-4.5"),
         system: systemPrompt,
         messages,
         tools,
