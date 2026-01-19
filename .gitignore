@@ -49,3 +49,4 @@ next-env.d.ts
 .supabase/
 # bd worktree
 .worktrees\planning-reorg/
+.worktrees/
