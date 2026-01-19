@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
+import { ensureUserExists } from "@/lib/supabase/ensure-user"
 import type {
   TasksListResponse,
   TaskResponse,
@@ -139,6 +140,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<TaskRespo
         { status: 401 }
       )
     }
+
+    // Ensure user exists in public.users (for foreign key constraint)
+    await ensureUserExists(supabase, user.id, user.email)
 
     // Parse request body
     let body: TaskCreateInput
