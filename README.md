@@ -22,6 +22,32 @@ bd close <id>         # Complete work
 - Never end session without `git push` (see SESSION_END.md)
 - Use `BEADS_DB=/tmp/test.db` for testing
 
+## Environment Setup
+
+Before running the application, you need to configure environment variables.
+
+### Quick Setup
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Fill in your credentials (see [docs/SETUP.md](docs/SETUP.md) for detailed instructions):
+   - **Supabase**: Get your project URL and API keys from [Supabase Dashboard](https://app.supabase.com)
+   - **OpenRouter**: Get your API key from [OpenRouter](https://openrouter.ai/keys)
+   - **Encryption Key**: Generate with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+
+3. See **[docs/SETUP.md](docs/SETUP.md)** for complete setup guide with step-by-step instructions.
+
+### Required Environment Variables
+
+- `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key (public)
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (server-only)
+- `OPENROUTER_API_KEY` - OpenRouter API key for AI features
+- `ENCRYPTION_KEY` - 32-byte hex string for encrypting sensitive data
+
 ## Getting Started
 
 First, run the development server:
