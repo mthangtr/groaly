@@ -58,7 +58,7 @@ type BulkActionsToolbarProps = {
 
 export function BulkActionsToolbar({
   selectedCount,
-  selectedIds,
+  selectedIds: _selectedIds,
   onBulkStatusChange,
   onBulkPriorityChange,
   onBulkReschedule,
@@ -68,14 +68,18 @@ export function BulkActionsToolbar({
   const [rescheduleDate, setRescheduleDate] = React.useState("")
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
 
-  const handleStatusChange = (status: string) => {
-    onBulkStatusChange(status as Task["status"])
-    toast.success(`Updated status for ${selectedCount} task${selectedCount > 1 ? "s" : ""}`)
+  const handleStatusChange = (status: string | null) => {
+    if (status) {
+      onBulkStatusChange(status as Task["status"])
+      toast.success(`Updated status for ${selectedCount} task${selectedCount > 1 ? "s" : ""}`)
+    }
   }
 
-  const handlePriorityChange = (priority: string) => {
-    onBulkPriorityChange(priority as Task["priority"])
-    toast.success(`Updated priority for ${selectedCount} task${selectedCount > 1 ? "s" : ""}`)
+  const handlePriorityChange = (priority: string | null) => {
+    if (priority) {
+      onBulkPriorityChange(priority as Task["priority"])
+      toast.success(`Updated priority for ${selectedCount} task${selectedCount > 1 ? "s" : ""}`)
+    }
   }
 
   const handleReschedule = () => {

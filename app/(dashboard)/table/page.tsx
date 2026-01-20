@@ -23,6 +23,14 @@ export default function TablePage() {
     setTasks((prev) => prev.filter((task) => !taskIds.includes(task.id)))
   }, [])
 
+  const handleBulkUpdate = React.useCallback((taskIds: string[], updates: Partial<Task>) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        taskIds.includes(task.id) ? { ...task, ...updates } : task
+      )
+    )
+  }, [])
+
   return (
     <div className="flex h-dvh flex-col">
       <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
@@ -45,6 +53,7 @@ export default function TablePage() {
           tasks={tasks}
           onTaskUpdate={handleTaskUpdate}
           onTaskDelete={handleTaskDelete}
+          onBulkUpdate={handleBulkUpdate}
         />
       </div>
     </div>

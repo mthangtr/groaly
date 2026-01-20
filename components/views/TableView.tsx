@@ -33,6 +33,9 @@ import {
   Eye,
   EyeOff,
   X,
+  Download,
+  FileSpreadsheet,
+  FileJson,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -60,6 +63,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { BulkActionsToolbar } from "@/components/views/BulkActionsToolbar"
+import { exportTasks, type ExportFormat } from "@/lib/export"
 
 const statusIcons = {
   todo: Circle,
@@ -98,6 +103,7 @@ type TableViewProps = {
   tasks: Task[]
   onTaskUpdate?: (taskId: string, updates: Partial<Task>) => void
   onTaskDelete?: (taskIds: string[]) => void
+  onBulkUpdate?: (taskIds: string[], updates: Partial<Task>) => void
 }
 
 const globalFilterFn: FilterFn<Task> = (row, _columnId, filterValue) => {
@@ -303,6 +309,100 @@ function DatePickerCell({
   )
 }
 
+function ExportButton({
+  tasks,
+  onExport,
+}: {
+  tasks: Task[]
+  onExport: (format: ExportFormat, dateFrom?: string, dateTo?: string) => void
+}) {
+  const [dateFrom, setDateFrom] = React.useState("")
+  const [dateTo, setDateTo] = React.useState("")
+
+  const handleExport = (format: ExportFormat) => {
+    onExport(format, dateFrom || undefined, dateTo || undefined)
+  }
+
+  return (
+    <Popover>
+      <PopoverTrigger
+        render={(props) => (
+          <Button {...props} variant="outline" size="sm" className="gap-1.5">
+            <Download className="size-3.5" />
+            Export
+          </Button>
+        )}
+      />
+      <PopoverContent align="end" className="w-56 p-3">
+        <div className="space-y-3">
+          <div className="text-xs font-medium">Export Options</div>
+
+          <div className="space-y-2">
+            <div className="text-xs text-muted-foreground">Date range (optional)</div>
+            <div className="flex items-center gap-2">
+              <Input
+                type="date"
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="h-7 text-xs"
+                placeholder="From"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Input
+                type="date"
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="h-7 text-xs"
+                placeholder="To"
+              />
+            </div>
+          </div>
+
+          <div className="text-xs text-muted-foreground">
+            {tasks.length} task{tasks.length !== 1 ? "s" : ""} in current view
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              className="justify-start gap-2"
+              onClick={() => handleExport("csv")}
+            >
+              <FileSpreadsheet className="size-3.5" />
+              Export as CSV
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="justify-start gap-2"
+              onClick={() => handleExport("json")}
+            >
+              <FileJson className="size-3.5" />
+              Export as JSON
+            </Button>
+          </div>
+
+          {(dateFrom || dateTo) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-xs"
+              onClick={() => {
+                setDateFrom("")
+                setDateTo("")
+              }}
+            >
+              Clear date filter
+            </Button>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
 function ColumnVisibilityToggle({
   table,
 }: {
@@ -437,7 +537,7 @@ function SortableHeader({
   )
 }
 
-export function TableView({ tasks, onTaskUpdate, onTaskDelete }: TableViewProps) {
+export function TableView({ tasks, onTaskUpdate, onTaskDelete, onBulkUpdate }: TableViewProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -475,6 +575,54 @@ export function TableView({ tasks, onTaskUpdate, onTaskDelete }: TableViewProps)
 
     return result
   }, [tasks, statusFilter, priorityFilter, goalFilter])
+
+  const selectedRowIds = React.useMemo(() => {
+    return Object.keys(rowSelection).filter((key) => rowSelection[key])
+  }, [rowSelection])
+
+  const selectedTaskIds = React.useMemo(() => {
+    return selectedRowIds.map((rowId) => {
+      const row = filteredTasks[parseInt(rowId)]
+      return row?.id
+    }).filter(Boolean) as string[]
+  }, [selectedRowIds, filteredTasks])
+
+  const handleBulkStatusChange = React.useCallback(
+    (status: Task["status"]) => {
+      onBulkUpdate?.(selectedTaskIds, { status })
+    },
+    [onBulkUpdate, selectedTaskIds]
+  )
+
+  const handleBulkPriorityChange = React.useCallback(
+    (priority: Task["priority"]) => {
+      onBulkUpdate?.(selectedTaskIds, { priority })
+    },
+    [onBulkUpdate, selectedTaskIds]
+  )
+
+  const handleBulkReschedule = React.useCallback(
+    (date: string | null) => {
+      onBulkUpdate?.(selectedTaskIds, { due_date: date ?? undefined })
+    },
+    [onBulkUpdate, selectedTaskIds]
+  )
+
+  const handleBulkDelete = React.useCallback(() => {
+    onTaskDelete?.(selectedTaskIds)
+    setRowSelection({})
+  }, [onTaskDelete, selectedTaskIds])
+
+  const handleClearSelection = React.useCallback(() => {
+    setRowSelection({})
+  }, [])
+
+  const handleExport = React.useCallback(
+    (format: ExportFormat, dateFrom?: string, dateTo?: string) => {
+      exportTasks(filteredTasks, { format, dateFrom, dateTo })
+    },
+    [filteredTasks]
+  )
 
   const columns = React.useMemo<ColumnDef<Task>[]>(
     () => [
@@ -739,14 +887,21 @@ export function TableView({ tasks, onTaskUpdate, onTaskDelete }: TableViewProps)
 
         <div className="flex-1" />
 
+        <ExportButton tasks={filteredTasks} onExport={handleExport} />
         <ColumnVisibilityToggle table={table} />
-
-        {selectedCount > 0 && (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span>{selectedCount} selected</span>
-          </div>
-        )}
       </div>
+
+      {selectedCount > 0 && (
+        <BulkActionsToolbar
+          selectedCount={selectedCount}
+          selectedIds={selectedTaskIds}
+          onBulkStatusChange={handleBulkStatusChange}
+          onBulkPriorityChange={handleBulkPriorityChange}
+          onBulkReschedule={handleBulkReschedule}
+          onBulkDelete={handleBulkDelete}
+          onClearSelection={handleClearSelection}
+        />
+      )}
 
       <div className="flex-1 overflow-auto">
         <table className="w-full">
