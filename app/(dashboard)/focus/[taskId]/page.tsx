@@ -8,10 +8,8 @@ import {
   Play,
   Pause,
   RotateCcw,
-  CheckCircle2,
+  SkipForward,
   ChevronRight,
-  Volume2,
-  Maximize2,
   Target,
 } from "lucide-react"
 
@@ -19,11 +17,18 @@ import { cn } from "@/lib/utils"
 import { mockTasks, philosophicalQuotes } from "@/lib/mock-data"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
+import {
+  PipTimer,
+  FullscreenToggle,
+  AmbientAudioPlayer,
+  FocusCelebration,
+  type TimerPhase,
+} from "@/components/focus"
 
-const POMODORO_DURATION = 25 * 60 // 25 minutes in seconds
-const SHORT_BREAK = 5 * 60 // 5 minutes
-const LONG_BREAK = 15 * 60 // 15 minutes
+const POMODORO_DURATION = 25 * 60
+const SHORT_BREAK = 5 * 60
+const LONG_BREAK = 15 * 60
+const POMODOROS_BEFORE_LONG_BREAK = 4
 
 function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60)
@@ -31,18 +36,88 @@ function formatTime(seconds: number): string {
   return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
 }
 
+function getPhaseLabel(phase: TimerPhase): string {
+  switch (phase) {
+    case "focus":
+      return "Focus Session"
+    case "short-break":
+      return "Short Break"
+    case "long-break":
+      return "Long Break"
+  }
+}
+
+function getTotalDuration(phase: TimerPhase): number {
+  switch (phase) {
+    case "focus":
+      return POMODORO_DURATION
+    case "short-break":
+      return SHORT_BREAK
+    case "long-break":
+      return LONG_BREAK
+  }
+}
+
+function requestNotificationPermission() {
+  if (typeof window !== "undefined" && "Notification" in window) {
+    if (Notification.permission === "default") {
+      Notification.requestPermission()
+    }
+  }
+}
+
+function sendNotification(title: string, body: string) {
+  if (typeof window !== "undefined" && "Notification" in window) {
+    if (Notification.permission === "granted") {
+      new Notification(title, { body, icon: "/favicon.ico" })
+    }
+  }
+}
+
 export default function FocusModePage() {
   const params = useParams()
   const taskId = params.taskId as string
   const task = mockTasks.find((t) => t.id === taskId)
+  const containerRef = React.useRef<HTMLDivElement>(null)
 
   const [isRunning, setIsRunning] = React.useState(false)
+  const [phase, setPhase] = React.useState<TimerPhase>("focus")
   const [timeRemaining, setTimeRemaining] = React.useState(POMODORO_DURATION)
   const [pomodorosCompleted, setPomodorosCompleted] = React.useState(0)
-  const [isBreak, setIsBreak] = React.useState(false)
+  const [breaksTaken, setBreaksTaken] = React.useState(0)
+  const [showCelebration, setShowCelebration] = React.useState(false)
 
-  const progress = ((POMODORO_DURATION - timeRemaining) / POMODORO_DURATION) * 100
+  const totalDuration = getTotalDuration(phase)
+  const progress = ((totalDuration - timeRemaining) / totalDuration) * 100
+  const circumference = 2 * Math.PI * 120
+  const strokeDashoffset = circumference - (progress / 100) * circumference
   const quote = philosophicalQuotes[pomodorosCompleted % philosophicalQuotes.length]
+
+  React.useEffect(() => {
+    requestNotificationPermission()
+  }, [])
+
+  const handlePhaseComplete = React.useCallback(() => {
+    if (phase === "focus") {
+      const newCount = pomodorosCompleted + 1
+      setPomodorosCompleted(newCount)
+      sendNotification("Focus Session Complete!", "Time for a break.")
+
+      if (newCount % POMODOROS_BEFORE_LONG_BREAK === 0) {
+        setPhase("long-break")
+        setTimeRemaining(LONG_BREAK)
+        setShowCelebration(true)
+      } else {
+        setPhase("short-break")
+        setTimeRemaining(SHORT_BREAK)
+      }
+    } else {
+      setBreaksTaken((prev) => prev + 1)
+      sendNotification("Break Over!", "Ready to focus again?")
+      setPhase("focus")
+      setTimeRemaining(POMODORO_DURATION)
+    }
+  }, [phase, pomodorosCompleted])
 
   React.useEffect(() => {
     let interval: NodeJS.Timeout | null = null
@@ -51,30 +126,26 @@ export default function FocusModePage() {
       interval = setInterval(() => {
         setTimeRemaining((prev) => prev - 1)
       }, 1000)
-    } else if (timeRemaining === 0) {
-      // Timer completed
-      if (!isBreak) {
-        setPomodorosCompleted((prev) => prev + 1)
-        const breakDuration =
-          (pomodorosCompleted + 1) % 4 === 0 ? LONG_BREAK : SHORT_BREAK
-        setTimeRemaining(breakDuration)
-        setIsBreak(true)
-      } else {
-        setTimeRemaining(POMODORO_DURATION)
-        setIsBreak(false)
-      }
+    } else if (timeRemaining === 0 && isRunning) {
       setIsRunning(false)
+      handlePhaseComplete()
     }
 
     return () => {
       if (interval) clearInterval(interval)
     }
-  }, [isRunning, timeRemaining, isBreak, pomodorosCompleted])
+  }, [isRunning, timeRemaining, handlePhaseComplete])
 
   const toggleTimer = () => setIsRunning(!isRunning)
+
   const resetTimer = () => {
     setIsRunning(false)
-    setTimeRemaining(isBreak ? SHORT_BREAK : POMODORO_DURATION)
+    setTimeRemaining(totalDuration)
+  }
+
+  const skipPhase = () => {
+    setIsRunning(false)
+    handlePhaseComplete()
   }
 
   if (!task) {
@@ -91,8 +162,10 @@ export default function FocusModePage() {
   }
 
   return (
-    <div className="flex h-dvh flex-col bg-zinc-950 text-white">
-      {/* Minimal Header */}
+    <div
+      ref={containerRef}
+      className="flex h-dvh flex-col bg-zinc-950 text-white"
+    >
       <header className="flex h-12 shrink-0 items-center justify-between px-4">
         <Link
           href="/kanban"
@@ -103,27 +176,18 @@ export default function FocusModePage() {
         </Link>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-8 text-zinc-400 hover:text-white"
-          >
-            <Volume2 className="size-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-8 text-zinc-400 hover:text-white"
-          >
-            <Maximize2 className="size-4" />
-          </Button>
+          <AmbientAudioPlayer />
+          <PipTimer
+            timeRemaining={timeRemaining}
+            isRunning={isRunning}
+            phase={phase}
+          />
+          <FullscreenToggle targetRef={containerRef} />
         </div>
       </header>
 
-      {/* Main Content */}
       <div className="flex flex-1 flex-col items-center justify-center p-8">
         <div className="max-w-lg w-full text-center space-y-12">
-          {/* Task Info */}
           <div className="space-y-3">
             <div className="flex items-center justify-center gap-2">
               <div
@@ -152,30 +216,55 @@ export default function FocusModePage() {
             )}
           </div>
 
-          {/* Timer */}
           <div className="space-y-6">
-            {/* Time Display */}
-            <div className="relative">
-              <div
-                className={cn(
-                  "text-8xl font-mono font-bold tracking-tighter tabular-nums transition-colors",
-                  isBreak ? "text-green-400" : "text-white"
-                )}
+            <div className="relative flex items-center justify-center">
+              <svg
+                className="transform -rotate-90"
+                width="280"
+                height="280"
+                viewBox="0 0 280 280"
               >
-                {formatTime(timeRemaining)}
+                <circle
+                  cx="140"
+                  cy="140"
+                  r="120"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="8"
+                  className="text-zinc-800"
+                />
+                <circle
+                  cx="140"
+                  cy="140"
+                  r="120"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={strokeDashoffset}
+                  className={cn(
+                    "transition-all duration-1000",
+                    phase === "focus" ? "text-white" : "text-green-400"
+                  )}
+                />
+              </svg>
+
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span
+                  className={cn(
+                    "text-7xl font-mono font-bold tracking-tighter tabular-nums",
+                    phase === "focus" ? "text-white" : "text-green-400"
+                  )}
+                >
+                  {formatTime(timeRemaining)}
+                </span>
+                <span className="text-sm text-zinc-500 mt-2">
+                  {getPhaseLabel(phase)}
+                </span>
               </div>
-              <p className="text-sm text-zinc-500 mt-2">
-                {isBreak ? "Break Time" : "Focus Session"}
-              </p>
             </div>
 
-            {/* Progress */}
-            <Progress
-              value={isBreak ? 0 : progress}
-              className="h-1 bg-zinc-800"
-            />
-
-            {/* Controls */}
             <div className="flex items-center justify-center gap-4">
               <Button
                 variant="ghost"
@@ -184,6 +273,7 @@ export default function FocusModePage() {
                 onClick={resetTimer}
               >
                 <RotateCcw className="size-5" />
+                <span className="sr-only">Reset timer</span>
               </Button>
 
               <Button
@@ -201,25 +291,27 @@ export default function FocusModePage() {
                 ) : (
                   <Play className="size-6 ml-0.5" />
                 )}
+                <span className="sr-only">{isRunning ? "Pause" : "Start"}</span>
               </Button>
 
               <Button
                 variant="ghost"
                 size="icon"
                 className="size-12 rounded-full text-zinc-400 hover:text-white"
+                onClick={skipPhase}
               >
-                <CheckCircle2 className="size-5" />
+                <SkipForward className="size-5" />
+                <span className="sr-only">Skip to next phase</span>
               </Button>
             </div>
 
-            {/* Pomodoro count */}
             <div className="flex items-center justify-center gap-2">
-              {Array.from({ length: 4 }).map((_, i) => (
+              {Array.from({ length: POMODOROS_BEFORE_LONG_BREAK }).map((_, i) => (
                 <div
                   key={i}
                   className={cn(
                     "size-3 rounded-full transition-colors",
-                    i < pomodorosCompleted % 4
+                    i < pomodorosCompleted % POMODOROS_BEFORE_LONG_BREAK
                       ? "bg-green-500"
                       : "bg-zinc-800"
                   )}
@@ -231,7 +323,6 @@ export default function FocusModePage() {
             </div>
           </div>
 
-          {/* Philosophical Quote */}
           <div className="space-y-2 pt-8 border-t border-zinc-800">
             <Target className="mx-auto size-4 text-zinc-600" />
             <blockquote className="text-sm italic text-zinc-500">
@@ -242,7 +333,6 @@ export default function FocusModePage() {
         </div>
       </div>
 
-      {/* Footer - Next Task Suggestion */}
       <footer className="flex h-16 shrink-0 items-center justify-center border-t border-zinc-800 px-4">
         <div className="flex items-center gap-3 text-sm text-zinc-500">
           <span>Next up:</span>
@@ -250,6 +340,25 @@ export default function FocusModePage() {
           <ChevronRight className="size-4" />
         </div>
       </footer>
+
+      <FocusCelebration
+        isOpen={showCelebration}
+        pomodorosCompleted={pomodorosCompleted}
+        totalFocusMinutes={pomodorosCompleted * 25}
+        breaksTaken={breaksTaken}
+        isPersonalBest={pomodorosCompleted >= 4 && pomodorosCompleted % 4 === 0}
+        onClose={() => setShowCelebration(false)}
+        onMarkDone={() => {
+          setShowCelebration(false)
+        }}
+        onContinue={() => {
+          setShowCelebration(false)
+          setIsRunning(true)
+        }}
+        onReturn={() => {
+          setShowCelebration(false)
+        }}
+      />
     </div>
   )
 }

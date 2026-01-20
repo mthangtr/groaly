@@ -5,18 +5,18 @@
       "url": "https://mcp.supabase.com/mcp?project_ref=onwwkhxrtcnzpmmrprro",
       "enabled": true
     },
-    "shadcn": {
-        "type": "stdio",
-        "command": "npx",
-        "args": ["shadcn@latest", "mcp"],
-        "includeTools": [
-          "search_items_in_registries",
-          "view_items_in_registries",
-          "get_item_examples_from_registries",
-          "get_add_command_for_items",
-          "get_audit_checklist"
-        ]
-      },
+    // "shadcn": {
+    //     "type": "stdio",
+    //     "command": "npx",
+    //     "args": ["shadcn@latest", "mcp"],
+    //     "includeTools": [
+    //       "search_items_in_registries",
+    //       "view_items_in_registries",
+    //       "get_item_examples_from_registries",
+    //       "get_add_command_for_items",
+    //       "get_audit_checklist"
+    //     ]
+    //   },
     "MCP_DOCKER": {
       "type": "stdio",
       "command": "docker",
@@ -28,14 +28,14 @@
       "url": "http://localhost:27495/mcp",
       "enabled": true
     }
-    // ,
-    // "mcp_agent_mail": {
-    //   "type": "remote",
-    //   "url": "http://localhost:8765/mcp/",
-    //   "headers": {
-    //     "Authorization": "Bearer 51872107e7d196c45d7e46bbd48bf370ca2191e4ebacd53224d9fc9acec27a3d"
-    //   },
-    //   "enabled": true
-    // }
+    ,
+    "mcp_agent_mail": {
+      "type": "remote",
+      "url": "http://localhost:8765/mcp/",
+      "headers": {
+        "Authorization": "Bearer 51872107e7d196c45d7e46bbd48bf370ca2191e4ebacd53224d9fc9acec27a3d"
+      },
+      "enabled": true
+    }
   }
 }
