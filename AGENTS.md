@@ -24,6 +24,69 @@ Run `bd prime` for workflow context, or install hooks (`bd hooks install`) for a
 
 For full workflow details: `bd prime`
 
+## Code Navigation & Analysis
+
+This project uses **GKG (Global Knowledge Graph)** for intelligent code navigation and analysis.
+The GKG server must be running (`gkg server start`) to use these tools.
+
+### When to Use GKG
+
+**ALWAYS use GKG tools when:**
+- Understanding unfamiliar code or exploring the codebase
+- Finding where a function/class is defined
+- Analyzing dependencies and imports
+- Finding all usages/references of a symbol
+- Planning refactoring or impact analysis
+- Understanding code structure before making changes
+
+**Prefer GKG over manual file search when:**
+- You need to find definitions across multiple files
+- You want to see all callers of a function
+- You need to understand module relationships
+- You're analyzing import patterns
+
+### Available GKG Tools
+
+1. **`mcp_gkg_list_projects`** - List indexed projects (use first to verify project is indexed)
+2. **`mcp_gkg_search_codebase_definitions`** - Find functions, classes, methods by name
+3. **`mcp_gkg_get_definition`** - Go to definition for a symbol on a specific line
+4. **`mcp_gkg_get_references`** - Find all usages of a definition (impact analysis)
+5. **`mcp_gkg_read_definitions`** - Read complete code bodies of multiple definitions
+6. **`mcp_gkg_repo_map`** - Generate API-style map of repository structure
+7. **`mcp_gkg_import_usage`** - Analyze import patterns and dependencies
+8. **`mcp_gkg_index_project`** - Re-index after major changes
+
+### Best Practices
+
+**Workflow Integration:**
+```
+1. Start → Use `list_projects` to verify project is indexed
+2. Explore → Use `search_codebase_definitions` to find relevant code
+3. Understand → Use `read_definitions` to see implementation
+4. Analyze → Use `get_references` to see usage patterns
+5. Plan → Use impact analysis before refactoring
+```
+
+**Example Usage:**
+```typescript
+// Before modifying a component, find all its usages:
+// 1. Search for the component definition
+// 2. Get all references to understand impact
+// 3. Read related definitions for context
+// 4. Make informed changes
+```
+
+**Performance Tips:**
+- Use `repo_map` with depth=1-2 for large repos
+- Group multiple definitions in single `read_definitions` call
+- Use pagination for large result sets
+- Re-index only after substantial file changes
+
+**When NOT to Use:**
+- Simple file viewing (use `view_file` instead)
+- Reading single files (use `view_file_outline` first)
+- Searching for text patterns (use `grep_search`)
+
 ## Project Stack
 
 - **Framework**: Next.js 16 (App Router) with React 19
