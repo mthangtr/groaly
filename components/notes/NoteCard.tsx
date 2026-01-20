@@ -25,10 +25,16 @@ type NoteCardProps = {
  * Generate a preview from note content
  * Strips markdown and truncates to reasonable length
  */
-function getContentPreview(content: string, maxLength = 150): string {
+function getContentPreview(content: unknown, maxLength = 150): string {
+  // Ensure content is a string - handle Json type from database
   if (!content) return ""
+
+  const contentStr = typeof content === "string"
+    ? content
+    : JSON.stringify(content)
+
   // Strip common markdown syntax
-  const stripped = content
+  const stripped = contentStr
     .replace(/#{1,6}\s/g, "") // Headers
     .replace(/\*\*([^*]+)\*\*/g, "$1") // Bold
     .replace(/\*([^*]+)\*/g, "$1") // Italic

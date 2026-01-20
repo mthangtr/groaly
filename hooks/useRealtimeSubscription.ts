@@ -52,22 +52,16 @@ export function useRealtimeSubscription<T extends Record<string, unknown> & { id
 }: UseRealtimeSubscriptionOptions<T>): UseRealtimeSubscriptionReturn<T> {
   const { user } = useAuth()
   const supabase = React.useMemo(() => createClient(), [])
-  
-  const [state, setState] = React.useState<OptimisticState<T>>({
+
+  const [state, setState] = React.useState<OptimisticState<T>>(() => ({
     data: initialData,
     pendingOperations: new Map(),
-  })
+  }))
   const [isSubscribed, setIsSubscribed] = React.useState(false)
   const [error, setError] = React.useState<Error | null>(null)
-  
+
   const channelRef = React.useRef<RealtimeChannel | null>(null)
 
-  React.useEffect(() => {
-    setState((prev) => ({
-      ...prev,
-      data: initialData,
-    }))
-  }, [initialData])
 
   React.useEffect(() => {
     if (!enabled || !user?.id) {
@@ -154,7 +148,7 @@ export function useRealtimeSubscription<T extends Record<string, unknown> & { id
     setState((prev) => {
       const originalItem = prev.data.find((item) => item.id === id)
       const newPending = new Map(prev.pendingOperations)
-      
+
       if (!prev.pendingOperations.has(id) && originalItem) {
         newPending.set(id, { type: "update", originalData: originalItem })
       }
@@ -172,7 +166,7 @@ export function useRealtimeSubscription<T extends Record<string, unknown> & { id
     setState((prev) => {
       const originalItem = prev.data.find((item) => item.id === id)
       const newPending = new Map(prev.pendingOperations)
-      
+
       if (originalItem) {
         newPending.set(id, { type: "delete", originalData: originalItem })
       }
