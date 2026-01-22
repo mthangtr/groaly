@@ -23,8 +23,33 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { NoteEditor } from "@/components/notes/NoteEditor"
 import type { Note } from "@/types/note"
 import type { ExtractTasksResponse } from "@/lib/ai/schemas"
+import type { JSONContent } from "@tiptap/react"
+
+// Helper function to extract plain text from Tiptap JSON
+function extractTextFromJSON(json: JSONContent): string {
+  if (!json) return ""
+
+  let text = ""
+
+  if (json.type === "text" && json.text) {
+    text += json.text
+  }
+
+  if (json.content && Array.isArray(json.content)) {
+    for (const node of json.content) {
+      text += extractTextFromJSON(node)
+      // Add newline after block elements
+      if (node.type === "paragraph" || node.type === "heading") {
+        text += "\n"
+      }
+    }
+  }
+
+  return text
+}
 
 export default function NoteEditorPage() {
   const params = useParams()
@@ -36,7 +61,7 @@ export default function NoteEditorPage() {
   const [error, setError] = React.useState<string | null>(null)
   const [isSaved, setIsSaved] = React.useState(true)
   const [title, setTitle] = React.useState("")
-  const [content, setContent] = React.useState("")
+  const [content, setContent] = React.useState<JSONContent>({})
   const [isExtracting, setIsExtracting] = React.useState(false)
 
   // Fetch note on mount
@@ -94,8 +119,10 @@ export default function NoteEditorPage() {
 
   // Handle "Plan this" - extract tasks from note using AI
   const handlePlanThis = React.useCallback(async () => {
-    if (isExtracting || !content.trim()) {
-      if (!content.trim()) {
+    const contentText = extractTextFromJSON(content)
+
+    if (isExtracting || !contentText.trim()) {
+      if (!contentText.trim()) {
         toast.warning("Nothing to plan", {
           description: "Add some content to your note first.",
         })
@@ -111,7 +138,7 @@ export default function NoteEditorPage() {
       const extractRes = await fetch("/api/ai/extract-tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ note_id: noteId, content }),
+        body: JSON.stringify({ note_id: noteId, content: contentText }),
       })
 
       if (!extractRes.ok) {
@@ -330,16 +357,17 @@ export default function NoteEditorPage() {
               )}
             </div>
 
-            {/* Content Editor (placeholder for Tiptap) */}
-            <textarea
-              value={content}
-              onChange={(e) => {
-                setContent(e.target.value)
-                setIsSaved(false)
-              }}
-              className="mt-8 w-full min-h-[400px] bg-transparent outline-none resize-none placeholder:text-muted-foreground/50"
-              placeholder="Start typing your note..."
-            />
+            {/* Content Editor */}
+            <div className="mt-8">
+              <NoteEditor
+                content={content}
+                onChange={(newContent) => {
+                  setContent(newContent)
+                  setIsSaved(false)
+                }}
+                placeholder="Start typing your note..."
+              />
+            </div>
           </div>
         </div>
       </div>
