@@ -49,6 +49,7 @@ export function NoteEditor({
     const editor = useEditor({
         ...editorConfig,
         content,
+        immediatelyRender: false, // Fix SSR hydration mismatch
         onUpdate: ({ editor }) => {
             // Update counts
             const text = editor.getText()
