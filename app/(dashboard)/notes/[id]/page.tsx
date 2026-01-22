@@ -27,29 +27,7 @@ import { NoteEditor } from "@/components/notes/NoteEditor"
 import type { Note } from "@/types/note"
 import type { ExtractTasksResponse } from "@/lib/ai/schemas"
 import type { JSONContent } from "@tiptap/react"
-
-// Helper function to extract plain text from Tiptap JSON
-function extractTextFromJSON(json: JSONContent): string {
-  if (!json) return ""
-
-  let text = ""
-
-  if (json.type === "text" && json.text) {
-    text += json.text
-  }
-
-  if (json.content && Array.isArray(json.content)) {
-    for (const node of json.content) {
-      text += extractTextFromJSON(node)
-      // Add newline after block elements
-      if (node.type === "paragraph" || node.type === "heading") {
-        text += "\n"
-      }
-    }
-  }
-
-  return text
-}
+import { extractTextFromTiptapJSON } from "@/lib/tiptap/utils"
 
 export default function NoteEditorPage() {
   const params = useParams()
@@ -119,7 +97,7 @@ export default function NoteEditorPage() {
 
   // Handle "Plan this" - extract tasks from note using AI
   const handlePlanThis = React.useCallback(async () => {
-    const contentText = extractTextFromJSON(content)
+    const contentText = extractTextFromTiptapJSON(content)
 
     if (isExtracting || !contentText.trim()) {
       if (!contentText.trim()) {

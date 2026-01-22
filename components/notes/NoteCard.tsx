@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { getTiptapContentPreview } from "@/lib/tiptap/utils"
 import type { Note } from "@/types/note"
 
 type NoteCardProps = {
@@ -21,39 +22,8 @@ type NoteCardProps = {
   onDuplicate?: (note: Note) => void
 }
 
-/**
- * Generate a preview from note content
- * Strips markdown and truncates to reasonable length
- */
-function getContentPreview(content: unknown, maxLength = 150): string {
-  // Ensure content is a string - handle Json type from database
-  if (!content) return ""
-
-  const contentStr = typeof content === "string"
-    ? content
-    : JSON.stringify(content)
-
-  // Strip common markdown syntax
-  const stripped = contentStr
-    .replace(/#{1,6}\s/g, "") // Headers
-    .replace(/\*\*([^*]+)\*\*/g, "$1") // Bold
-    .replace(/\*([^*]+)\*/g, "$1") // Italic
-    .replace(/`([^`]+)`/g, "$1") // Inline code
-    .replace(/```[\s\S]*?```/g, "") // Code blocks
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Links
-    .replace(/!\[([^\]]*)\]\([^)]+\)/g, "") // Images
-    .replace(/^\s*[-*+]\s/gm, "") // List items
-    .replace(/^\s*\d+\.\s/gm, "") // Numbered lists
-    .replace(/\n+/g, " ") // Newlines to spaces
-    .trim()
-
-  return stripped.length > maxLength
-    ? stripped.slice(0, maxLength) + "..."
-    : stripped
-}
-
 export function NoteCard({ note, isSelected, onDelete, onDuplicate }: NoteCardProps) {
-  const preview = getContentPreview(note.content)
+  const preview = getTiptapContentPreview(note.content)
 
   const handleDelete = () => {
     onDelete?.(note.id)
