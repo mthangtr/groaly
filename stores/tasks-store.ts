@@ -153,6 +153,28 @@ export const useTasksStore = create<TasksState & TasksActions>((set, get) => ({
 
     get().removeTask(id)
 
+    // Track if undo was triggered
+    let undoTriggered = false
+
+    // Show toast with undo action
+    toast.success("Task deleted", {
+      duration: 5000,
+      action: {
+        label: "Undo",
+        onClick: () => {
+          undoTriggered = true
+          get().addTask(originalTask)
+          toast.info("Task restored")
+        },
+      },
+    })
+
+    // Wait a bit to allow undo before making the API call
+    await new Promise((resolve) => setTimeout(resolve, 5000))
+
+    // If undo was triggered, don't delete from backend
+    if (undoTriggered) return false
+
     try {
       const response = await fetch(`/api/tasks/${id}`, {
         method: "DELETE",
@@ -162,7 +184,6 @@ export const useTasksStore = create<TasksState & TasksActions>((set, get) => ({
         throw new Error("Failed to delete task")
       }
 
-      toast.success("Task deleted")
       return true
     } catch (err) {
       get().addTask(originalTask)

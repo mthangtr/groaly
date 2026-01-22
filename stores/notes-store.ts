@@ -149,6 +149,28 @@ export const useNotesStore = create<NotesState & NotesActions>((set, get) => ({
 
     get().removeNote(id)
 
+    // Track if undo was triggered
+    let undoTriggered = false
+
+    // Show toast with undo action
+    toast.success("Note deleted", {
+      duration: 5000,
+      action: {
+        label: "Undo",
+        onClick: () => {
+          undoTriggered = true
+          get().addNote(originalNote)
+          toast.info("Note restored")
+        },
+      },
+    })
+
+    // Wait a bit to allow undo before making the API call
+    await new Promise((resolve) => setTimeout(resolve, 5000))
+
+    // If undo was triggered, don't delete from backend
+    if (undoTriggered) return false
+
     try {
       const response = await fetch(`/api/notes/${id}`, {
         method: "DELETE",
@@ -158,7 +180,6 @@ export const useNotesStore = create<NotesState & NotesActions>((set, get) => ({
         throw new Error("Failed to delete note")
       }
 
-      toast.success("Note deleted")
       return true
     } catch (err) {
       get().addNote(originalNote)
