@@ -192,7 +192,7 @@ function StatusSelect({
   onValueChange: (value: Task["status"]) => void
 }) {
   const StatusIcon = statusIcons[value]
-  
+
   return (
     <Select value={value} onValueChange={(v) => v && onValueChange(v)}>
       <SelectTrigger className="h-7 w-[130px]">

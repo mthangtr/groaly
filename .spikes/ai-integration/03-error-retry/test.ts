@@ -32,37 +32,36 @@ async function withRetry<T>(
   } = options
 
   let lastError: unknown
-  
+
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await fn()
     } catch (error) {
       lastError = error
-      
+
       if (attempt === maxRetries || !retryOn(error)) {
         throw error
       }
-      
+
       const delay = Math.min(initialDelayMs * Math.pow(2, attempt), maxDelayMs)
       console.log(`  Retry ${attempt + 1}/${maxRetries} after ${delay}ms...`)
       await new Promise(resolve => setTimeout(resolve, delay))
     }
   }
-  
+
   throw lastError
 }
 
 function isRetryableError(error: unknown): boolean {
   if (!(error instanceof Error)) return false
-  
-  const errorName = error.name
+
   const errorMessage = error.message.toLowerCase()
-  
+
   // Rate limit errors
   if (errorMessage.includes("rate limit") || errorMessage.includes("429")) {
     return true
   }
-  
+
   // Network/timeout errors
   if (
     errorMessage.includes("timeout") ||
@@ -72,12 +71,12 @@ function isRetryableError(error: unknown): boolean {
   ) {
     return true
   }
-  
+
   // 5xx server errors
   if (errorMessage.includes("500") || errorMessage.includes("502") || errorMessage.includes("503")) {
     return true
   }
-  
+
   return false
 }
 
@@ -89,7 +88,6 @@ async function testSuccessfulRetry() {
       return await generateText({
         model: openrouter("anthropic/claude-haiku-4.5"),
         prompt: "Say 'OK'",
-        maxTokens: 10,
       })
     })
 
@@ -139,13 +137,13 @@ async function testRetryableErrorSimulation() {
       async () => {
         attempts++
         console.log(`  Attempt ${attempts}`)
-        
+
         // Simulate transient failure for first 2 attempts
         if (attempts <= maxFailures) {
           const error = new Error("Connection timeout")
           throw error
         }
-        
+
         return { text: "Success after retries!" }
       },
       { maxRetries: 3, initialDelayMs: 100 }
@@ -175,16 +173,16 @@ async function testMaxRetriesExceeded() {
     )
     console.log("❌ Expected error but got success")
     return false
-  } catch (error) {
+  } catch (_error) {
     console.log(`✅ Correctly failed after ${attempts} attempts`)
     return attempts === 3 // initial + 2 retries
   }
 }
 
 async function main() {
-  console.log("=" .repeat(60))
+  console.log("=".repeat(60))
   console.log("Spike: Error Handling and Retry Logic")
-  console.log("=" .repeat(60))
+  console.log("=".repeat(60))
 
   if (!process.env.OPENROUTER_API_KEY) {
     console.error("❌ OPENROUTER_API_KEY not set")
@@ -198,17 +196,17 @@ async function main() {
     maxRetriesExceeded: await testMaxRetriesExceeded(),
   }
 
-  console.log("\n" + "=" .repeat(60))
+  console.log("\n" + "=".repeat(60))
   console.log("Results Summary")
-  console.log("=" .repeat(60))
-  
+  console.log("=".repeat(60))
+
   Object.entries(results).forEach(([test, passed]) => {
     console.log(`${passed ? "✅" : "❌"} ${test}`)
   })
 
   const allPassed = Object.values(results).every(Boolean)
   console.log(`\n${allPassed ? "🎉 All tests passed!" : "⚠️ Some tests failed"}`)
-  
+
   process.exit(allPassed ? 0 : 1)
 }
 
