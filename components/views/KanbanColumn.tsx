@@ -26,6 +26,7 @@ type KanbanColumnProps = {
   tasks: KanbanTask[]
   isDragOver?: boolean
   onAddTask?: () => void
+  onTaskClick?: (task: KanbanTask) => void
 }
 
 export function KanbanColumn({
@@ -33,6 +34,7 @@ export function KanbanColumn({
   tasks,
   isDragOver = false,
   onAddTask,
+  onTaskClick,
 }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
@@ -69,7 +71,7 @@ export function KanbanColumn({
         <SortableContext items={taskIds} strategy={verticalListSortingStrategy}>
           <div className="p-2 space-y-2 min-h-[100px]">
             {tasks.map((task) => (
-              <KanbanCard key={task.id} task={task} />
+              <KanbanCard key={task.id} task={task} onClick={onTaskClick} />
             ))}
             {tasks.length === 0 && (
               <div

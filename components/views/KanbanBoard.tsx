@@ -30,9 +30,10 @@ type KanbanBoardProps = {
   tasks: KanbanTask[]
   onTaskMove: (taskId: string, newStatus: TaskStatus) => Promise<void>
   onAddTask?: (status: TaskStatus) => void
+  onTaskClick?: (task: KanbanTask) => void
 }
 
-export function KanbanBoard({ tasks, onTaskMove, onAddTask }: KanbanBoardProps) {
+export function KanbanBoard({ tasks, onTaskMove, onAddTask, onTaskClick }: KanbanBoardProps) {
   const [activeTask, setActiveTask] = React.useState<KanbanTask | null>(null)
   const [overId, setOverId] = React.useState<string | null>(null)
 
@@ -132,6 +133,7 @@ export function KanbanBoard({ tasks, onTaskMove, onAddTask }: KanbanBoardProps) 
             tasks={tasksByStatus[column.id] || []}
             isDragOver={overId === column.id}
             onAddTask={() => onAddTask?.(column.id)}
+            onTaskClick={onTaskClick}
           />
         ))}
       </div>

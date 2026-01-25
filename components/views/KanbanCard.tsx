@@ -31,9 +31,10 @@ type KanbanCardProps = {
   task: KanbanTask
   onEdit?: (task: KanbanTask) => void
   onDelete?: (taskId: string) => void
+  onClick?: (task: KanbanTask) => void
 }
 
-export function KanbanCard({ task, onEdit, onDelete }: KanbanCardProps) {
+export function KanbanCard({ task, onEdit, onDelete, onClick }: KanbanCardProps) {
   const {
     attributes,
     listeners,
@@ -79,7 +80,12 @@ export function KanbanCard({ task, onEdit, onDelete }: KanbanCardProps) {
         </button>
         <div className="flex-1 min-w-0 space-y-2">
           <div className="flex items-start justify-between gap-2">
-            <p className="text-sm font-medium leading-tight">{task.title}</p>
+            <button
+              onClick={() => onClick?.(task)}
+              className="text-sm font-medium leading-tight text-left hover:underline"
+            >
+              {task.title}
+            </button>
             <DropdownMenu>
               <DropdownMenuTrigger
                 className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"

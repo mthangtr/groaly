@@ -6,12 +6,15 @@ import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { KanbanBoard } from "@/components/views/KanbanBoard"
+import { TaskDetailModal } from "@/components/tasks"
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription"
 import type { Task, TaskStatus } from "@/types/task"
 
 export default function KanbanPage() {
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
+  const [selectedTask, setSelectedTask] = React.useState<Task | null>(null)
+  const [modalOpen, setModalOpen] = React.useState(false)
 
   const {
     data: tasks,
@@ -67,6 +70,16 @@ export default function KanbanPage() {
     console.log("Add task with status:", status)
   }
 
+  const handleTaskClick = (task: Task) => {
+    setSelectedTask(task)
+    setModalOpen(true)
+  }
+
+  const handleModalClose = () => {
+    setModalOpen(false)
+    setTimeout(() => setSelectedTask(null), 200)
+  }
+
   const activeTasks = React.useMemo(
     () => tasks.filter((t) => t.status !== "cancelled"),
     [tasks]
@@ -106,9 +119,17 @@ export default function KanbanPage() {
             tasks={activeTasks}
             onTaskMove={handleTaskMove}
             onAddTask={handleAddTask}
+            onTaskClick={handleTaskClick}
           />
         )}
       </div>
+
+      <TaskDetailModal
+        task={selectedTask}
+        open={modalOpen}
+        onOpenChange={handleModalClose}
+        onTaskClick={handleTaskClick}
+      />
     </div>
   )
 }
