@@ -13,6 +13,7 @@ import {
   Sun,
   Monitor,
   CalendarClock,
+  Key,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -23,6 +24,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { ProtectedSlotsSection } from "@/components/settings/ProtectedSlotsSection"
+import { ApiKeysSection } from "@/components/settings/ApiKeysSection"
 import type {
   ProtectedSlotWithDuration,
   ProtectedSlotCreateInput,
@@ -36,6 +38,7 @@ type SettingsSection = {
 
 const sections: SettingsSection[] = [
   { id: "profile", title: "Profile", icon: User },
+  { id: "api-keys", title: "API Keys", icon: Key },
   { id: "protected-slots", title: "Protected Slots", icon: CalendarClock },
   { id: "notifications", title: "Notifications", icon: Bell },
   { id: "appearance", title: "Appearance", icon: Palette },
@@ -233,6 +236,9 @@ export default function SettingsPage() {
                 </div>
               </div>
             )}
+
+            {/* API Keys Section */}
+            {activeSection === "api-keys" && <ApiKeysSection />}
 
             {/* Protected Slots Section */}
             {activeSection === "protected-slots" && (
