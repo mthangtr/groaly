@@ -6,12 +6,14 @@ import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { CalendarView } from "@/components/views/CalendarView"
+import { OptimizeWeekButton } from "@/components/views/OptimizeWeekButton"
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription"
 import type { Task } from "@/types/task"
 
 export default function CalendarPage() {
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
+  const [refreshKey, setRefreshKey] = React.useState(0)
 
   const {
     data: tasks,
@@ -40,7 +42,7 @@ export default function CalendarPage() {
       }
     }
     fetchTasks()
-  }, [setTasks])
+  }, [setTasks, refreshKey])
 
   const handleTaskReschedule = async (taskId: string, newDate: string) => {
     const previousTask = tasks.find((t) => t.id === taskId)
@@ -67,6 +69,20 @@ export default function CalendarPage() {
     console.log("Add task for date:", date)
   }
 
+  const handleOptimized = () => {
+    // Refresh tasks after optimization
+    setRefreshKey((prev) => prev + 1)
+  }
+
+  // Get Monday of current week for optimize button
+  const getMondayOfCurrentWeek = () => {
+    const today = new Date()
+    const day = today.getDay()
+    const diff = today.getDate() - day + (day === 0 ? -6 : 1) // Adjust if Sunday
+    const monday = new Date(today.setDate(diff))
+    return monday.toISOString().split("T")[0]
+  }
+
   const activeTasks = React.useMemo(
     () => tasks.filter((t) => t.status !== "cancelled"),
     [tasks]
@@ -90,10 +106,16 @@ export default function CalendarPage() {
             {isLoading ? "Loading..." : `${activeTasks.length} tasks`}
           </span>
         </div>
-        <Button size="sm" className="gap-1.5">
-          <Plus className="size-3.5" />
-          Add Task
-        </Button>
+        <div className="flex items-center gap-2">
+          <OptimizeWeekButton
+            weekStart={getMondayOfCurrentWeek()}
+            onOptimized={handleOptimized}
+          />
+          <Button size="sm" className="gap-1.5">
+            <Plus className="size-3.5" />
+            Add Task
+          </Button>
+        </div>
       </header>
 
       {isLoading ? (
