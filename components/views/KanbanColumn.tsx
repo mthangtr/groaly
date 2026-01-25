@@ -47,12 +47,12 @@ export function KanbanColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        "flex flex-col w-80 shrink-0 rounded-lg transition-colors",
-        isHighlighted && "bg-muted/50 ring-2 ring-primary/20"
+        "flex flex-col w-80 shrink-0 rounded-lg border bg-card transition-all duration-200",
+        isHighlighted && "ring-2 ring-primary/30 scale-[1.02] shadow-md"
       )}
     >
-      <div className="flex items-center gap-2 p-3 border-b">
-        <div className={cn("size-2 rounded-full", column.color)} />
+      <div className="flex items-center gap-2 p-3 border-b bg-muted/30">
+        <div className={cn("size-2 rounded-full transition-transform", column.color, isHighlighted && "scale-150")} />
         <h3 className="font-medium text-sm">{column.title}</h3>
         <Badge variant="outline" className="ml-auto text-xs h-5">
           {tasks.length}
@@ -76,11 +76,13 @@ export function KanbanColumn({
             {tasks.length === 0 && (
               <div
                 className={cn(
-                  "flex items-center justify-center h-24 text-xs text-muted-foreground border border-dashed rounded-lg transition-colors",
-                  isHighlighted && "border-primary/50 bg-primary/5"
+                  "flex flex-col items-center justify-center h-32 text-xs text-muted-foreground border-2 border-dashed rounded-lg transition-all duration-200",
+                  isHighlighted ? "border-primary/50 bg-primary/5 scale-105" : "hover:border-muted-foreground/30"
                 )}
               >
-                {isHighlighted ? "Drop here" : "No tasks"}
+                <Plus className={cn("size-8 mb-2 transition-all", isHighlighted && "animate-bounce")} />
+                <span>{isHighlighted ? "Drop here" : "No tasks yet"}</span>
+                <span className="text-[10px] text-muted-foreground/60 mt-1">Drag tasks here or click + to add</span>
               </div>
             )}
           </div>

@@ -169,14 +169,14 @@ function EditableCell({
         onChange={(e) => setEditValue(e.target.value)}
         onBlur={handleSave}
         onKeyDown={handleKeyDown}
-        className="h-7 text-sm"
+        className="h-8 text-sm -my-1"
       />
     )
   }
 
   return (
     <span
-      className="cursor-pointer hover:bg-muted/50 px-1 py-0.5 rounded -mx-1"
+      className="cursor-pointer hover:bg-muted/50 px-2 py-1 rounded transition-colors -mx-2"
       onClick={() => onStartEdit(row.id, column.id)}
     >
       {value}
@@ -854,7 +854,7 @@ export function TableView({ tasks, onTaskUpdate, onTaskDelete, onBulkUpdate }: T
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center gap-2 p-2 border-b flex-wrap">
+      <div className="flex items-center gap-2 p-3 border-b flex-wrap bg-muted/30">
         <Input
           placeholder="Search tasks..."
           value={globalFilter}
@@ -927,8 +927,8 @@ export function TableView({ tasks, onTaskUpdate, onTaskDelete, onBulkUpdate }: T
               <tr
                 key={row.id}
                 className={cn(
-                  "group border-b transition-colors hover:bg-muted/50",
-                  row.getIsSelected() && "bg-muted/30"
+                  "group border-b transition-all duration-150 hover:bg-muted/50",
+                  row.getIsSelected() && "bg-muted/50 ring-1 ring-inset ring-primary/20"
                 )}
               >
                 {row.getVisibleCells().map((cell) => (

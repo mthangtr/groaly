@@ -124,9 +124,9 @@ function DraggableTask({ task }: { task: Task }) {
     <div
       ref={setNodeRef}
       className={cn(
-        "group flex items-center gap-1.5 rounded-md border bg-card p-2 text-xs transition-all hover:shadow-sm cursor-grab",
+        "group flex items-center gap-1.5 rounded-md border bg-card p-2 text-xs transition-all hover:shadow-sm hover:border-foreground/20 cursor-grab active:cursor-grabbing",
         task.status === "done" && "opacity-50",
-        isDragging && "opacity-50 shadow-lg ring-2 ring-primary"
+        isDragging && "opacity-50 shadow-lg ring-2 ring-primary rotate-2 scale-105"
       )}
     >
       <button
@@ -218,9 +218,9 @@ function DayColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        "flex flex-col border-r last:border-r-0 min-w-[140px] flex-1 transition-colors",
+        "flex flex-col border-r last:border-r-0 min-w-[140px] flex-1 transition-all duration-200",
         today && "bg-muted/30",
-        isHighlighted && "bg-primary/10 ring-2 ring-inset ring-primary/30"
+        isHighlighted && "bg-primary/10 ring-2 ring-inset ring-primary/30 scale-[1.02]"
       )}
     >
       <div
@@ -268,8 +268,8 @@ function DayColumn({
           {dayTasks.length === 0 && daySlots.length === 0 && (
             <div
               className={cn(
-                "flex items-center justify-center h-16 text-xs text-muted-foreground border border-dashed rounded-md transition-colors",
-                isHighlighted && "border-primary/50 bg-primary/5"
+                "flex items-center justify-center h-16 text-xs text-muted-foreground border border-dashed rounded-md transition-all duration-200",
+                isHighlighted && "border-primary/50 bg-primary/5 border-solid scale-105"
               )}
             >
               {isHighlighted ? "Drop here" : "No tasks"}

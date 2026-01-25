@@ -161,7 +161,7 @@ export function PomodoroTimer({
             fill="none"
             stroke="currentColor"
             strokeWidth="8"
-            className="text-zinc-800"
+            className="text-muted/30"
           />
           <circle
             cx="140"
@@ -174,8 +174,8 @@ export function PomodoroTimer({
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             className={cn(
-              "transition-all duration-1000",
-              phase === "focus" ? "text-white" : "text-green-400"
+              "transition-all duration-1000 ease-out",
+              phase === "focus" ? "text-primary" : "text-green-500"
             )}
           />
         </svg>
@@ -183,13 +183,13 @@ export function PomodoroTimer({
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span
             className={cn(
-              "text-6xl font-mono font-bold tracking-tighter tabular-nums",
-              phase === "focus" ? "text-white" : "text-green-400"
+              "text-6xl font-mono font-bold tracking-tighter tabular-nums transition-colors duration-300",
+              phase === "focus" ? "text-foreground" : "text-green-600 dark:text-green-400"
             )}
           >
             {formatTime(timeRemaining)}
           </span>
-          <span className="text-sm text-zinc-500 mt-1">
+          <span className="text-sm text-muted-foreground mt-1">
             {getPhaseLabel(phase)}
           </span>
         </div>
@@ -199,7 +199,7 @@ export function PomodoroTimer({
         <Button
           variant="ghost"
           size="icon"
-          className="size-12 rounded-full text-zinc-400 hover:text-white"
+          className="size-12 rounded-full hover:scale-105 transition-transform"
           onClick={resetTimer}
         >
           <RotateCcw className="size-5" />
@@ -209,10 +209,10 @@ export function PomodoroTimer({
         <Button
           size="icon"
           className={cn(
-            "size-16 rounded-full transition-all",
+            "size-16 rounded-full transition-all hover:scale-105 shadow-lg",
             isRunning
-              ? "bg-zinc-700 hover:bg-zinc-600"
-              : "bg-white text-zinc-950 hover:bg-zinc-200"
+              ? "bg-secondary hover:bg-secondary/90"
+              : "bg-primary text-primary-foreground hover:bg-primary/90"
           )}
           onClick={toggleTimer}
         >
@@ -227,7 +227,7 @@ export function PomodoroTimer({
         <Button
           variant="ghost"
           size="icon"
-          className="size-12 rounded-full text-zinc-400 hover:text-white"
+          className="size-12 rounded-full hover:scale-105 transition-transform"
           onClick={skipPhase}
         >
           <SkipForward className="size-5" />
@@ -240,14 +240,14 @@ export function PomodoroTimer({
           <div
             key={i}
             className={cn(
-              "size-3 rounded-full transition-colors",
+              "size-3 rounded-full transition-all duration-300",
               i < pomodorosCompleted % POMODOROS_BEFORE_LONG_BREAK
-                ? "bg-green-500"
-                : "bg-zinc-800"
+                ? "bg-green-500 scale-110"
+                : "bg-muted scale-100"
             )}
           />
         ))}
-        <span className="ml-2 text-xs text-zinc-500">
+        <span className="ml-2 text-xs text-muted-foreground">
           {pomodorosCompleted} pomodoros completed
         </span>
       </div>

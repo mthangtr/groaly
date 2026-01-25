@@ -121,13 +121,13 @@ export function NoteEditor({
     return (
         <div
             className={cn(
-                "flex flex-col rounded-lg border bg-background",
+                "flex flex-col rounded-lg border bg-background transition-all duration-300",
                 isFocusMode && "fixed inset-4 z-50 shadow-2xl",
                 className
             )}
         >
             {/* Toolbar */}
-            <div className="flex flex-wrap items-center gap-1 border-b p-2">
+            <div className="flex flex-wrap items-center gap-1.5 border-b p-3">
                 {/* Text Formatting */}
                 <ToolbarButton
                     onClick={() => editor.chain().focus().toggleBold().run()}
@@ -280,7 +280,7 @@ export function NoteEditor({
             {/* Focus Mode Overlay */}
             {isFocusMode && (
                 <div
-                    className="fixed inset-0 -z-10 bg-background/80 backdrop-blur-sm"
+                    className="fixed inset-0 -z-10 bg-background/80 backdrop-blur-sm animate-in fade-in duration-300"
                     onClick={toggleFocusMode}
                 />
             )}

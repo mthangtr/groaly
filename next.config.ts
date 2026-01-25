@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 import withPWA from "next-pwa";
+import withBundleAnalyzer from "@next/bundle-analyzer";
+
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
 
 const nextConfig: NextConfig = {
   images: {
@@ -10,14 +15,28 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Performance optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === "production",
+  },
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "@tanstack/react-table",
+      "@dnd-kit/core",
+      "@dnd-kit/sortable",
+      "date-fns",
+    ],
+  },
 };
 
-export default withPWA({
-  dest: "public",
-  disable: process.env.NODE_ENV === "development",
-  register: true,
-  skipWaiting: true,
-  runtimeCaching: [
+export default bundleAnalyzer(
+  withPWA({
+    dest: "public",
+    disable: process.env.NODE_ENV === "development",
+    register: true,
+    skipWaiting: true,
+    runtimeCaching: [
     {
       urlPattern: /^https:\/\/fonts\.(?:gstatic)\.com\/.*/i,
       handler: "CacheFirst",
@@ -154,6 +173,7 @@ export default withPWA({
         },
         networkTimeoutSeconds: 10,
       },
-    },
-  ],
-})(nextConfig);
+      },
+    ],
+  })(nextConfig)
+);
