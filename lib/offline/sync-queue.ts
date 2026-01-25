@@ -1,5 +1,5 @@
 import { toast } from "sonner"
-import type { Note, NoteCreateInput, NoteUpdateInput } from "@/types/note"
+import type { NoteCreateInput, NoteUpdateInput } from "@/types/note"
 import {
   getNotesQueue,
   removeNoteFromQueue,

@@ -133,7 +133,7 @@ export default function ReviewsPage() {
     } finally {
       setLoading(false)
     }
-  }, [reviews])
+  }, [])
 
   // Generate new review
   const generateReview = async () => {

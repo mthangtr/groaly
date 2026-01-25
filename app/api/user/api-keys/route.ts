@@ -10,7 +10,7 @@
 
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
-import { encrypt, decrypt } from "@/lib/crypto"
+import { encrypt } from "@/lib/crypto"
 import type { EncryptedData } from "@/lib/crypto"
 
 /**
