@@ -73,10 +73,8 @@ export function RelatedTasksPanel({
           <h3 className="text-sm font-medium">Related Tasks</h3>
           {data && data.reasoning && (
             <Tooltip>
-              <TooltipTrigger asChild>
-                <button className="text-muted-foreground hover:text-foreground transition-colors">
-                  <Info className="size-3.5" />
-                </button>
+              <TooltipTrigger className="text-muted-foreground hover:text-foreground transition-colors">
+                <Info className="size-3.5" />
               </TooltipTrigger>
               <TooltipContent className="max-w-sm whitespace-pre-wrap">
                 <p className="text-xs">{data.reasoning}</p>

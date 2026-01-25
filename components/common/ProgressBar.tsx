@@ -13,7 +13,7 @@ NProgress.configure({
     speed: 400,
 })
 
-export function ProgressBar() {
+function ProgressBarComponent() {
     const pathname = usePathname()
     const searchParams = useSearchParams()
 
@@ -72,4 +72,12 @@ export function ProgressBar() {
     }, [])
 
     return null
+}
+
+export function ProgressBar() {
+    return (
+        <React.Suspense fallback={null}>
+            <ProgressBarComponent />
+        </React.Suspense>
+    )
 }
