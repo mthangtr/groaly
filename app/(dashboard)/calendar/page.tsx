@@ -9,11 +9,13 @@ import { CalendarView } from "@/components/views/CalendarView"
 import { OptimizeWeekButton } from "@/components/views/OptimizeWeekButton"
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription"
 import type { Task } from "@/types/task"
+import type { ProtectedSlotWithDuration } from "@/types/protected-slot"
 
 export default function CalendarPage() {
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
   const [refreshKey, setRefreshKey] = React.useState(0)
+  const [protectedSlots, setProtectedSlots] = React.useState<ProtectedSlotWithDuration[]>([])
 
   const {
     data: tasks,
@@ -27,21 +29,31 @@ export default function CalendarPage() {
   })
 
   React.useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch("/api/tasks")
-        if (!res.ok) {
+        const [tasksRes, slotsRes] = await Promise.all([
+          fetch("/api/tasks"),
+          fetch("/api/protected-slots"),
+        ])
+        
+        if (!tasksRes.ok) {
           throw new Error("Failed to fetch tasks")
         }
-        const data = await res.json()
-        setTasks(data.tasks || [])
+        
+        const tasksData = await tasksRes.json()
+        setTasks(tasksData.tasks || [])
+        
+        if (slotsRes.ok) {
+          const slotsData = await slotsRes.json()
+          setProtectedSlots(slotsData.slots || [])
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load tasks")
+        setError(err instanceof Error ? err.message : "Failed to load data")
       } finally {
         setIsLoading(false)
       }
     }
-    fetchTasks()
+    fetchData()
   }, [setTasks, refreshKey])
 
   const handleTaskReschedule = async (taskId: string, newDate: string) => {
@@ -125,6 +137,7 @@ export default function CalendarPage() {
       ) : (
         <CalendarView
           tasks={activeTasks}
+          protectedSlots={protectedSlots}
           onTaskReschedule={handleTaskReschedule}
           onAddTask={handleAddTask}
         />

@@ -12,6 +12,7 @@ import {
   Moon,
   Sun,
   Monitor,
+  CalendarClock,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -21,6 +22,11 @@ import { Switch } from "@/components/ui/switch"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Progress } from "@/components/ui/progress"
 import { SidebarTrigger } from "@/components/ui/sidebar"
+import { ProtectedSlotsSection } from "@/components/settings/ProtectedSlotsSection"
+import type {
+  ProtectedSlotWithDuration,
+  ProtectedSlotCreateInput,
+} from "@/types/protected-slot"
 
 type SettingsSection = {
   id: string
@@ -30,6 +36,7 @@ type SettingsSection = {
 
 const sections: SettingsSection[] = [
   { id: "profile", title: "Profile", icon: User },
+  { id: "protected-slots", title: "Protected Slots", icon: CalendarClock },
   { id: "notifications", title: "Notifications", icon: Bell },
   { id: "appearance", title: "Appearance", icon: Palette },
   { id: "language", title: "Language", icon: Globe },
@@ -62,6 +69,67 @@ function SettingRow({
 export default function SettingsPage() {
   const [activeSection, setActiveSection] = React.useState("profile")
   const [theme, setTheme] = React.useState<"light" | "dark" | "system">("system")
+  const [protectedSlots, setProtectedSlots] = React.useState<ProtectedSlotWithDuration[]>([])
+  const [loadingSlots, setLoadingSlots] = React.useState(false)
+
+  // Fetch protected slots
+  React.useEffect(() => {
+    if (activeSection === "protected-slots") {
+      fetchProtectedSlots()
+    }
+  }, [activeSection])
+
+  const fetchProtectedSlots = async () => {
+    setLoadingSlots(true)
+    try {
+      const response = await fetch("/api/protected-slots")
+      if (response.ok) {
+        const data = await response.json()
+        setProtectedSlots(data.slots ?? [])
+      }
+    } catch (error) {
+      console.error("Failed to fetch protected slots:", error)
+    } finally {
+      setLoadingSlots(false)
+    }
+  }
+
+  const handleCreateSlot = async (input: ProtectedSlotCreateInput) => {
+    const response = await fetch("/api/protected-slots", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.details || error.error)
+    }
+    await fetchProtectedSlots()
+  }
+
+  const handleUpdateSlot = async (id: string, input: Partial<ProtectedSlotCreateInput>) => {
+    const response = await fetch(`/api/protected-slots/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.details || error.error)
+    }
+    await fetchProtectedSlots()
+  }
+
+  const handleDeleteSlot = async (id: string) => {
+    const response = await fetch(`/api/protected-slots/${id}`, {
+      method: "DELETE",
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.details || error.error)
+    }
+    await fetchProtectedSlots()
+  }
 
   return (
     <div className="flex h-dvh flex-col">
@@ -163,6 +231,24 @@ export default function SettingsPage() {
                     ))}
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Protected Slots Section */}
+            {activeSection === "protected-slots" && (
+              <div className="space-y-8">
+                {loadingSlots ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : (
+                  <ProtectedSlotsSection
+                    slots={protectedSlots}
+                    onCreateSlot={handleCreateSlot}
+                    onUpdateSlot={handleUpdateSlot}
+                    onDeleteSlot={handleDeleteSlot}
+                  />
+                )}
               </div>
             )}
 

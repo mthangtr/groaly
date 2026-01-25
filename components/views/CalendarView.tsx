@@ -22,6 +22,8 @@ import {
   isSameDay,
   isToday,
   parseISO,
+  startOfDay,
+  endOfDay,
 } from "date-fns"
 import {
   ChevronLeft,
@@ -29,16 +31,20 @@ import {
   Plus,
   Play,
   GripVertical,
+  Lock,
 } from "lucide-react"
 import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { getOccurrences } from "@/lib/recurrence"
 import type { Task } from "@/types/task"
+import type { ProtectedSlotWithDuration } from "@/types/protected-slot"
 
 type CalendarViewProps = {
   tasks: Task[]
+  protectedSlots?: ProtectedSlotWithDuration[]
   onTaskReschedule: (taskId: string, newDate: string) => Promise<void>
   onAddTask?: (date: Date) => void
 }
@@ -60,6 +66,39 @@ function getTasksForDate(tasks: Task[], date: Date): Task[] {
       }
     }
     return false
+  })
+}
+
+function getProtectedSlotsForDate(
+  slots: ProtectedSlotWithDuration[],
+  date: Date
+): ProtectedSlotWithDuration[] {
+  const dayStart = startOfDay(date)
+  const dayEnd = endOfDay(date)
+
+  return slots.filter((slot) => {
+    const slotStart = parseISO(slot.start_time)
+    const slotEnd = parseISO(slot.end_time)
+
+    // Check if slot overlaps with this day
+    const overlaps = slotStart < dayEnd && slotEnd > dayStart
+
+    if (!overlaps) return false
+
+    // If not recurring, just check overlap
+    if (!slot.is_recurring || !slot.recurrence_rule) {
+      return true
+    }
+
+    // Check if recurring slot has occurrence on this date
+    const occurrences = getOccurrences(
+      slot.recurrence_rule,
+      slotStart,
+      dayStart,
+      dayEnd,
+      10
+    )
+    return occurrences.length > 0
   })
 }
 
@@ -134,19 +173,37 @@ function TaskOverlay({ task }: { task: Task }) {
   )
 }
 
+function ProtectedSlotBadge({ slot }: { slot: ProtectedSlotWithDuration }) {
+  return (
+    <div className="flex items-center gap-1.5 rounded-md border border-green-500/50 bg-green-500/10 p-2 text-xs">
+      <Lock className="size-3 text-green-600" />
+      <span className="flex-1 truncate font-medium text-green-900 dark:text-green-100">
+        {slot.title}
+      </span>
+      <span className="text-xs text-green-600 tabular-nums">
+        {format(parseISO(slot.start_time), "HH:mm")} -{" "}
+        {format(parseISO(slot.end_time), "HH:mm")}
+      </span>
+    </div>
+  )
+}
+
 function DayColumn({
   date,
   tasks,
+  protectedSlots,
   isDropTarget,
   onAddTask,
 }: {
   date: Date
   tasks: Task[]
+  protectedSlots: ProtectedSlotWithDuration[]
   isDropTarget: boolean
   onAddTask?: () => void
 }) {
   const today = isToday(date)
   const dayTasks = getTasksForDate(tasks, date)
+  const daySlots = getProtectedSlotsForDate(protectedSlots, date)
   const density = getDayDensity(dayTasks)
   const dateStr = format(date, "yyyy-MM-dd")
 
@@ -202,10 +259,13 @@ function DayColumn({
 
       <ScrollArea className="flex-1">
         <div className="p-2 space-y-1.5 min-h-[100px]">
+          {daySlots.map((slot) => (
+            <ProtectedSlotBadge key={slot.id} slot={slot} />
+          ))}
           {dayTasks.map((task) => (
             <DraggableTask key={task.id} task={task} />
           ))}
-          {dayTasks.length === 0 && (
+          {dayTasks.length === 0 && daySlots.length === 0 && (
             <div
               className={cn(
                 "flex items-center justify-center h-16 text-xs text-muted-foreground border border-dashed rounded-md transition-colors",
@@ -235,6 +295,7 @@ function DayColumn({
 
 export function CalendarView({
   tasks,
+  protectedSlots = [],
   onTaskReschedule,
   onAddTask,
 }: CalendarViewProps) {
@@ -344,6 +405,7 @@ export function CalendarView({
                 key={date.toISOString()}
                 date={date}
                 tasks={tasks}
+                protectedSlots={protectedSlots}
                 isDropTarget={overId === format(date, "yyyy-MM-dd")}
                 onAddTask={() => onAddTask?.(date)}
               />
