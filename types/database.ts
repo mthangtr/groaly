@@ -6,6 +6,8 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
+export type JSONContent = object
+
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
@@ -99,7 +101,7 @@ export type Database = {
       }
       notes: {
         Row: {
-          content: string
+          content: Json
           created_at: string | null
           id: string
           metadata: Json | null
@@ -108,7 +110,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          content: string
+          content: Json
           created_at?: string | null
           id?: string
           metadata?: Json | null
@@ -117,7 +119,7 @@ export type Database = {
           user_id: string
         }
         Update: {
-          content?: string
+          content?: Json
           created_at?: string | null
           id?: string
           metadata?: Json | null

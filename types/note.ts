@@ -17,7 +17,7 @@ export type NoteResponse = {
 
 export type NoteCreateInput = {
   title: string
-  content: string
+  content: Json
   metadata?: Json
 }
 

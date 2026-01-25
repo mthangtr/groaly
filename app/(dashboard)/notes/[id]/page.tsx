@@ -24,7 +24,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { NoteEditor } from "@/components/notes/NoteEditor"
+import { useOfflineSync } from "@/hooks/useOfflineSync"
 import type { Note } from "@/types/note"
+import type { Json } from "@/types/database"
 import type { ExtractTasksResponse } from "@/lib/ai/schemas"
 import type { JSONContent } from "@tiptap/react"
 import { extractTextFromTiptapJSON } from "@/lib/tiptap/utils"
@@ -33,6 +35,7 @@ export default function NoteEditorPage() {
   const params = useParams()
   const router = useRouter()
   const noteId = params.id as string
+  const { updateNoteOffline, isOnline } = useOfflineSync()
 
   const [note, setNote] = React.useState<Note | null>(null)
   const [isLoading, setIsLoading] = React.useState(true)
@@ -70,30 +73,33 @@ export default function NoteEditorPage() {
     fetchNote()
   }, [noteId])
 
-  // Auto-save debounced
+  // Auto-save debounced with offline support
   React.useEffect(() => {
     if (!note || isSaved) return
 
     const timeout = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/notes/${noteId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, content }),
-        })
-
-        if (res.ok) {
-          setIsSaved(true)
-          const data = await res.json()
-          setNote(data.note)
-        }
+        // Use offline-aware save
+        await updateNoteOffline(noteId, { title, content })
+        setIsSaved(true)
+        
+        // Update local state with new timestamp
+        setNote(prev => prev ? {
+          ...prev,
+          title,
+          content: content as unknown as Json,
+          updated_at: new Date().toISOString()
+        } : null)
       } catch (err) {
         console.error("Error saving note:", err)
+        if (isOnline) {
+          toast.error("Failed to save note")
+        }
       }
     }, 2000)
 
     return () => clearTimeout(timeout)
-  }, [note, noteId, title, content, isSaved])
+  }, [note, noteId, title, content, isSaved, updateNoteOffline, isOnline])
 
   // Handle "Plan this" - extract tasks from note using AI
   const handlePlanThis = React.useCallback(async () => {
@@ -245,7 +251,7 @@ export default function NoteEditorPage() {
           {isSaved ? (
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <CheckCircle2 className="size-3" />
-              Saved
+              {isOnline ? "Saved" : "Saved offline"}
             </span>
           ) : (
             <span className="flex items-center gap-1 text-xs text-yellow-600">
