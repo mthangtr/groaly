@@ -212,6 +212,7 @@ ${insights.suggestions.map((s) => `- ${s}`).join("\n")}`
         completion_rate: stats.completion_rate,
         total_focus_minutes: stats.total_focus_minutes,
         focus_sessions_count: stats.focus_sessions_count,
+        tags_distribution: stats.tags_distribution,
       },
     })
   } catch (error) {

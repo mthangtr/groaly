@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Target,
   ChevronsUpDown,
+  TrendingUp,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -67,6 +68,12 @@ const mainNavItems = [
     url: "/table",
     icon: Table2,
     description: "All tasks view",
+  },
+  {
+    title: "Reviews",
+    url: "/reviews",
+    icon: TrendingUp,
+    description: "Weekly insights",
   },
 ]
 
