@@ -124,3 +124,77 @@ export const ExtractTasksResponseSchema = z.object({
 })
 
 export type ExtractTasksResponse = z.infer<typeof ExtractTasksResponseSchema>
+
+/**
+ * Weekly Review AI Generation Schemas
+ */
+
+/**
+ * Schema for AI-generated weekly insights
+ */
+export const WeeklyInsightsSchema = z.object({
+  completion_summary: z
+    .string()
+    .max(300)
+    .describe(
+      "Brief summary of task completion (e.g., '18 of 25 tasks completed (72%)')"
+    ),
+  productivity_patterns: z
+    .array(z.string().max(200))
+    .max(5)
+    .describe(
+      "Observed patterns (e.g., 'Most productive on Tuesday mornings', 'Struggled with afternoon focus')"
+    ),
+  bottlenecks: z
+    .array(z.string().max(200))
+    .max(3)
+    .describe(
+      "Key blockers or challenges (e.g., 'Too many meetings on Wednesday', 'Underestimated design tasks')"
+    ),
+  achievements: z
+    .array(z.string().max(200))
+    .max(5)
+    .describe(
+      "Notable accomplishments and milestones (e.g., 'Completed project milestone', 'Resolved critical bug')"
+    ),
+  suggestions: z
+    .array(z.string().max(200))
+    .max(5)
+    .describe(
+      "Actionable recommendations for next week (e.g., 'Schedule deep work in mornings', 'Break large tasks into smaller chunks')"
+    ),
+})
+
+export type WeeklyInsights = z.infer<typeof WeeklyInsightsSchema>
+
+/**
+ * Schema description for weekly review AI prompt
+ */
+export const WEEKLY_INSIGHTS_SCHEMA_DESCRIPTION = `{
+  "completion_summary": string (required, max 300 chars - overview of task completion rate),
+  "productivity_patterns": string[] (required, max 5 items - observed patterns in productivity),
+  "bottlenecks": string[] (required, max 3 items - key challenges or blockers),
+  "achievements": string[] (required, max 5 items - notable accomplishments),
+  "suggestions": string[] (required, max 5 items - actionable recommendations for next week)
+}`
+
+/**
+ * Weekly review data aggregation
+ */
+export const WeeklyStatsSchema = z.object({
+  total_tasks: z.number().int().min(0),
+  completed_tasks: z.number().int().min(0),
+  in_progress_tasks: z.number().int().min(0),
+  completion_rate: z.number().min(0).max(100),
+  total_focus_minutes: z.number().int().min(0),
+  focus_sessions_count: z.number().int().min(0),
+  priority_distribution: z.object({
+    urgent: z.number().int().min(0),
+    high: z.number().int().min(0),
+    medium: z.number().int().min(0),
+    low: z.number().int().min(0),
+  }),
+  tags_distribution: z.record(z.string(), z.number().int().min(0)),
+})
+
+export type WeeklyStats = z.infer<typeof WeeklyStatsSchema>
