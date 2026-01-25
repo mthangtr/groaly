@@ -104,19 +104,21 @@ export function OptimizeWeekButton({
             <AlertDialogTitle>Optimize your week?</AlertDialogTitle>
             <AlertDialogDescription>
               AI will automatically schedule your tasks across the week based on:
-              <ul className="mt-2 space-y-1 text-left">
-                <li>• Task priorities and due dates</li>
-                <li>• Dependencies (blocked tasks won&apos;t be scheduled)</li>
-                <li>• Your working hours and energy levels</li>
-                <li>• Protected time slots (meetings, breaks)</li>
-                <li>• Even workload distribution</li>
-              </ul>
-              <p className="mt-3 text-xs text-muted-foreground">
-                This will update <code className="rounded bg-muted px-1">scheduled_at</code> for
-                all unscheduled tasks. You can manually adjust after.
-              </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <div className="mt-2 space-y-2 text-xs text-muted-foreground">
+            <ul className="space-y-1 text-left">
+              <li>• Task priorities and due dates</li>
+              <li>• Dependencies (blocked tasks won&apos;t be scheduled)</li>
+              <li>• Your working hours and energy levels</li>
+              <li>• Protected time slots (meetings, breaks)</li>
+              <li>• Even workload distribution</li>
+            </ul>
+            <div>
+              This will update <code className="rounded bg-muted px-1">scheduled_at</code> for all
+              unscheduled tasks. You can manually adjust after.
+            </div>
+          </div>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isOptimizing}>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleOptimize} disabled={isOptimizing}>
