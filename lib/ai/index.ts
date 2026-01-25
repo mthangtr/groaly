@@ -19,6 +19,11 @@ export {
   type SuggestionOptions,
 } from "./suggestion-algorithm"
 export {
+  getRelatedTasks,
+  calculateRelatednessScore,
+  buildRelatednessReasoning,
+} from "./relatedness-algorithm"
+export {
   buildSystemPrompt,
   buildMinimalSystemPrompt,
   buildDetailedSystemPrompt,
