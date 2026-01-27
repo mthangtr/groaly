@@ -832,11 +832,6 @@ OPENROUTER_API_KEY=sk-or-v1-...
 # Security
 ENCRYPTION_KEY=32-byte-hex-string
 
-# Optional - Caching
-UPSTASH_REDIS_REST_URL=https://...
-UPSTASH_REDIS_REST_TOKEN=...
-```
-
 ---
 
 *This document consolidates all planning artifacts into a single actionable specification for AI agents to build dumtasking.*

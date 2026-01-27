@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Button } from "@/components/ui/button"
+import { SidebarTrigger } from "@/components/ui/sidebar"
 import {
   Select,
   SelectContent,
@@ -197,111 +198,93 @@ export default function ReviewsPage() {
 
   if (loading && !currentReview) {
     return (
-      <div className="flex h-[400px] items-center justify-center">
+      <div className="flex h-dvh items-center justify-center">
         <LoadingSpinner />
       </div>
     )
   }
 
   return (
-    <div className="container max-w-5xl space-y-6 py-8">
+    <div className="flex h-dvh flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Weekly Reviews</h1>
-          <p className="text-sm text-muted-foreground">
-            AI-powered insights about your productivity
-          </p>
+      <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+        <SidebarTrigger className="-ml-1" />
+        <div className="flex flex-1 items-center gap-2">
+          <h1 className="text-sm font-medium">Weekly Reviews</h1>
+          <span className="text-xs text-muted-foreground">
+            {reviews.length} {reviews.length === 1 ? "review" : "reviews"}
+          </span>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          {reviews.length > 0 && (
+            <Select value={selectedWeek} onValueChange={(value) => setSelectedWeek(value || "")}>
+              <SelectTrigger className="h-8 w-[200px]">
+                <CalendarIcon className="mr-2 size-3.5" />
+                <SelectValue placeholder="Select week" />
+              </SelectTrigger>
+              <SelectContent>
+                {reviews.map((review) => {
+                  const date = new Date(review.week_start)
+                  const endDate = new Date(date)
+                  endDate.setDate(endDate.getDate() + 6)
+                  return (
+                    <SelectItem key={review.id} value={review.week_start}>
+                      {date.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}{" "}
+                      -{" "}
+                      {endDate.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </SelectItem>
+                  )
+                })}
+              </SelectContent>
+            </Select>
+          )}
+          {currentReview && (
+            <Button variant="outline" size="sm" disabled>
+              <Download className="size-3.5" />
+              Export
+            </Button>
+          )}
           <Button
-            variant="outline"
             size="sm"
+            className="gap-1.5"
             onClick={generateReview}
             disabled={generating}
           >
-            {generating ? (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Generate Review
-              </>
-            )}
+            <RefreshCw className={`size-3.5 ${generating ? "animate-spin" : ""}`} />
+            {generating ? "Generating..." : "Generate"}
           </Button>
-          {currentReview && (
-            <Button variant="outline" size="sm" disabled>
-              <Download className="mr-2 h-4 w-4" />
-              Download PDF
+        </div>
+      </header>
+
+      {/* Content */}
+      <div className="flex-1 overflow-auto">
+        {currentReview ? (
+          <div className="mx-auto max-w-4xl p-6">
+            <WeeklyReview
+              data={currentReview}
+              onApplySuggestion={handleApplySuggestion}
+            />
+          </div>
+        ) : (
+          <div className="flex h-full flex-col items-center justify-center p-8 text-center">
+            <CalendarIcon className="mb-4 size-12 text-muted-foreground/50" />
+            <h3 className="mb-2 text-lg font-semibold">No reviews yet</h3>
+            <p className="mb-4 text-sm text-muted-foreground">
+              Generate your first weekly review to get AI-powered insights
+            </p>
+            <Button onClick={generateReview} disabled={generating} className="gap-1.5">
+              <RefreshCw className={`size-3.5 ${generating ? "animate-spin" : ""}`} />
+              {generating ? "Generating..." : "Generate Review"}
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-
-      {/* Week Selector */}
-      {reviews.length > 0 && (
-        <div className="flex items-center gap-3">
-          <CalendarIcon className="h-5 w-5 text-muted-foreground" />
-          <Select value={selectedWeek} onValueChange={(value) => setSelectedWeek(value || "")}>
-            <SelectTrigger className="w-[250px]">
-              <SelectValue placeholder="Select week" />
-            </SelectTrigger>
-            <SelectContent>
-              {reviews.map((review) => {
-                const date = new Date(review.week_start)
-                const endDate = new Date(date)
-                endDate.setDate(endDate.getDate() + 6)
-                return (
-                  <SelectItem key={review.id} value={review.week_start}>
-                    {date.toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })}{" "}
-                    -{" "}
-                    {endDate.toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </SelectItem>
-                )
-              })}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
-
-      {/* Review Content */}
-      {currentReview ? (
-        <WeeklyReview
-          data={currentReview}
-          onApplySuggestion={handleApplySuggestion}
-        />
-      ) : (
-        <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">
-          <CalendarIcon className="mb-4 h-12 w-12 text-muted-foreground/50" />
-          <h3 className="mb-2 text-lg font-semibold">No reviews yet</h3>
-          <p className="mb-4 text-sm text-muted-foreground">
-            Generate your first weekly review to get AI-powered insights
-          </p>
-          <Button onClick={generateReview} disabled={generating}>
-            {generating ? (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Generate Review
-              </>
-            )}
-          </Button>
-        </div>
-      )}
     </div>
   )
 }
