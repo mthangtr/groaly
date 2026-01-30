@@ -27,36 +27,6 @@ export type Note = {
   task_count: number
 }
 
-export type Goal = {
-  id: string
-  name: string
-  color: string
-  percentage: number
-}
-
-export type User = {
-  id: string
-  name: string
-  email: string
-  avatar?: string
-  timezone: string
-}
-
-// Mock user
-export const mockUser: User = {
-  id: "1",
-  name: "mthangtr",
-  email: "thang@dumtasking.com",
-  timezone: "Asia/Ho_Chi_Minh",
-}
-
-// Mock goals
-export const mockGoals: Goal[] = [
-  { id: "1", name: "Startup", color: "#3b82f6", percentage: 65 },
-  { id: "2", name: "Dev Learning", color: "#10b981", percentage: 22 },
-  { id: "3", name: "Japanese N3", color: "#f59e0b", percentage: 13 },
-]
-
 // Mock tasks
 export const mockTasks: Task[] = [
   {

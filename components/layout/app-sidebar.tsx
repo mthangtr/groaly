@@ -12,13 +12,11 @@ import {
   Sparkles,
   LogOut,
   ChevronRight,
-  Target,
   ChevronsUpDown,
   TrendingUp,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { mockGoals } from "@/lib/mock-data"
 import { useAuth } from "@/hooks/useAuth"
 import {
   Sidebar,
@@ -42,7 +40,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Progress } from "@/components/ui/progress"
 import { OfflineIndicator } from "@/components/common"
 
 const mainNavItems = [
@@ -149,44 +146,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Goals Section */}
-        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-          <SidebarGroupLabel className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
-            <Target className="mr-1.5 size-3" />
-            Goals Distribution
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <div className="space-y-3 px-2 py-1">
-              {mockGoals.map((goal) => (
-                <div key={goal.id} className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5">
-                      <div
-                        className="size-2 rounded-full"
-                        style={{ backgroundColor: goal.color }}
-                      />
-                      <span className="font-medium text-foreground/80">
-                        {goal.name}
-                      </span>
-                    </div>
-                    <span className="tabular-nums text-muted-foreground">
-                      {goal.percentage}%
-                    </span>
-                  </div>
-                  <Progress
-                    value={goal.percentage}
-                    className="h-1"
-                    style={
-                      {
-                        "--progress-background": goal.color,
-                      } as React.CSSProperties
-                    }
-                  />
-                </div>
-              ))}
-            </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
 
       {/* Footer / User */}
