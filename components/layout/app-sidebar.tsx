@@ -8,7 +8,6 @@ import {
   LayoutGrid,
   Calendar,
   Table2,
-  Settings,
   Sparkles,
   LogOut,
   ChevronRight,
@@ -66,12 +65,6 @@ const mainNavItems = [
     url: "/table",
     icon: Table2,
     description: "All tasks view",
-  },
-  {
-    title: "Reviews",
-    url: "/reviews",
-    icon: TrendingUp,
-    description: "Weekly insights",
   },
 ]
 
@@ -156,19 +149,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
 
         <SidebarMenu>
-          {/* Settings */}
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              isActive={pathname === "/settings"}
-              tooltip="Settings"
-            >
-              <Link href="/settings" className="flex items-center gap-2 w-full">
-                <Settings className="size-4" />
-                <span>Settings</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-
           {/* User Menu */}
           <SidebarMenuItem>
             <DropdownMenu>
@@ -220,9 +200,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Link href="/settings" className="flex items-center gap-2 w-full">
-                    <Settings className="size-4" />
-                    Settings
+                  <Link href="/reviews" className="flex items-center gap-2 w-full">
+                    <TrendingUp className="size-4" />
+                    Weekly Review
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
