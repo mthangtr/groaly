@@ -147,7 +147,7 @@ export function KanbanCard({ task, onEdit, onDelete, onClick }: KanbanCardProps)
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-7 text-xs gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="h-8 text-sm gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <Play className="size-3" />
                 Focus

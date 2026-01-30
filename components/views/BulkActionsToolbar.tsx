@@ -117,7 +117,7 @@ export function BulkActionsToolbar({
       <div className="h-4 w-px bg-border mx-2" />
 
       <Select onValueChange={handleStatusChange}>
-        <SelectTrigger className="h-7 w-[130px]">
+        <SelectTrigger className="h-9 w-[130px]">
           <SelectValue placeholder="Set status" />
         </SelectTrigger>
         <SelectContent>
@@ -130,7 +130,7 @@ export function BulkActionsToolbar({
       </Select>
 
       <Select onValueChange={handlePriorityChange}>
-        <SelectTrigger className="h-7 w-[120px]">
+        <SelectTrigger className="h-9 w-[120px]">
           <SelectValue placeholder="Set priority" />
         </SelectTrigger>
         <SelectContent>
@@ -148,7 +148,7 @@ export function BulkActionsToolbar({
       <Popover>
         <PopoverTrigger
           render={(props) => (
-            <Button {...props} variant="outline" size="sm" className="h-7 gap-1.5">
+            <Button {...props} variant="outline" size="sm" className="h-9 gap-1.5">
               <Calendar className="size-3.5" />
               Reschedule
             </Button>
@@ -162,11 +162,11 @@ export function BulkActionsToolbar({
                 type="date"
                 value={rescheduleDate}
                 onChange={(e) => setRescheduleDate(e.target.value)}
-                className="h-7 text-xs w-[140px]"
+                className="h-9 text-sm w-[140px]"
               />
               <Button
                 size="sm"
-                className="h-7"
+                className="h-9"
                 onClick={handleReschedule}
                 disabled={!rescheduleDate}
               >
@@ -176,7 +176,7 @@ export function BulkActionsToolbar({
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 text-xs justify-start"
+              className="h-9 text-sm justify-start"
               onClick={handleClearDueDate}
             >
               Clear due date
@@ -194,7 +194,7 @@ export function BulkActionsToolbar({
               {...props}
               variant="outline"
               size="sm"
-              className="h-7 gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10"
+              className="h-9 gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10"
             >
               <Trash2 className="size-3.5" />
               Delete

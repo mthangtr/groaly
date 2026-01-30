@@ -220,7 +220,7 @@ function DayColumn({
         <Button
           variant="ghost"
           size="sm"
-          className="w-full h-7 text-xs text-muted-foreground"
+          className="w-full h-9 text-sm text-muted-foreground"
           onClick={onAddTask}
         >
           <Plus className="size-3 mr-1" />

@@ -195,7 +195,7 @@ function StatusSelect({
 
   return (
     <Select value={value} onValueChange={(v) => v && onValueChange(v)}>
-      <SelectTrigger className="h-7 w-[130px]">
+      <SelectTrigger className="h-9 w-[130px]">
         <SelectValue>
           <div className="flex items-center gap-2">
             <StatusIcon
@@ -206,7 +206,7 @@ function StatusSelect({
                 value === "todo" && "text-muted-foreground"
               )}
             />
-            <span className="capitalize text-xs">{value.replace("_", " ")}</span>
+            <span className="capitalize text-sm">{value.replace("_", " ")}</span>
           </div>
         </SelectValue>
       </SelectTrigger>
@@ -243,11 +243,11 @@ function PrioritySelect({
 }) {
   return (
     <Select value={value} onValueChange={(v) => v && onValueChange(v)}>
-      <SelectTrigger className="h-7 w-[100px]">
+      <SelectTrigger className="h-9 w-[100px]">
         <SelectValue>
           <div className="flex items-center gap-2">
             <div className={cn("size-2.5 rounded-full", priorityColors[value])} />
-            <span className="capitalize text-xs">{value}</span>
+            <span className="capitalize text-sm">{value}</span>
           </div>
         </SelectValue>
       </SelectTrigger>
@@ -290,7 +290,7 @@ function DatePickerCell({
         type="date"
         value={inputValue}
         onChange={handleChange}
-        className="h-7 text-xs w-[130px]"
+        className="h-9 text-sm w-[130px]"
       />
       {inputValue && (
         <Button
@@ -344,7 +344,7 @@ function ExportButton({
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
-                className="h-7 text-xs"
+                className="h-9 text-sm"
                 placeholder="From"
               />
             </div>
@@ -353,7 +353,7 @@ function ExportButton({
                 type="date"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
-                className="h-7 text-xs"
+                className="h-9 text-sm"
                 placeholder="To"
               />
             </div>
@@ -859,7 +859,7 @@ export function TableView({ tasks, onTaskUpdate, onTaskDelete, onBulkUpdate }: T
           placeholder="Search tasks..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="h-8 w-64"
+          className="h-9 w-64"
         />
 
         <MultiSelectFilter
