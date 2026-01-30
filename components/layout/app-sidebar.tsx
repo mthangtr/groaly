@@ -84,14 +84,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader className="border-b border-sidebar-border">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" tooltip="dumtasking">
+            <SidebarMenuButton size="lg" tooltip="Groaly">
               <Link href="/notes" className="flex items-center gap-2 w-full">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-zinc-800 to-zinc-900 dark:from-zinc-100 dark:to-zinc-200">
                   <Sparkles className="size-4 text-zinc-100 dark:text-zinc-900" />
                 </div>
                 <div className="grid flex-1 text-left leading-tight">
                   <span className="truncate font-semibold tracking-tight">
-                    dumtasking
+                    Groaly
                   </span>
                   <span className="truncate text-[10px] text-muted-foreground">
                     Vibe Tasking

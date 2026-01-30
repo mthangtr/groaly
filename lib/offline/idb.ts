@@ -1,7 +1,7 @@
 import { openDB, type IDBPDatabase } from "idb"
 import type { Json } from "@/types/database"
 
-const DB_NAME = "dumtasking-offline"
+const DB_NAME = "groaly-offline"
 const DB_VERSION = 1
 
 export type SyncOperation = "create" | "update" | "delete"
@@ -34,7 +34,7 @@ export type TaskSyncQueueItem = {
   retries: number
 }
 
-type DumtaskingDB = {
+type GroalyDB = {
   notes_queue: {
     key: string
     value: NoteSyncQueueItem
@@ -47,14 +47,14 @@ type DumtaskingDB = {
   }
 }
 
-let dbInstance: IDBPDatabase<DumtaskingDB> | null = null
+let dbInstance: IDBPDatabase<GroalyDB> | null = null
 
-export async function getDB(): Promise<IDBPDatabase<DumtaskingDB>> {
+export async function getDB(): Promise<IDBPDatabase<GroalyDB>> {
   if (dbInstance) {
     return dbInstance
   }
 
-  dbInstance = await openDB<DumtaskingDB>(DB_NAME, DB_VERSION, {
+  dbInstance = await openDB<GroalyDB>(DB_NAME, DB_VERSION, {
     upgrade(db) {
       // Notes sync queue
       if (!db.objectStoreNames.contains("notes_queue")) {

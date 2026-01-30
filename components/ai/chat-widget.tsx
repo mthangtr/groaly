@@ -28,7 +28,7 @@ const quickActions = [
   { label: "/balance", description: "Check goal balance" },
 ]
 
-const STORAGE_KEY = "dumtasking-chat-history"
+const STORAGE_KEY = "groaly-chat-history"
 
 // Load messages from localStorage
 function loadMessages(): Message[] {

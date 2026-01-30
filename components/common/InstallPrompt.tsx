@@ -77,7 +77,7 @@ export function InstallPrompt() {
           <Download className="size-5 text-primary" />
         </div>
         <div className="flex-1 space-y-1">
-          <h3 className="font-semibold text-sm">Install DumTasking</h3>
+          <h3 className="font-semibold text-sm">Install Groaly</h3>
           <p className="text-xs text-muted-foreground">
             Install the app for a better experience with offline access and quick launch.
           </p>

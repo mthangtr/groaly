@@ -1,6 +1,6 @@
 {
-  "name": "DumTasking - AI-Powered Task Management",
-  "short_name": "DumTasking",
+  "name": "Groaly - AI-Powered Task Management",
+  "short_name": "Groaly",
   "description": "Transform chaotic notes into balanced, actionable tasks through AI. Zero-friction planning with multi-goal orchestration.",
   "start_url": "/",
   "display": "standalone",

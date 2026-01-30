@@ -52,7 +52,7 @@ export default function LoginPage() {
             <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <Sparkles className="size-4" />
             </div>
-            dumtasking
+            Groaly
           </Link>
         </div>
 

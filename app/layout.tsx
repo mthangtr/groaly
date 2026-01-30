@@ -37,30 +37,30 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "DumTasking - AI-Powered Personal Productivity Companion",
-    template: "%s | DumTasking",
+    default: "Groaly - AI-Powered Personal Productivity Companion",
+    template: "%s | Groaly",
   },
   description: "Transform chaotic notes into balanced, actionable task orchestration through conversational AI. Zero-friction planning with multi-goal orchestration and compassionate accountability.",
   keywords: ["productivity", "task management", "AI", "planning", "focus mode", "pomodoro", "weekly review", "goal tracking"],
-  authors: [{ name: "DumTasking Team" }],
-  creator: "DumTasking",
+  authors: [{ name: "Groaly Team" }],
+  creator: "Groaly",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "DumTasking",
+    title: "Groaly",
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://dumtasking.com",
-    title: "DumTasking - AI-Powered Task Management",
+    url: "https://groaly.com",
+    title: "Groaly - AI-Powered Task Management",
     description: "Dump your notes, AI Agents handle the rest",
-    siteName: "DumTasking",
+    siteName: "Groaly",
   },
   twitter: {
     card: "summary_large_image",
-    title: "DumTasking - AI-Powered Task Management",
+    title: "Groaly - AI-Powered Task Management",
     description: "Dump your notes, AI Agents handle the rest",
   },
   robots: {

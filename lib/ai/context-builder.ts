@@ -41,7 +41,7 @@ export type ContextBuildOptions = {
 // System Prompt Template
 // ============================================================================
 
-const SYSTEM_PROMPT_BASE = `You are a helpful task management assistant for the Dumtasking app. You help users manage their tasks and notes efficiently.
+const SYSTEM_PROMPT_BASE = `You are a helpful task management assistant for the Groaly app. You help users manage their tasks and notes efficiently.
 
 Your capabilities:
 - View and understand the user's tasks and notes

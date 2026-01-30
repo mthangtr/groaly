@@ -1,6 +1,6 @@
-# "dumtasking" - Product Idea & Requirements Spec
+# "Groaly" - Product Idea & Requirements Spec
 
-**Project Name:** dumtasking (dumb/dump + tasking)  
+**Project Name:** Groaly (Goal + Reality)  
 **Tagline:** "Dump your notes, AI Agents handle the rest"  
 **Current Date:** January 2026  
 **Document Version:** 3.0
@@ -10,7 +10,7 @@
 ## 1. Overview / Product Description
 
 **What is this product?**  
-**dumtasking** is an AI Agents-powered productivity application that transforms your notes into organized, actionable task management systems. Users dump notes (text-first) and interact with AI through natural conversation to automatically extract tasks, set priorities, identify dependencies, suggest schedules, and manage everything through Kanban, Calendar, and Table views—all through intelligent prompting and agent orchestration with a powerful Focus Mode for execution.
+**Groaly** is an AI Agents-powered productivity application that transforms your notes into organized, actionable task management systems. Users dump notes (text-first) and interact with AI through natural conversation to automatically extract tasks, set priorities, identify dependencies, suggest schedules, and manage everything through Kanban, Calendar, and Table views—all through intelligent prompting and agent orchestration with a powerful Focus Mode for execution.
 
 **Core value proposition (UVP):**  
 *"Store your notes, chat with AI Agents, get perfect task plans—zero manual organizing."*
@@ -96,7 +96,7 @@ User takes notes in various apps → notes sit unused → manually copy to task 
 - ❌ No image/PDF OCR or multi-modal input
 - ❌ No custom LLM fine-tuning (rely on OpenRouter's routing to best models)
 - ❌ No complex workflow automation (e.g., IFTTT-style rules)
-- ❌ No external calendar sync (two-way) - dumtasking is single source of truth
+- ❌ No external calendar sync (two-way) - Groaly is single source of truth
 - ❌ No meeting notes templates or recording features
 - ❌ No browser extensions or quick capture tools (bookmark tab sufficient)
 

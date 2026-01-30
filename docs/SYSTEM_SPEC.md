@@ -1,13 +1,13 @@
-# dumtasking - Complete System Specification
+# Groaly - Complete System Specification
 
-**Document Purpose:** Consolidated technical specification for AI agents to build dumtasking.  
+**Document Purpose:** Consolidated technical specification for AI agents to build Groaly.  
 **Consolidates:** Product Brief, PRD, UX Design, Architecture
 
 ---
 
 ## 1. Product Overview
 
-### What is dumtasking?
+### What is Groaly?
 
 An AI-powered personal productivity companion that transforms chaotic notes into balanced, actionable task orchestration through conversational AI.
 
@@ -155,7 +155,7 @@ CREATE TABLE tasks (
   priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'urgent')),
   
   -- AI-Generated Metadata
-  goal TEXT, -- e.g., "Japanese N3", "dumtasking MVP"
+  goal TEXT, -- e.g., "Japanese N3", "Groaly MVP"
   tags TEXT[],
   estimated_time_minutes INTEGER,
   energy_level TEXT CHECK (energy_level IN ('low', 'medium', 'high')),
@@ -834,4 +834,4 @@ ENCRYPTION_KEY=32-byte-hex-string
 
 ---
 
-*This document consolidates all planning artifacts into a single actionable specification for AI agents to build dumtasking.*
+*This document consolidates all planning artifacts into a single actionable specification for AI agents to build Groaly.*
