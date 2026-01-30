@@ -23,7 +23,7 @@ Run `bd prime` for workflow context, or install hooks (`bd hooks install`) for a
 - **Framework**: Next.js 16 (App Router) with React 19
 - **Language**: TypeScript (strict mode)
 - **Styling**: Tailwind CSS 4 with shadcn/ui (base-mira style)
-- **UI Library**: @base-ui/react with class-variance-authority
+- **UI Library**: @base-ui/react with class-variance-authority (radix-vega style)
 - **Backend**: Supabase (auth, database, realtime)
 - **Validation**: Zod
 - **Icons**: lucide-react
