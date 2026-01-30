@@ -137,50 +137,6 @@ export type Database = {
           },
         ]
       }
-      protected_slots: {
-        Row: {
-          created_at: string | null
-          end_time: string
-          id: string
-          is_recurring: boolean | null
-          recurrence_rule: string | null
-          start_time: string
-          title: string
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          end_time: string
-          id?: string
-          is_recurring?: boolean | null
-          recurrence_rule?: string | null
-          start_time: string
-          title: string
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          end_time?: string
-          id?: string
-          is_recurring?: boolean | null
-          recurrence_rule?: string | null
-          start_time?: string
-          title?: string
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "protected_slots_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       tasks: {
         Row: {
           created_at: string | null

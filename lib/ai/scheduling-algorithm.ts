@@ -7,12 +7,10 @@
  * - Dependencies (can't schedule before blockers complete)
  * - Working hours (respects user preferences)
  * - Energy levels (high energy tasks → morning)
- * - Protected slots (no scheduling conflicts)
  * - Even distribution across days
  */
 
 import type { Task } from "@/types/task"
-import type { ProtectedSlot } from "@/types/protected-slot"
 
 // User preferences for scheduling
 export type SchedulingPreferences = {
@@ -36,7 +34,6 @@ export type OptimizeWeekResponse = {
     total_scheduled: number
     unscheduled_count: number
     average_tasks_per_day: number
-    protected_slots_respected: number
   }
 }
 
@@ -44,7 +41,6 @@ export type OptimizeWeekResponse = {
 export type SchedulingOptions = {
   week_start: string // ISO date string (YYYY-MM-DD)
   preferences: SchedulingPreferences
-  protected_slots: ProtectedSlot[]
   preserve_existing?: boolean // Keep existing scheduled_at if possible
 }
 
@@ -63,14 +59,6 @@ function getTaskMetadata(task: Task): TaskMetadata {
     return {}
   }
   return task.metadata as TaskMetadata
-}
-
-/**
- * Get estimated time for a task in minutes (default: 60 minutes)
- */
-function getEstimatedMinutes(task: Task): number {
-  const metadata = getTaskMetadata(task)
-  return metadata.estimated_time_minutes ?? 60
 }
 
 /**
@@ -263,29 +251,6 @@ function getWorkingHoursBonus(
 }
 
 /**
- * Check if a time slot conflicts with protected slots
- */
-function hasProtectedSlotConflict(
-  slotStart: Date,
-  slotDurationMinutes: number,
-  protectedSlots: ProtectedSlot[]
-): boolean {
-  const slotEnd = new Date(slotStart.getTime() + slotDurationMinutes * 60 * 1000)
-
-  for (const slot of protectedSlots) {
-    const protectedStart = new Date(slot.start_time)
-    const protectedEnd = new Date(slot.end_time)
-
-    // Check for overlap
-    if (slotStart < protectedEnd && slotEnd > protectedStart) {
-      return true
-    }
-  }
-
-  return false
-}
-
-/**
  * Calculate how well a task fits in a time slot based on energy
  * Returns a score (higher = better fit)
  */
@@ -353,7 +318,6 @@ function generateWeekDates(weekStart: string): Date[] {
  * 3. Generate available time slots for the week
  * 4. For each task (in priority order):
  *    - Find best available slot considering:
- *      * No protected slot conflicts
  *      * Energy level matching
  *      * Even distribution across days
  *    - Assign task to slot
@@ -363,7 +327,7 @@ export function optimizeWeek(
   tasks: Task[],
   options: SchedulingOptions
 ): OptimizeWeekResponse {
-  const { week_start, preferences, protected_slots } = options
+  const { week_start, preferences } = options
   const { working_hours_start, working_hours_end, energy_preference = "balanced" } = preferences
 
   // Generate week dates
@@ -396,11 +360,6 @@ export function optimizeWeek(
     }
   }
 
-  // Filter out slots that conflict with protected slots
-  const availableSlots = allSlots.filter(
-    (slot) => !hasProtectedSlotConflict(slot.time, 60, protected_slots)
-  )
-
   // Track tasks per day for even distribution
   const tasksPerDay = new Array(7).fill(0)
 
@@ -409,15 +368,11 @@ export function optimizeWeek(
   const unscheduled: Task[] = []
 
   for (const task of sortedTasks) {
-    // Note: taskMinutes reserved for future enhancement (variable-duration slots)
-    // Currently using fixed 60-min slots
-    // const taskMinutes = getEstimatedMinutes(task)
-
     // Find best slot for this task
     let bestSlot: SlotInfo | null = null
     let bestScore = -Infinity
 
-    for (const slot of availableSlots) {
+    for (const slot of allSlots) {
       if (slot.assigned) continue
 
       // Calculate fitness score
@@ -462,8 +417,7 @@ export function optimizeWeek(
     schedule.length,
     unscheduled.length,
     blocked.length,
-    tasksPerDay,
-    protected_slots.length
+    tasksPerDay
   )
 
   // Calculate stats
@@ -471,7 +425,6 @@ export function optimizeWeek(
     total_scheduled: schedule.length,
     unscheduled_count: unscheduled.length,
     average_tasks_per_day: schedule.length / 7,
-    protected_slots_respected: protected_slots.length,
   }
 
   return {
@@ -488,8 +441,7 @@ function generateReasoning(
   scheduledCount: number,
   unscheduledCount: number,
   blockedCount: number,
-  tasksPerDay: number[],
-  protectedSlotsCount: number
+  tasksPerDay: number[]
 ): string {
   const parts: string[] = []
 
@@ -507,10 +459,8 @@ function generateReasoning(
     )
   }
 
-  // Find most/least loaded days
+  // Find most loaded days
   const maxTasks = Math.max(...tasksPerDay)
-  // minTasks reserved for future "least loaded day" insights
-  // const minTasks = Math.min(...tasksPerDay.filter((count) => count > 0))
 
   if (maxTasks > 0) {
     const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -523,10 +473,6 @@ function generateReasoning(
         `Busiest day${busiestDays.length > 1 ? "s" : ""}: ${busiestDays.join(", ")} (${maxTasks} task${maxTasks !== 1 ? "s" : ""}).`
       )
     }
-  }
-
-  if (protectedSlotsCount > 0) {
-    parts.push(`Respected ${protectedSlotsCount} protected slot${protectedSlotsCount !== 1 ? "s" : ""}.`)
   }
 
   parts.push(

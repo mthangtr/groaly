@@ -9,13 +9,11 @@ import { CalendarView } from "@/components/views/CalendarView"
 import { OptimizeWeekButton } from "@/components/views/OptimizeWeekButton"
 import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription"
 import type { Task } from "@/types/task"
-import type { ProtectedSlotWithDuration } from "@/types/protected-slot"
 
 export default function CalendarPage() {
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
   const [refreshKey, setRefreshKey] = React.useState(0)
-  const [protectedSlots, setProtectedSlots] = React.useState<ProtectedSlotWithDuration[]>([])
 
   const {
     data: tasks,
@@ -31,10 +29,7 @@ export default function CalendarPage() {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const [tasksRes, slotsRes] = await Promise.all([
-          fetch("/api/tasks"),
-          fetch("/api/protected-slots"),
-        ])
+        const tasksRes = await fetch("/api/tasks")
         
         if (!tasksRes.ok) {
           throw new Error("Failed to fetch tasks")
@@ -42,11 +37,6 @@ export default function CalendarPage() {
         
         const tasksData = await tasksRes.json()
         setTasks(tasksData.tasks || [])
-        
-        if (slotsRes.ok) {
-          const slotsData = await slotsRes.json()
-          setProtectedSlots(slotsData.slots || [])
-        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load data")
       } finally {
@@ -82,15 +72,13 @@ export default function CalendarPage() {
   }
 
   const handleOptimized = () => {
-    // Refresh tasks after optimization
     setRefreshKey((prev) => prev + 1)
   }
 
-  // Get Monday of current week for optimize button
   const getMondayOfCurrentWeek = () => {
     const today = new Date()
     const day = today.getDay()
-    const diff = today.getDate() - day + (day === 0 ? -6 : 1) // Adjust if Sunday
+    const diff = today.getDate() - day + (day === 0 ? -6 : 1)
     const monday = new Date(today.setDate(diff))
     return monday.toISOString().split("T")[0]
   }
@@ -137,7 +125,6 @@ export default function CalendarPage() {
       ) : (
         <CalendarView
           tasks={activeTasks}
-          protectedSlots={protectedSlots}
           onTaskReschedule={handleTaskReschedule}
           onAddTask={handleAddTask}
         />

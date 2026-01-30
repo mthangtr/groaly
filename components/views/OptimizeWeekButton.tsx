@@ -32,7 +32,6 @@ type OptimizeWeekResponse = {
     total_scheduled: number
     unscheduled_count: number
     average_tasks_per_day: number
-    protected_slots_respected: number
   }
 }
 

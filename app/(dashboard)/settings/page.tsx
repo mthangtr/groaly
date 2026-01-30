@@ -1,21 +1,10 @@
 "use client"
 
 import * as React from "react"
-import {
-  LogOut,
-  CalendarClock,
-  Key,
-} from "lucide-react"
+import { LogOut, User, Bell, Palette } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { ProtectedSlotsSection } from "@/components/settings/ProtectedSlotsSection"
-import { ApiKeysSection } from "@/components/settings/ApiKeysSection"
-import type {
-  ProtectedSlotWithDuration,
-  ProtectedSlotCreateInput,
-} from "@/types/protected-slot"
 
 type SettingsSection = {
   id: string
@@ -24,73 +13,13 @@ type SettingsSection = {
 }
 
 const sections: SettingsSection[] = [
-  { id: "api-keys", title: "API Keys", icon: Key },
-  { id: "protected-slots", title: "Protected Slots", icon: CalendarClock },
+  { id: "profile", title: "Profile", icon: User },
+  { id: "notifications", title: "Notifications", icon: Bell },
+  { id: "appearance", title: "Appearance", icon: Palette },
 ]
 
 export default function SettingsPage() {
-  const [activeSection, setActiveSection] = React.useState("api-keys")
-  const [protectedSlots, setProtectedSlots] = React.useState<ProtectedSlotWithDuration[]>([])
-  const [loadingSlots, setLoadingSlots] = React.useState(false)
-
-  // Fetch protected slots
-  React.useEffect(() => {
-    if (activeSection === "protected-slots") {
-      fetchProtectedSlots()
-    }
-  }, [activeSection])
-
-  const fetchProtectedSlots = async () => {
-    setLoadingSlots(true)
-    try {
-      const response = await fetch("/api/protected-slots")
-      if (response.ok) {
-        const data = await response.json()
-        setProtectedSlots(data.slots ?? [])
-      }
-    } catch (error) {
-      console.error("Failed to fetch protected slots:", error)
-    } finally {
-      setLoadingSlots(false)
-    }
-  }
-
-  const handleCreateSlot = async (input: ProtectedSlotCreateInput) => {
-    const response = await fetch("/api/protected-slots", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(input),
-    })
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.details || error.error)
-    }
-    await fetchProtectedSlots()
-  }
-
-  const handleUpdateSlot = async (id: string, input: Partial<ProtectedSlotCreateInput>) => {
-    const response = await fetch(`/api/protected-slots/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(input),
-    })
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.details || error.error)
-    }
-    await fetchProtectedSlots()
-  }
-
-  const handleDeleteSlot = async (id: string) => {
-    const response = await fetch(`/api/protected-slots/${id}`, {
-      method: "DELETE",
-    })
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.details || error.error)
-    }
-    await fetchProtectedSlots()
-  }
+  const [activeSection, setActiveSection] = React.useState("profile")
 
   return (
     <div className="flex h-dvh flex-col">
@@ -132,24 +61,30 @@ export default function SettingsPage() {
         {/* Settings Content */}
         <div className="flex-1 overflow-auto p-8">
           <div className="max-w-2xl">
-            {/* API Keys Section */}
-            {activeSection === "api-keys" && <ApiKeysSection />}
+            {activeSection === "profile" && (
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold">Profile</h2>
+                <p className="text-sm text-muted-foreground">
+                  Manage your profile settings
+                </p>
+              </div>
+            )}
 
-            {/* Protected Slots Section */}
-            {activeSection === "protected-slots" && (
-              <div className="space-y-8">
-                {loadingSlots ? (
-                  <div className="flex items-center justify-center py-8">
-                    <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  </div>
-                ) : (
-                  <ProtectedSlotsSection
-                    slots={protectedSlots}
-                    onCreateSlot={handleCreateSlot}
-                    onUpdateSlot={handleUpdateSlot}
-                    onDeleteSlot={handleDeleteSlot}
-                  />
-                )}
+            {activeSection === "notifications" && (
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold">Notifications</h2>
+                <p className="text-sm text-muted-foreground">
+                  Configure notification preferences
+                </p>
+              </div>
+            )}
+
+            {activeSection === "appearance" && (
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold">Appearance</h2>
+                <p className="text-sm text-muted-foreground">
+                  Customize the app appearance
+                </p>
               </div>
             )}
           </div>

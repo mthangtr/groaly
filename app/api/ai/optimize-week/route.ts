@@ -26,7 +26,6 @@ type OptimizeWeekRequest = {
  * - Dependencies (can't schedule before blockers)
  * - Working hours (soft constraint - prefer but don't enforce)
  * - Energy levels (high energy → morning slots)
- * - Protected slots (hard constraint - never schedule)
  * - Even distribution (avoid overloading single day)
  *
  * Request body:
@@ -43,8 +42,7 @@ type OptimizeWeekRequest = {
  *   stats: {
  *     total_scheduled: number,
  *     unscheduled_count: number,
- *     average_tasks_per_day: number,
- *     protected_slots_respected: number
+ *     average_tasks_per_day: number
  *   }
  * }
  */
@@ -120,22 +118,6 @@ export async function POST(
       )
     }
 
-    // Fetch protected slots for the week
-    const weekEnd = new Date(weekStartDate)
-    weekEnd.setDate(weekEnd.getDate() + 7)
-
-    const { data: protectedSlots, error: slotsError } = await supabase
-      .from("protected_slots")
-      .select("*")
-      .eq("user_id", user.id)
-      .gte("start_time", body.week_start)
-      .lt("start_time", weekEnd.toISOString().split("T")[0])
-
-    if (slotsError) {
-      console.error("Error fetching protected slots:", slotsError)
-      // Non-critical error, continue with empty array
-    }
-
     // Build scheduling preferences
     const preferences: SchedulingPreferences = {
       working_hours_start: userData.working_hours_start || "09:00:00",
@@ -148,7 +130,6 @@ export async function POST(
     const options: SchedulingOptions = {
       week_start: body.week_start,
       preferences,
-      protected_slots: protectedSlots || [],
       preserve_existing: body.preserve_existing ?? false,
     }
 
