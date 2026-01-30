@@ -143,11 +143,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       {/* Footer / User */}
       <SidebarFooter className="border-t border-sidebar-border">
-        {/* Offline Indicator */}
-        <div className="px-2 py-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center">
-          <OfflineIndicator />
-        </div>
-
+        <OfflineIndicator />
         <SidebarMenu>
           {/* User Menu */}
           <SidebarMenuItem>

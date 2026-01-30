@@ -17,6 +17,12 @@ import { Progress } from "@/components/ui/progress"
 export function OfflineIndicator() {
   const { isOnline, syncStatus, queuedCount, syncProgress, syncNow } = useOfflineSync()
 
+  const shouldShow = !isOnline || syncStatus === "syncing" || syncStatus === "error" || queuedCount > 0
+
+  if (!shouldShow) {
+    return null
+  }
+
   const getStatusIcon = () => {
     if (!isOnline) {
       return <CloudOff className="h-4 w-4" />
@@ -53,11 +59,7 @@ export function OfflineIndicator() {
       return "Sync error"
     }
 
-    if (queuedCount > 0) {
-      return `${queuedCount} pending`
-    }
-
-    return "Synced"
+    return `${queuedCount} pending`
   }
 
   const getStatusColor = () => {
@@ -73,11 +75,7 @@ export function OfflineIndicator() {
       return "bg-red-500/10 text-red-600 border-red-500/20"
     }
 
-    if (queuedCount > 0) {
-      return "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
-    }
-
-    return "bg-green-500/10 text-green-600 border-green-500/20"
+    return "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
   }
 
   const getTooltipContent = () => {
@@ -129,26 +127,15 @@ export function OfflineIndicator() {
       )
     }
 
-    if (queuedCount > 0) {
-      return (
-        <div className="space-y-1">
-          <p className="font-medium">Pending changes</p>
-          <p className="text-sm text-muted-foreground">
-            {queuedCount} change{queuedCount !== 1 ? "s" : ""} waiting to sync
-          </p>
-          <Button size="sm" onClick={syncNow} className="mt-2 w-full">
-            Sync now
-          </Button>
-        </div>
-      )
-    }
-
     return (
       <div className="space-y-1">
-        <p className="font-medium">All synced</p>
+        <p className="font-medium">Pending changes</p>
         <p className="text-sm text-muted-foreground">
-          All changes are saved and synced
+          {queuedCount} change{queuedCount !== 1 ? "s" : ""} waiting to sync
         </p>
+        <Button size="sm" onClick={syncNow} className="mt-2 w-full">
+          Sync now
+        </Button>
       </div>
     )
   }
