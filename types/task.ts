@@ -49,3 +49,21 @@ export type TaskErrorResponse = {
   error: string
   details?: string
 }
+
+// View task type with string priority (for UI components)
+export type ViewTask = {
+  id: string
+  title: string
+  description?: string
+  status: "todo" | "in_progress" | "done" | "cancelled"
+  priority: "low" | "medium" | "high" | "urgent"
+  goal?: string
+  tags: string[]
+  estimated_time_minutes?: number
+  energy_level?: "low" | "medium" | "high"
+  scheduled_at?: string
+  due_date?: string
+  completed_at?: string
+  note_id?: string
+  created_at: string
+}

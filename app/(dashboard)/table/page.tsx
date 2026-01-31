@@ -9,7 +9,7 @@ import { TableView } from "@/components/views/TableView"
 import { useTasksStore } from "@/stores/tasks-store"
 import { useTasksContext } from "@/contexts/tasks-context"
 import { dbTasksToViewTasks, viewTaskToDbUpdates } from "@/lib/task-adapter"
-import type { Task as ViewTask } from "@/lib/mock-data"
+import type { ViewTask } from "@/types/task"
 
 export default function TablePage() {
   const { isLoading, error } = useTasksContext()

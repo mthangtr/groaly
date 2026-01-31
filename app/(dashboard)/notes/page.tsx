@@ -4,7 +4,7 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 import { Plus, Sparkles, FileText, Loader2 } from "lucide-react"
 
-import { philosophicalQuotes } from "@/lib/mock-data"
+import { philosophicalQuotes } from "@/lib/constants/quotes"
 import { Button } from "@/components/ui/button"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { NotesList } from "@/components/notes/NotesList"

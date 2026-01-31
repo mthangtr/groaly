@@ -39,7 +39,7 @@ import {
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { type Task } from "@/lib/mock-data"
+import type { ViewTask } from "@/types/task"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -100,13 +100,13 @@ type EditingCell = {
 } | null
 
 type TableViewProps = {
-  tasks: Task[]
-  onTaskUpdate?: (taskId: string, updates: Partial<Task>) => void
+  tasks: ViewTask[]
+  onTaskUpdate?: (taskId: string, updates: Partial<ViewTask>) => void
   onTaskDelete?: (taskIds: string[]) => void
-  onBulkUpdate?: (taskIds: string[], updates: Partial<Task>) => void
+  onBulkUpdate?: (taskIds: string[], updates: Partial<ViewTask>) => void
 }
 
-const globalFilterFn: FilterFn<Task> = (row, _columnId, filterValue) => {
+const globalFilterFn: FilterFn<ViewTask> = (row, _columnId, filterValue) => {
   const search = filterValue.toLowerCase()
   const title = row.original.title?.toLowerCase() ?? ""
   const description = row.original.description?.toLowerCase() ?? ""
@@ -123,12 +123,12 @@ function EditableCell({
   onUpdate,
 }: {
   value: string
-  row: { id: string; original: Task }
+  row: { id: string; original: ViewTask }
   column: { id: string }
   editingCell: EditingCell
   onStartEdit: (rowId: string, columnId: string) => void
   onEndEdit: () => void
-  onUpdate: (taskId: string, updates: Partial<Task>) => void
+  onUpdate: (taskId: string, updates: Partial<ViewTask>) => void
 }) {
   const [editValue, setEditValue] = React.useState(value)
   const inputRef = React.useRef<HTMLInputElement>(null)
@@ -188,8 +188,8 @@ function StatusSelect({
   value,
   onValueChange,
 }: {
-  value: Task["status"]
-  onValueChange: (value: Task["status"]) => void
+  value: ViewTask["status"]
+  onValueChange: (value: ViewTask["status"]) => void
 }) {
   const StatusIcon = statusIcons[value]
 
@@ -238,8 +238,8 @@ function PrioritySelect({
   value,
   onValueChange,
 }: {
-  value: Task["priority"]
-  onValueChange: (value: Task["priority"]) => void
+  value: ViewTask["priority"]
+  onValueChange: (value: ViewTask["priority"]) => void
 }) {
   return (
     <Select value={value} onValueChange={(v) => v && onValueChange(v)}>
@@ -313,7 +313,7 @@ function ExportButton({
   tasks,
   onExport,
 }: {
-  tasks: Task[]
+  tasks: ViewTask[]
   onExport: (format: ExportFormat, dateFrom?: string, dateTo?: string) => void
 }) {
   const [dateFrom, setDateFrom] = React.useState("")
@@ -406,7 +406,7 @@ function ExportButton({
 function ColumnVisibilityToggle({
   table,
 }: {
-  table: ReturnType<typeof useReactTable<Task>>
+  table: ReturnType<typeof useReactTable<ViewTask>>
 }) {
   return (
     <Popover>
@@ -549,7 +549,7 @@ export function TableView({ tasks, onTaskUpdate, onTaskDelete, onBulkUpdate }: T
   const [goalFilter, setGoalFilter] = React.useState<string[]>([])
 
   const handleTaskUpdate = React.useCallback(
-    (taskId: string, updates: Partial<Task>) => {
+    (taskId: string, updates: Partial<ViewTask>) => {
       onTaskUpdate?.(taskId, updates)
     },
     [onTaskUpdate]
@@ -588,14 +588,14 @@ export function TableView({ tasks, onTaskUpdate, onTaskDelete, onBulkUpdate }: T
   }, [selectedRowIds, filteredTasks])
 
   const handleBulkStatusChange = React.useCallback(
-    (status: Task["status"]) => {
+    (status: ViewTask["status"]) => {
       onBulkUpdate?.(selectedTaskIds, { status })
     },
     [onBulkUpdate, selectedTaskIds]
   )
 
   const handleBulkPriorityChange = React.useCallback(
-    (priority: Task["priority"]) => {
+    (priority: ViewTask["priority"]) => {
       onBulkUpdate?.(selectedTaskIds, { priority })
     },
     [onBulkUpdate, selectedTaskIds]
@@ -624,7 +624,7 @@ export function TableView({ tasks, onTaskUpdate, onTaskDelete, onBulkUpdate }: T
     [filteredTasks]
   )
 
-  const columns = React.useMemo<ColumnDef<Task>[]>(
+  const columns = React.useMemo<ColumnDef<ViewTask>[]>(
     () => [
       {
         id: "select",

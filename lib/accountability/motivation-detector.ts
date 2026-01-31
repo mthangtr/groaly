@@ -1,4 +1,4 @@
-import { philosophicalQuotes } from "@/lib/mock-data"
+import { philosophicalQuotes } from "@/lib/constants/quotes"
 
 export type EveningCheckWindow = {
   startHour: number

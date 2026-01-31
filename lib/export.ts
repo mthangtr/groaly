@@ -1,4 +1,4 @@
-import type { Task } from "@/lib/mock-data"
+import type { ViewTask } from "@/types/task"
 
 type ExportFormat = "csv" | "json"
 
@@ -25,10 +25,10 @@ function getFilename(format: ExportFormat): string {
 }
 
 function filterByDateRange(
-  tasks: Task[],
+  tasks: ViewTask[],
   dateFrom?: string,
   dateTo?: string
-): Task[] {
+): ViewTask[] {
   if (!dateFrom && !dateTo) return tasks
 
   return tasks.filter((task) => {
@@ -42,7 +42,7 @@ function filterByDateRange(
   })
 }
 
-function tasksToCSV(tasks: Task[]): string {
+function tasksToCSV(tasks: ViewTask[]): string {
   const headers = [
     "ID",
     "Title",
@@ -83,7 +83,7 @@ function tasksToCSV(tasks: Task[]): string {
   return csvContent
 }
 
-function tasksToJSON(tasks: Task[]): string {
+function tasksToJSON(tasks: ViewTask[]): string {
   return JSON.stringify(tasks, null, 2)
 }
 
@@ -99,7 +99,7 @@ function downloadFile(content: string, filename: string, mimeType: string): void
   URL.revokeObjectURL(url)
 }
 
-export function exportTasks(tasks: Task[], options: ExportOptions): void {
+export function exportTasks(tasks: ViewTask[], options: ExportOptions): void {
   const { format, dateFrom, dateTo } = options
 
   const filteredTasks = filterByDateRange(tasks, dateFrom, dateTo)

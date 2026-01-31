@@ -1,5 +1,4 @@
-import type { Task as DbTask } from "@/types/task"
-import type { Task as ViewTask } from "@/lib/mock-data"
+import type { Task as DbTask, ViewTask } from "@/types/task"
 
 const PRIORITY_MAP: Record<number, ViewTask["priority"]> = {
   0: "low",

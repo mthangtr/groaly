@@ -5,7 +5,7 @@ import { Trash2, Calendar, X } from "lucide-react"
 import { toast } from "sonner"
 
 import { cn } from "@/lib/utils"
-import { type Task } from "@/lib/mock-data"
+import type { ViewTask } from "@/types/task"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -49,8 +49,8 @@ const priorityOptions = [
 type BulkActionsToolbarProps = {
   selectedCount: number
   selectedIds: string[]
-  onBulkStatusChange: (status: Task["status"]) => void
-  onBulkPriorityChange: (priority: Task["priority"]) => void
+  onBulkStatusChange: (status: ViewTask["status"]) => void
+  onBulkPriorityChange: (priority: ViewTask["priority"]) => void
   onBulkReschedule: (date: string | null) => void
   onBulkDelete: () => void
   onClearSelection: () => void
@@ -70,14 +70,14 @@ export function BulkActionsToolbar({
 
   const handleStatusChange = (status: string | null) => {
     if (status) {
-      onBulkStatusChange(status as Task["status"])
+      onBulkStatusChange(status as ViewTask["status"])
       toast.success(`Updated status for ${selectedCount} task${selectedCount > 1 ? "s" : ""}`)
     }
   }
 
   const handlePriorityChange = (priority: string | null) => {
     if (priority) {
-      onBulkPriorityChange(priority as Task["priority"])
+      onBulkPriorityChange(priority as ViewTask["priority"])
       toast.success(`Updated priority for ${selectedCount} task${selectedCount > 1 ? "s" : ""}`)
     }
   }

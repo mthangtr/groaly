@@ -11,10 +11,13 @@ import {
   SkipForward,
   ChevronRight,
   Target,
+  Loader2,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { mockTasks, philosophicalQuotes } from "@/lib/mock-data"
+import { philosophicalQuotes } from "@/lib/constants/quotes"
+import { dbTaskToViewTask } from "@/lib/task-adapter"
+import type { ViewTask } from "@/types/task"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -77,9 +80,11 @@ function sendNotification(title: string, body: string) {
 export default function FocusModePage() {
   const params = useParams()
   const taskId = params.taskId as string
-  const task = mockTasks.find((t) => t.id === taskId)
   const containerRef = React.useRef<HTMLDivElement>(null)
 
+  const [task, setTask] = React.useState<ViewTask | null>(null)
+  const [isLoading, setIsLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
   const [isRunning, setIsRunning] = React.useState(false)
   const [phase, setPhase] = React.useState<TimerPhase>("focus")
   const [timeRemaining, setTimeRemaining] = React.useState(POMODORO_DURATION)
@@ -96,6 +101,33 @@ export default function FocusModePage() {
   React.useEffect(() => {
     requestNotificationPermission()
   }, [])
+
+  React.useEffect(() => {
+    const fetchTask = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
+        const response = await fetch(`/api/tasks/${taskId}`)
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError("Task not found")
+          } else {
+            setError("Failed to load task")
+          }
+          return
+        }
+        const data = await response.json()
+        setTask(dbTaskToViewTask(data.task))
+      } catch (err) {
+        console.error("Error fetching task:", err)
+        setError("Failed to load task")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchTask()
+  }, [taskId])
 
   const handlePhaseComplete = React.useCallback(() => {
     if (phase === "focus") {
@@ -148,11 +180,22 @@ export default function FocusModePage() {
     handlePhaseComplete()
   }
 
-  if (!task) {
+  if (isLoading) {
     return (
       <div className="flex h-dvh items-center justify-center bg-zinc-950 text-white">
         <div className="text-center space-y-4">
-          <p className="text-muted-foreground">Task not found</p>
+          <Loader2 className="size-8 animate-spin mx-auto text-zinc-400" />
+          <p className="text-muted-foreground">Loading task...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !task) {
+    return (
+      <div className="flex h-dvh items-center justify-center bg-zinc-950 text-white">
+        <div className="text-center space-y-4">
+          <p className="text-muted-foreground">{error || "Task not found"}</p>
           <Link href="/kanban">
             <Button variant="outline">Go back</Button>
           </Link>
