@@ -5,18 +5,18 @@
       "url": "https://mcp.supabase.com/mcp?project_ref=onwwkhxrtcnzpmmrprro",
       "enabled": true
     },
-    // "shadcn": {
-    //     "type": "stdio",
-    //     "command": "npx",
-    //     "args": ["shadcn@latest", "mcp"],
-    //     "includeTools": [
-    //       "search_items_in_registries",
-    //       "view_items_in_registries",
-    //       "get_item_examples_from_registries",
-    //       "get_add_command_for_items",
-    //       "get_audit_checklist"
-    //     ]
-    //   },
+    "shadcn": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["shadcn@latest", "mcp"],
+        "includeTools": [
+          "search_items_in_registries",
+          "view_items_in_registries",
+          "get_item_examples_from_registries",
+          "get_add_command_for_items",
+          "get_audit_checklist"
+        ]
+      },
     "MCP_DOCKER": {
       "type": "stdio",
       "command": "docker",
