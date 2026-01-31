@@ -222,7 +222,7 @@ export function AIChatWidget() {
         size="icon"
         className="fixed bottom-6 right-6 size-14 rounded-full shadow-lg hover:shadow-xl transition-all z-50"
       >
-        <MessageCircle className="size-6" />
+        <img src="/logo.ico" alt="Chat" className="size-11 object-contain rounded-full" />
       </Button>
     )
   }
@@ -240,11 +240,9 @@ export function AIChatWidget() {
         onClick={() => setIsMinimized(!isMinimized)}
       >
         <div className="flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center rounded-full bg-gradient-to-br from-zinc-800 to-zinc-900 dark:from-zinc-100 dark:to-zinc-200">
-            <Sparkles className="size-4 text-zinc-100 dark:text-zinc-900" />
-          </div>
+          <img src="/logo.ico" alt="Groaly" className="size-9 object-contain rounded-full" />
           <div>
-            <p className="text-sm font-medium">AI Assistant</p>
+            <p className="text-sm font-medium">Groaly</p>
             <p className="text-[10px] text-muted-foreground">
               {isLoading ? "Thinking..." : "Always here to help"}
             </p>

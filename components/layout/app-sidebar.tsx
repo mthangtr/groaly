@@ -86,9 +86,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" tooltip="Groaly">
               <Link href="/notes" className="flex items-center gap-2 w-full">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-zinc-800 to-zinc-900 dark:from-zinc-100 dark:to-zinc-200">
-                  <Sparkles className="size-4 text-zinc-100 dark:text-zinc-900" />
-                </div>
+                <img src="/logo.ico" alt="Groaly" className="size-10 object-contain" />
                 <div className="grid flex-1 text-left leading-tight">
                   <span className="truncate font-semibold tracking-tight">
                     Groaly
@@ -202,7 +200,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
                   onClick={() => signOut()}
                 >

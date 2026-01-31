@@ -9,8 +9,8 @@ import {
   type TaskExtractionResponse,
 } from "./schemas"
 
-// Model for task extraction - Claude 3.5 Sonnet for best quality
-export const EXTRACTION_MODEL = "anthropic/claude-3.5-sonnet"
+// Model for task extraction - Gemini 3 Flash Preview
+export const EXTRACTION_MODEL = "google/gemini-3-flash-preview"
 
 /**
  * System prompt for task extraction

@@ -6,8 +6,8 @@ import { ProgressBar } from "@/components/common/ProgressBar";
 import { InstallPrompt } from "@/components/common/InstallPrompt";
 import "./globals.css";
 
-const inter = Inter({ 
-  subsets: ['latin'], 
+const inter = Inter({
+  subsets: ['latin'],
   variable: '--font-sans',
   display: 'swap',
   preload: true,
@@ -45,6 +45,11 @@ export const metadata: Metadata = {
   authors: [{ name: "Groaly Team" }],
   creator: "Groaly",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/logo.ico",
+    shortcut: "/logo.ico",
+    apple: "/logo.ico",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

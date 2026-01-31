@@ -4,12 +4,12 @@ export const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY,
 })
 
-// Default model - Claude Haiku 4.5 for fast, cheap responses
-export const DEFAULT_MODEL = "anthropic/claude-haiku-4.5"
+// Default model - Gemini 3 Flash Preview for fast, cheap responses
+export const DEFAULT_MODEL = "google/gemini-3-flash-preview"
 
 // Model aliases for different use cases
 export const MODELS = {
-  fast: "anthropic/claude-haiku-4.5",
-  balanced: "anthropic/claude-sonnet-4",
-  powerful: "anthropic/claude-sonnet-4",
+  fast: "google/gemini-3-flash-preview",
+  balanced: "google/gemini-3-flash-preview",
+  powerful: "google/gemini-3-flash-preview",
 } as const
