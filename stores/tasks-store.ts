@@ -2,7 +2,7 @@
 
 import { create } from "zustand"
 import { toast } from "sonner"
-import type { Task, TaskCreateInput, TaskUpdateInput } from "@/types/task"
+import type { Task, TaskCreateInput } from "@/types/task"
 
 type TasksState = {
   tasks: Task[]
@@ -18,7 +18,7 @@ type TasksActions = {
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
   createTaskOptimistic: (input: TaskCreateInput, userId: string) => Promise<Task | null>
-  updateTaskOptimistic: (id: string, input: TaskUpdateInput) => Promise<Task | null>
+  updateTaskOptimistic: (id: string, input: Partial<Task>) => Promise<Task | null>
   deleteTaskOptimistic: (id: string) => Promise<boolean>
   fetchTasks: () => Promise<void>
 }

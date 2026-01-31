@@ -3,33 +3,53 @@
 import * as React from "react"
 import { Plus } from "lucide-react"
 
-import { mockTasks, type Task } from "@/lib/mock-data"
 import { Button } from "@/components/ui/button"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { TableView } from "@/components/views/TableView"
+import { useTasksStore } from "@/stores/tasks-store"
+import { useTasksContext } from "@/contexts/tasks-context"
+import { dbTasksToViewTasks, viewTaskToDbUpdates } from "@/lib/task-adapter"
+import type { Task as ViewTask } from "@/lib/mock-data"
 
 export default function TablePage() {
-  const [tasks, setTasks] = React.useState<Task[]>(mockTasks)
+  const { isLoading, error } = useTasksContext()
+  const { tasks, updateTaskOptimistic, deleteTaskOptimistic } = useTasksStore()
 
-  const handleTaskUpdate = React.useCallback((taskId: string, updates: Partial<Task>) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, ...updates } : task
-      )
+  const viewTasks = React.useMemo(
+    () => dbTasksToViewTasks(tasks.filter((t) => t.status !== "cancelled")),
+    [tasks]
+  )
+
+  const handleTaskUpdate = React.useCallback(
+    async (taskId: string, updates: Partial<ViewTask>) => {
+      const dbUpdates = viewTaskToDbUpdates(updates)
+      await updateTaskOptimistic(taskId, dbUpdates)
+    },
+    [updateTaskOptimistic]
+  )
+
+  const handleTaskDelete = React.useCallback(
+    async (taskIds: string[]) => {
+      await Promise.all(taskIds.map((id) => deleteTaskOptimistic(id)))
+    },
+    [deleteTaskOptimistic]
+  )
+
+  const handleBulkUpdate = React.useCallback(
+    async (taskIds: string[], updates: Partial<ViewTask>) => {
+      const dbUpdates = viewTaskToDbUpdates(updates)
+      await Promise.all(taskIds.map((id) => updateTaskOptimistic(id, dbUpdates)))
+    },
+    [updateTaskOptimistic]
+  )
+
+  if (error) {
+    return (
+      <div className="flex h-dvh items-center justify-center">
+        <p className="text-destructive">{error}</p>
+      </div>
     )
-  }, [])
-
-  const handleTaskDelete = React.useCallback((taskIds: string[]) => {
-    setTasks((prev) => prev.filter((task) => !taskIds.includes(task.id)))
-  }, [])
-
-  const handleBulkUpdate = React.useCallback((taskIds: string[], updates: Partial<Task>) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        taskIds.includes(task.id) ? { ...task, ...updates } : task
-      )
-    )
-  }, [])
+  }
 
   return (
     <div className="flex h-dvh flex-col">
@@ -38,7 +58,7 @@ export default function TablePage() {
         <div className="flex flex-1 items-center gap-2">
           <h1 className="text-sm font-medium">All Tasks</h1>
           <span className="text-xs text-muted-foreground">
-            {tasks.length} tasks
+            {isLoading ? "Loading..." : `${viewTasks.length} tasks`}
           </span>
         </div>
 
@@ -49,12 +69,18 @@ export default function TablePage() {
       </header>
 
       <div className="flex-1 overflow-hidden">
-        <TableView
-          tasks={tasks}
-          onTaskUpdate={handleTaskUpdate}
-          onTaskDelete={handleTaskDelete}
-          onBulkUpdate={handleBulkUpdate}
-        />
+        {isLoading ? (
+          <div className="flex h-full items-center justify-center">
+            <div className="text-sm text-muted-foreground">Loading tasks...</div>
+          </div>
+        ) : (
+          <TableView
+            tasks={viewTasks}
+            onTaskUpdate={handleTaskUpdate}
+            onTaskDelete={handleTaskDelete}
+            onBulkUpdate={handleBulkUpdate}
+          />
+        )}
       </div>
     </div>
   )

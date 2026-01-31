@@ -2,6 +2,7 @@ import { cookies } from "next/headers"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { AIChatWidget } from "@/components/ai/chat-widget"
+import { TasksProvider } from "@/contexts/tasks-context"
 
 export default async function DashboardLayout({
   children,
@@ -14,7 +15,9 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar />
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset>
+        <TasksProvider>{children}</TasksProvider>
+      </SidebarInset>
       <AIChatWidget />
     </SidebarProvider>
   )

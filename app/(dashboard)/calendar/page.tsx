@@ -7,64 +7,15 @@ import { Button } from "@/components/ui/button"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { CalendarView } from "@/components/views/CalendarView"
 import { OptimizeWeekButton } from "@/components/views/OptimizeWeekButton"
-import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription"
-import type { Task } from "@/types/task"
+import { useTasksStore } from "@/stores/tasks-store"
+import { useTasksContext } from "@/contexts/tasks-context"
 
 export default function CalendarPage() {
-  const [isLoading, setIsLoading] = React.useState(true)
-  const [error, setError] = React.useState<string | null>(null)
-  const [refreshKey, setRefreshKey] = React.useState(0)
-
-  const {
-    data: tasks,
-    setData: setTasks,
-    optimisticUpdate,
-    rollback,
-  } = useRealtimeSubscription<Task>({
-    table: "tasks",
-    initialData: [],
-    enabled: true,
-  })
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const tasksRes = await fetch("/api/tasks")
-        
-        if (!tasksRes.ok) {
-          throw new Error("Failed to fetch tasks")
-        }
-        
-        const tasksData = await tasksRes.json()
-        setTasks(tasksData.tasks || [])
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load data")
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    fetchData()
-  }, [setTasks, refreshKey])
+  const { isLoading, error } = useTasksContext()
+  const { tasks, updateTaskOptimistic, fetchTasks } = useTasksStore()
 
   const handleTaskReschedule = async (taskId: string, newDate: string) => {
-    const previousTask = tasks.find((t) => t.id === taskId)
-    if (!previousTask) return
-
-    optimisticUpdate(taskId, { due_date: newDate } as Partial<Task>)
-
-    try {
-      const res = await fetch(`/api/tasks/${taskId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ due_date: newDate }),
-      })
-
-      if (!res.ok) {
-        throw new Error("Failed to reschedule task")
-      }
-    } catch {
-      rollback(taskId)
-    }
+    await updateTaskOptimistic(taskId, { due_date: newDate })
   }
 
   const handleAddTask = (date: Date) => {
@@ -72,7 +23,7 @@ export default function CalendarPage() {
   }
 
   const handleOptimized = () => {
-    setRefreshKey((prev) => prev + 1)
+    fetchTasks()
   }
 
   const getMondayOfCurrentWeek = () => {
