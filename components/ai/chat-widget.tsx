@@ -21,10 +21,10 @@ type Message = {
 }
 
 const quickActions = [
-  { label: "/plan-week", description: "Plan your week" },
-  { label: "/whats-next", description: "Get next task suggestion" },
-  { label: "/optimize", description: "Optimize today's schedule" },
-  { label: "/balance", description: "Check goal balance" },
+  { label: "Plan week", prompt: "Plan my week by analyzing all my tasks and scheduling them optimally based on priorities and deadlines" },
+  { label: "What's next", prompt: "What should I work on next? Consider my current priorities, deadlines, and energy levels" },
+  { label: "Optimize", prompt: "Optimize my schedule for today to maximize productivity and ensure I hit my deadlines" },
+  { label: "Balance", prompt: "Check my goal balance - am I making progress across all my important areas or neglecting some?" },
 ]
 
 const STORAGE_KEY = "groaly-chat-history"
@@ -189,8 +189,8 @@ export function AIChatWidget() {
     }
   }
 
-  const handleQuickAction = (action: string) => {
-    setInput(action)
+  const handleQuickAction = (prompt: string) => {
+    setInput(prompt)
   }
 
   const handleClearHistory = () => {
@@ -198,7 +198,8 @@ export function AIChatWidget() {
       {
         id: "init",
         role: "assistant",
-        content: "Chat history cleared. How can I help you today?",
+        content:
+          "Hey! I'm your AI assistant. I can help you plan tasks, optimize your schedule, and keep your goals balanced. What would you like to do?",
         timestamp: new Date(),
       },
     ])
@@ -318,9 +319,9 @@ export function AIChatWidget() {
                 {quickActions.map((action) => (
                   <button
                     key={action.label}
-                    onClick={() => handleQuickAction(action.label)}
+                    onClick={() => handleQuickAction(action.prompt)}
                     className="px-2.5 py-1 rounded-full border text-xs hover:bg-muted transition-colors"
-                    title={action.description}
+                    title={action.prompt}
                   >
                     {action.label}
                   </button>
