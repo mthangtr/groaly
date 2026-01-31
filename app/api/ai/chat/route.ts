@@ -100,6 +100,7 @@ export async function POST(request: Request): Promise<Response> {
       userId: user.id,
       tasks,
       notes,
+      supabase,
     })
 
     try {

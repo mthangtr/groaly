@@ -6,13 +6,26 @@
  */
 import { tool } from "ai"
 import { z } from "zod"
+import type { SupabaseClient } from "@supabase/supabase-js"
 
-import type { Task, TaskStatus, TaskPriority } from "@/types/task"
+import type { Task } from "@/types/task"
 import type { Note } from "@/types/note"
 
 // ============================================================================
 // Tool Result Types
 // ============================================================================
+
+export type CreateTaskResult = {
+  success: boolean
+  task?: {
+    id: string
+    title: string
+    priority: number
+    due_date?: string
+    tags?: string[]
+  }
+  error?: string
+}
 
 export type ExtractTasksResult = {
   success: boolean
@@ -94,6 +107,7 @@ export type ToolContext = {
   userId: string
   tasks: Task[]
   notes: Note[]
+  supabase: SupabaseClient
 }
 
 // Global context holder - set before tool execution
@@ -120,6 +134,74 @@ function getToolContext(): ToolContext | null {
  */
 export function createChatTools() {
   return {
+    /**
+     * Create a new task from conversation
+     * Used when user asks the AI to create/add a task directly
+     */
+    create_task: tool({
+      description:
+        "Create a new task from the conversation. Use when the user asks to add, create, or remind them about something.",
+      inputSchema: z.object({
+        title: z.string().min(1).describe("The task title"),
+        description: z.string().optional().describe("Optional task description"),
+        priority: z
+          .number()
+          .int()
+          .min(0)
+          .max(3)
+          .optional()
+          .describe("Priority (0=urgent, 1=high, 2=medium, 3=low). Default: 2"),
+        due_date: z
+          .string()
+          .regex(/^\d{4}-\d{2}-\d{2}$/)
+          .optional()
+          .describe("Due date in YYYY-MM-DD format"),
+        tags: z.array(z.string()).optional().describe("Optional tags for the task"),
+      }),
+      execute: async ({
+        title,
+        description,
+        priority,
+        due_date,
+        tags,
+      }): Promise<CreateTaskResult> => {
+        const ctx = getToolContext()
+        if (!ctx) {
+          return { success: false, error: "No context provided" }
+        }
+
+        const { data, error } = await ctx.supabase
+          .from("tasks")
+          .insert({
+            user_id: ctx.userId,
+            title,
+            description: description ?? null,
+            priority: priority ?? 2,
+            due_date: due_date ?? null,
+            tags: tags ?? [],
+            status: "todo",
+          })
+          .select()
+          .single()
+
+        if (error) {
+          console.error("Failed to create task:", error)
+          return { success: false, error: error.message }
+        }
+
+        return {
+          success: true,
+          task: {
+            id: data.id,
+            title: data.title,
+            priority: data.priority,
+            due_date: data.due_date,
+            tags: data.tags,
+          },
+        }
+      },
+    }),
+
     /**
      * Extract tasks from a note
      * Analyzes note content and identifies actionable tasks
@@ -199,19 +281,28 @@ export function createChatTools() {
           return { success: false, error: `Task ${task_id} not found` }
         }
 
-        // Stub: In production, this would update the database
-        const updatedTask: Task = {
-          ...task,
-          ...(updates.title !== undefined && { title: updates.title }),
-          ...(updates.description !== undefined && { description: updates.description }),
-          ...(updates.status !== undefined && { status: updates.status as TaskStatus }),
-          ...(updates.priority !== undefined && { priority: updates.priority as TaskPriority }),
-          ...(updates.due_date !== undefined && { due_date: updates.due_date }),
-          ...(updates.tags !== undefined && { tags: updates.tags }),
-          updated_at: new Date().toISOString(),
+        const updatePayload: Record<string, unknown> = {}
+        if (updates.title !== undefined) updatePayload.title = updates.title
+        if (updates.description !== undefined) updatePayload.description = updates.description
+        if (updates.status !== undefined) updatePayload.status = updates.status
+        if (updates.priority !== undefined) updatePayload.priority = updates.priority
+        if (updates.due_date !== undefined) updatePayload.due_date = updates.due_date
+        if (updates.tags !== undefined) updatePayload.tags = updates.tags
+
+        const { data, error } = await ctx.supabase
+          .from("tasks")
+          .update(updatePayload)
+          .eq("id", task_id)
+          .eq("user_id", ctx.userId)
+          .select()
+          .single()
+
+        if (error) {
+          console.error("Failed to update task:", error)
+          return { success: false, error: error.message }
         }
 
-        return { success: true, task: updatedTask }
+        return { success: true, task: data as Task }
       },
     }),
 
@@ -301,20 +392,41 @@ export function createChatTools() {
           return { success: false, error: "No context provided" }
         }
 
-        const updates: Array<{ id: string; new_due_date: string }> = []
         const dateMap = new Map(new_dates.map((d) => [d.task_id, d.due_date]))
+        const updates: Array<{ id: string; new_due_date: string }> = []
+        const errors: string[] = []
 
         for (const taskId of task_ids) {
           const task = ctx.tasks.find((t) => t.id === taskId)
-          if (task) {
-            const newDate = dateMap.get(taskId)
-            if (newDate) {
-              updates.push({ id: taskId, new_due_date: newDate })
-            }
+          if (!task) {
+            errors.push(`Task ${taskId} not found`)
+            continue
+          }
+
+          const newDate = dateMap.get(taskId)
+          if (!newDate) {
+            errors.push(`No date provided for task ${taskId}`)
+            continue
+          }
+
+          const { error } = await ctx.supabase
+            .from("tasks")
+            .update({ due_date: newDate })
+            .eq("id", taskId)
+            .eq("user_id", ctx.userId)
+
+          if (error) {
+            console.error(`Failed to reschedule task ${taskId}:`, error)
+            errors.push(`Failed to update ${taskId}: ${error.message}`)
+          } else {
+            updates.push({ id: taskId, new_due_date: newDate })
           }
         }
 
-        // Stub: In production, this would update the database
+        if (updates.length === 0 && errors.length > 0) {
+          return { success: false, error: errors.join("; ") }
+        }
+
         return {
           success: true,
           updated_count: updates.length,
