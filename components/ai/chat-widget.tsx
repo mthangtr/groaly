@@ -9,6 +9,7 @@ import {
   Loader2,
   ChevronDown,
 } from "lucide-react"
+import Markdown from "react-markdown"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -294,21 +295,25 @@ export function AIChatWidget() {
                 >
                   <div
                     className={cn(
-                      "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap",
+                      "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm",
                       message.role === "user"
-                        ? "bg-foreground text-background rounded-br-md"
-                        : "bg-muted rounded-bl-md"
+                        ? "bg-foreground text-background rounded-br-md whitespace-pre-wrap"
+                        : "bg-muted rounded-bl-md prose prose-sm dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-ol:my-1 max-w-none"
                     )}
                   >
-                    {message.content}
+                    {message.role === "assistant" ? (
+                      <Markdown>{message.content}</Markdown>
+                    ) : (
+                      message.content
+                    )}
                   </div>
                 </div>
               ))}
               {/* Streaming message */}
               {streamingContent && (
                 <div className="flex justify-start">
-                  <div className="max-w-[80%] bg-muted rounded-2xl rounded-bl-md px-4 py-2.5 text-sm whitespace-pre-wrap">
-                    {streamingContent}
+                  <div className="max-w-[80%] bg-muted rounded-2xl rounded-bl-md px-4 py-2.5 text-sm prose prose-sm dark:prose-invert prose-p:my-1 prose-ul:my-1 prose-ol:my-1 max-w-none">
+                    <Markdown>{streamingContent}</Markdown>
                     <span className="inline-block w-1.5 h-4 ml-1 bg-foreground/50 animate-pulse" />
                   </div>
                 </div>
