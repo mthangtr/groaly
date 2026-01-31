@@ -2,12 +2,10 @@
 
 import * as React from "react"
 import {
-  MessageCircle,
   X,
   Send,
-  Sparkles,
   Loader2,
-  ChevronDown,
+  Plus,
 } from "lucide-react"
 import Markdown from "react-markdown"
 
@@ -63,7 +61,6 @@ function saveMessages(messages: Message[]) {
 
 export function AIChatWidget() {
   const [isOpen, setIsOpen] = React.useState(false)
-  const [isMinimized, setIsMinimized] = React.useState(false)
   const [messages, setMessages] = React.useState<Message[]>([])
   const [input, setInput] = React.useState("")
   const [isLoading, setIsLoading] = React.useState(false)
@@ -229,17 +226,9 @@ export function AIChatWidget() {
   }
 
   return (
-    <div
-      className={cn(
-        "fixed bottom-6 right-6 w-96 rounded-2xl border bg-background shadow-2xl transition-all z-50 overflow-hidden",
-        isMinimized ? "h-14" : "h-[500px]"
-      )}
-    >
+    <div className="fixed bottom-6 right-6 w-96 h-[500px] rounded-2xl border bg-background shadow-2xl transition-all z-50 overflow-hidden">
       {/* Header */}
-      <div
-        className="flex h-14 items-center justify-between px-4 border-b bg-muted/30 cursor-pointer"
-        onClick={() => setIsMinimized(!isMinimized)}
-      >
+      <div className="flex h-14 items-center justify-between px-4 border-b bg-muted/30">
         <div className="flex items-center gap-2">
           <img src="/logo.ico" alt="Groaly" className="size-9 object-contain rounded-full" />
           <div>
@@ -256,15 +245,11 @@ export function AIChatWidget() {
             className="size-8"
             onClick={(e) => {
               e.stopPropagation()
-              setIsMinimized(!isMinimized)
+              handleClearHistory()
             }}
+            title="New conversation"
           >
-            <ChevronDown
-              className={cn(
-                "size-4 transition-transform",
-                isMinimized && "rotate-180"
-              )}
-            />
+            <Plus className="size-4" />
           </Button>
           <Button
             variant="ghost"
@@ -280,9 +265,7 @@ export function AIChatWidget() {
         </div>
       </div>
 
-      {!isMinimized && (
-        <>
-          {/* Messages */}
+      {/* Messages */}
           <ScrollArea className="flex-1 h-[352px]" ref={scrollRef}>
             <div className="p-4 space-y-4">
               {messages.map((message) => (
@@ -346,17 +329,7 @@ export function AIChatWidget() {
             </div>
           )}
 
-          {/* Clear history button */}
-          {messages.length > 5 && (
-            <div className="px-4 pb-2">
-              <button
-                onClick={handleClearHistory}
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Clear history
-              </button>
-            </div>
-          )}
+
 
           {/* Input */}
           <div className="p-3 border-t">
@@ -385,8 +358,6 @@ export function AIChatWidget() {
               </Button>
             </form>
           </div>
-        </>
-      )}
     </div>
   )
 }
