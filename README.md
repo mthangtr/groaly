@@ -1,84 +1,179 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Groaly
 
-## Issue Tracking with Beads
+**Groaly** (Goal + Reality) is an AI-powered personal productivity companion that transforms chaotic notes into balanced, actionable task orchestration. Rather than forcing users into rigid task management systems, Groaly meets you where you are—in your notes—and intelligently organizes the rest.
 
-This project uses **[Beads](https://github.com/steveyegge/beads)** for AI-native issue tracking.
+*Dump your notes, AI handles the rest.*
 
-```bash
-bd ready              # See available work
-bd show <id>          # View issue details
-bd update <id> --status in_progress  # Start work
-bd close <id>         # Complete work
-```
+## The Problem
 
-**Documentation:**
-- [AGENTS.md](AGENTS.md) - Full workflow guidelines
-- [.beads/SESSION_START.md](.beads/SESSION_START.md) - Session start checklist
-- [.beads/SESSION_END.md](.beads/SESSION_END.md) - Session end protocol (mandatory!)
-- [.beads/TESTING.md](.beads/TESTING.md) - Test isolation practices
+Knowledge workers juggling multiple life goals—a startup, learning new skills, personal projects, health routines—face a common set of frustrations:
 
-**Key Rules:**
-- Always include issue ID in commits: `git commit -m "Fix bug (dt-xyz)"`
-- Never end session without `git push` (see SESSION_END.md)
-- Use `BEADS_DB=/tmp/test.db` for testing
+**Goal Neglect.** When you focus intensely on one goal, others quietly disappear for weeks or months. That language learning app gathers dust. The side project stalls. You only remember when guilt strikes.
 
-## Environment Setup
+**Planning Friction.** Setting up and maintaining task systems is tedious. The overhead kills the habit before it forms. You spend more time organizing than doing.
 
-Before running the application, you need to configure environment variables.
+**No Orchestration.** Existing tools don't auto-balance multiple goals. You're left manually shuffling priorities, often poorly, often reactively.
 
-### Quick Setup
+**Guilt Loops.** Evening motivation drops. Tasks pile up. Traditional productivity tools amplify guilt rather than offering compassion, leading to tool abandonment.
 
-1. Copy the example environment file:
+**Context Fragmentation.** Notes in one app, tasks in another, calendar in a third. Context is lost. The original "why" behind a task vanishes.
+
+## The Solution
+
+Groaly introduces **Vibe Tasking**—the productivity equivalent of vibe coding. Just as AI handles the heavy lifting of implementation in code, Groaly handles the heavy lifting of planning, scheduling, and organizing. You focus on thinking, doing, and growing.
+
+### How It Works
+
+1. **Write freely.** Capture thoughts, ideas, meeting notes, or random brain dumps in the rich text editor. No structure required.
+
+2. **Let AI extract.** Click "Plan this" and Groaly's AI identifies actionable tasks, assigns priorities, estimates effort, suggests deadlines, and connects tasks to your goals.
+
+3. **Execute with focus.** Work through tasks in the Kanban board, calendar, or table view. When you need deep work, enter Focus Mode with a Pomodoro timer, ambient sounds, and distraction-free fullscreen.
+
+4. **Converse naturally.** The AI chat assistant understands context. Ask it to reschedule your week, find blockers, suggest what to work on next, or generate productivity insights.
+
+5. **Review and adapt.** Weekly AI-generated reviews surface patterns, celebrate wins, and gently highlight areas for improvement—without judgment.
+
+## Core Features
+
+### Intelligent Task Extraction
+The AI reads your notes and extracts tasks with context preserved. It understands priority, estimates effort, suggests scheduling, and links tasks back to their source. No manual copying or reformatting.
+
+### Multi-Goal Orchestration
+Groaly automatically balances work across your different life goals. The AI ensures your startup gets attention, but so does your health, your learning, and your relationships. Nothing falls through the cracks.
+
+### Multiple Views for Different Mindsets
+- **Kanban Board** for visual thinkers who like dragging cards across columns
+- **Calendar View** for time-blockers who think in schedules
+- **Table View** for power users who want filters, sorting, and bulk actions
+- **Notes View** for capturing and browsing your raw thinking
+
+### Focus Mode
+When it's time to execute, Focus Mode eliminates distractions. A fullscreen Pomodoro timer keeps you on track. Picture-in-Picture mode lets the timer float while you work elsewhere. Ambient sounds—rain, coffee shop, white noise—set the mood. Celebrations with confetti reward completed sessions.
+
+### AI Chat Assistant
+A floating chat widget provides a conversational interface to your entire productivity system. Create tasks, search your backlog, reschedule batches of work, find blocking dependencies, or ask for a summary of your week. The AI has tools for all of it.
+
+### Smart Daily Suggestions
+Each morning, Groaly surfaces a curated list of what to work on today based on deadlines, priorities, goal balance, and your historical patterns.
+
+### Weekly Reviews
+AI-generated weekly insights show you what you accomplished, where you spent your time, which goals got attention, and where you might adjust. The tone is encouraging, never shaming.
+
+### Compassionate Accountability
+When motivation drops, Groaly doesn't guilt-trip. It offers philosophical quotes, suggests lighter alternatives, and remembers that productivity serves life—not the other way around.
+
+### Related Tasks Discovery
+Every task shows contextually related items—other tasks from the same note, the same goal, or with overlapping tags. Connections surface naturally.
+
+### Offline Support
+Built as a Progressive Web App, Groaly works offline. Your notes and tasks sync when connectivity returns.
+
+## Technical Foundation
+
+Groaly is built on a modern, robust stack:
+
+- **Framework:** Next.js 16 with the App Router and React 19
+- **Language:** TypeScript in strict mode throughout
+- **Styling:** Tailwind CSS 4 with shadcn/ui components
+- **Backend:** Supabase for authentication, PostgreSQL database, and real-time sync
+- **AI:** Vercel AI SDK with OpenRouter for model flexibility (Claude, Gemini, and others)
+- **Rich Text:** Tiptap editor with Markdown support and code highlighting
+- **Drag and Drop:** dnd-kit for smooth Kanban interactions
+- **Data Tables:** TanStack Table for powerful filtering and sorting
+- **Charts:** Recharts for progress visualization
+- **Offline:** Service workers and IndexedDB for PWA functionality
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20 or later (Bun recommended)
+- A Supabase project
+- An OpenRouter API key for AI features
+
+### Environment Setup
+
+1. Clone the repository and install dependencies:
+   ```bash
+   bun install
+   ```
+
+2. Copy the example environment file:
    ```bash
    cp .env.example .env.local
    ```
 
-2. Fill in your credentials (see [docs/SETUP.md](docs/SETUP.md) for detailed instructions):
-   - **Supabase**: Get your project URL and API keys from [Supabase Dashboard](https://app.supabase.com)
-   - **OpenRouter**: Get your API key from [OpenRouter](https://openrouter.ai/keys)
-   - **Encryption Key**: Generate with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+3. Configure the required environment variables:
+   - `NEXT_PUBLIC_SUPABASE_URL` — Your Supabase project URL
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anonymous key
+   - `SUPABASE_SERVICE_ROLE_KEY` — Supabase service role key (server-side only)
+   - `OPENROUTER_API_KEY` — Your OpenRouter API key
+   - `ENCRYPTION_KEY` — A 32-byte hex string for encrypting sensitive data
 
-3. See **[docs/SETUP.md](docs/SETUP.md)** for complete setup guide with step-by-step instructions.
+   Generate an encryption key with:
+   ```bash
+   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+   ```
 
-### Required Environment Variables
+4. See `docs/SETUP.md` for detailed configuration instructions.
 
-- `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key (public)
-- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (server-only)
-- `OPENROUTER_API_KEY` - OpenRouter API key for AI features
-- `ENCRYPTION_KEY` - 32-byte hex string for encrypting sensitive data
+### Development
 
-## Getting Started
-
-First, run the development server:
-
+Start the development server:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+bun build
+bun start
+```
 
-## Learn More
+### Code Quality
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+bun lint          # Run ESLint
+bun lint --fix    # Auto-fix issues
+bunx tsc --noEmit # Type check
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/                  # Next.js App Router pages and API routes
+  (auth)/             # Authentication pages
+  (dashboard)/        # Main application views
+  api/                # Backend API endpoints
+components/
+  ui/                 # shadcn/ui primitives
+  ai/                 # AI chat and suggestions
+  focus/              # Focus mode and Pomodoro
+  notes/              # Note editor and list
+  tasks/              # Task modals and related tasks
+  views/              # Kanban, calendar, table views
+  reviews/            # Weekly review components
+lib/
+  ai/                 # AI client, tools, and scheduling logic
+  supabase/           # Database clients and realtime subscriptions
+  crypto/             # Encryption utilities
+  tiptap/             # Editor configuration
+hooks/                # Custom React hooks
+stores/               # Zustand state management
+types/                # TypeScript definitions
+```
 
-## Deploy on Vercel
+## Documentation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **AGENTS.md** — Development guidelines and code conventions
+- **docs/SETUP.md** — Complete environment setup guide
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Philosophy
+
+Groaly believes that productivity tools should adapt to humans, not the other way around. The goal is not to turn you into a task-completing machine, but to help you live a balanced life where the things that matter to you—all of them—get the attention they deserve.
+
+We call this Vibe Tasking: you bring the intention and effort, AI handles the organization and orchestration. The result is less friction, less guilt, and more progress on what actually matters.
